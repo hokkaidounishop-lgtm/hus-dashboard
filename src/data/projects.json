@@ -1,0 +1,727 @@
+[
+  {
+    "id": "proj-001",
+    "name": "CVR Recovery",
+    "description": "Address Shopify conversion rate crisis. Optimize product pages, checkout flow, and launch DropShip Meta ads campaign to drive qualified traffic.",
+    "status": "behind",
+    "owner": "飛べない豚",
+    "kpis": "CVR ≥ 1% | ROAS ≥ 2.5x | CPM < $18",
+    "deliverables": "PDP redesign, checkout UX audit, Meta ads creative library, A/B test framework",
+    "startDate": "2026-01-15",
+    "dueDate": "2026-06-30",
+    "progress": 0,
+    "blocks": [
+      {
+        "blockName": "Shopify Product & Collection Updates",
+        "items": [
+          {
+            "text": "Add new Item to Collection — identify missing SKUs and create new collection entry",
+            "status": "pending"
+          },
+          {
+            "text": "Add Collection description copy — write and publish description for each collection page",
+            "status": "pending"
+          },
+          {
+            "text": "Add Omakase Set contents — update product page with full set details, items, and photos",
+            "status": "pending"
+          },
+          {
+            "text": "Review all collection pages for missing products or outdated descriptions",
+            "status": "pending"
+          },
+          {
+            "text": "Check sold-out products — hide or update availability on homepage and collection pages",
+            "status": "pending"
+          },
+          {
+            "text": "Verify all product images are high quality and consistent across collections",
+            "status": "pending"
+          },
+          {
+            "text": "Check SEO titles and meta descriptions for all collection pages",
+            "status": "pending"
+          },
+          {
+            "text": "Confirm free shipping threshold ($350) is displayed correctly site-wide",
+            "status": "pending"
+          },
+          {
+            "text": "Test add-to-cart flow on mobile for top 5 products",
+            "status": "pending"
+          },
+          {
+            "text": "Verify checkout contact info step is working correctly (100% abandonment issue)",
+            "status": "pending"
+          }
+        ]
+      }
+    ],
+    "followups": [
+      {
+        "id": "fu-1774876173020",
+        "text": "Respond to DropShip with CVR & cart funnel progress report, schedule meetings April 10 & April 20 — due today, High",
+        "addedAt": "2026-03-30",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "proj-002",
+    "name": "The Core Project",
+    "description": "Japanese equity crowdfunding campaign on FUNDINNO platform. Target ¥30–50M to fund US expansion and new product lines.",
+    "status": "on-track",
+    "owner": "Yuki Tanaka",
+    "kpis": "¥30M minimum raise | 200+ investors | Campaign live by Q3",
+    "deliverables": "Business plan (JP), financials deck, FUNDINNO listing, investor FAQ, video pitch",
+    "startDate": "2026-02-01",
+    "dueDate": "2026-09-30",
+    "progress": 40
+  },
+  {
+    "id": "proj-003",
+    "name": "EU Hamachi Project",
+    "description": "Source and list new Tsushima Island premium seafood: conger eel (anago), nodoguro (blackthroat seaperch), and tilefish (amadai). Coordinate with Tsushima Fisheries Co-op.",
+    "status": "planning",
+    "owner": "Hiroshi Fujita",
+    "kpis": "3 new SKUs live | AOV uplift +$40 | 50 units/mo per SKU",
+    "deliverables": "Supplier contracts, compliance docs, product photography, listing copy, cold-chain logistics",
+    "startDate": "2026-03-01",
+    "dueDate": "2026-07-15",
+    "progress": 15
+  },
+  {
+    "id": "proj-004",
+    "name": "Yumemakura Tea Recovery",
+    "description": "Revive sales of Michino-ku Bussan herbal tea line. Identify root cause of drop (positioning, price, SEO) and execute recovery plan.",
+    "status": "stalled",
+    "owner": "Aiko Sato",
+    "kpis": "10 units/mo by Q3 | 3.5★ avg review | $1,200/mo revenue",
+    "deliverables": "Root cause analysis, repricing strategy, new listing copy, influencer outreach, bundle offer",
+    "startDate": "2026-01-20",
+    "dueDate": "2026-08-31",
+    "progress": 10
+  },
+  {
+    "id": "proj-005",
+    "name": "The Tuna Show",
+    "description": "Luxury tuna cutting (kaihatsu) event series for high-net-worth clients in NYC. Target $60K–100K revenue per event with premium experience packages.",
+    "status": "active",
+    "owner": "Kenji Nakamura",
+    "kpis": "$80K avg revenue/event | 40+ guests | 90% satisfaction score",
+    "deliverables": "Event concept deck, venue shortlist, chef partnerships, ticket pricing, sponsorship deck, PR strategy",
+    "startDate": "2026-02-15",
+    "dueDate": "2026-12-31",
+    "progress": 55
+  },
+  {
+    "id": "proj-006",
+    "name": "EU Uni Project",
+    "description": "Expand HUS premium seafood into UK and EU markets. Establish Hokkaido uni distribution into top European cities (Paris, London, Amsterdam) while coordinating CITES compliance, APHA import permits, EU food safety certification (HACCP/EC), and cold-chain logistics.",
+    "status": "planning",
+    "owner": "Emma Clarke",
+    "kpis": "15 SKUs cleared for UK/EU | 3 EU distributor agreements | 200kg/mo uni volume | Logistics cost < 22% of AOV | Q4 launch",
+    "deliverables": "Compliance checklist, APHA documentation, EU food safety certification, UK/EU pricing model, distributor shortlist, pilot shipment plan, landing page",
+    "startDate": "2026-03-10",
+    "dueDate": "2026-12-31",
+    "progress": 0,
+    "blocks": [
+      {
+        "name": "General",
+        "items": [
+          {
+            "id": "blk-1774876030511",
+            "text": "ETA check for London trip — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1774876038332",
+            "text": "Fix UK product price list — halation issue, rebuild from scratch — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1774888113959",
+            "text": "ETA check for London trip — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1774888119754",
+            "text": "Fix UK product price list — halation issue, rebuild — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775132148852",
+            "text": "Switzerland business registration — High",
+            "status": "pending",
+            "completedAt": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "proj-008",
+    "name": "Order Audit System",
+    "description": "Build automated system to detect missed or recurring order anomalies. Flag customers with missed subscription orders, partial fulfillments, and loyalty drop patterns.",
+    "status": "on-track",
+    "owner": "Dev Team",
+    "kpis": "100% order coverage | < 2hr alert latency | Zero missed repeat orders",
+    "deliverables": "Shopify webhook integration, audit dashboard, Slack alert bot, weekly report email",
+    "startDate": "2026-02-10",
+    "dueDate": "2026-05-30",
+    "progress": 60
+  },
+  {
+    "id": "proj-009",
+    "name": "B2B Sales Increase",
+    "description": "Grow B2B revenue through Freshline, pricing optimization, and new restaurant/distributor accounts",
+    "status": "active",
+    "owner": "Tad",
+    "kpis": "B2B KPIは未定義 → Tadが決定次第更新",
+    "deliverables": "Freshline SKU alignment, bulk price upload, new account outreach",
+    "startDate": "2026-03-26",
+    "dueDate": "2026-12-31",
+    "progress": 22,
+    "blocks": [
+      {
+        "name": "General",
+        "items": [
+          {
+            "id": "blk-1774876026509",
+            "text": "Follow up B2B sales with Sam — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1774888110595",
+            "text": "Follow up B2B sales with Sam — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1774898905047",
+            "text": "Check in Swiss Air and Hilton Hotel for tomorrow's trip — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775032696677",
+            "text": "Anago pricing calculation — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775116100833",
+            "text": "Send invoice to Kevin Omakase — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775116112219",
+            "text": "Hotate (scallop) follow-up — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775132145356",
+            "text": "Anago pricing finalize — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775132279290",
+            "text": "Send invoice to Kevin Omakase — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775153788283",
+            "text": "Wagyu follow-up — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775207358283",
+            "text": "Hotate (scallop) spec sheet — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775207371029",
+            "text": "Hotate (scallop) product specification sheet — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775212604210",
+            "text": "Catalogue PDF compressed 29MB→2.1MB (93% reduction), reformatted to A4 14-page ✅",
+            "status": "done",
+            "completedAt": "2026-04-03"
+          },
+          {
+            "id": "blk-1775212608893",
+            "text": "Wholesale Price List Excel — 53 Farm to Kitchen + 28 Ocean to Kitchen items, A4 print-ready ✅",
+            "status": "done",
+            "completedAt": "2026-04-03"
+          },
+          {
+            "id": "blk-1775213294441",
+            "text": "Hotate spot offer sheet (EN + JP) — FOB Tokyo, ¥6,390/kg, 1MT, prepaid ✅",
+            "status": "done",
+            "completedAt": "2026-04-03"
+          }
+        ]
+      },
+      {
+        "name": "スポット案件",
+        "items": [
+          {
+            "id": "blk-1775296034976",
+            "text": "ホタテ1トン案件 — 仕入¥6,900/kg・売値¥7,200/kg・粗利¥300K・粗利率4.2% → 配送コスト・為替リスク要確認",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775296115949",
+            "text": "ホタテ1トン — 配送先方持ち確定、実質粗利¥300K丸取り → Tad電話でクローズ → リピート交渉へ",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775296140637",
+            "text": "ホタテ規定書 → バイヤー3件にメール送付（今週中）→ 月曜電話クローズ",
+            "status": "pending",
+            "completedAt": null
+          }
+        ]
+      },
+      {
+        "name": "Integrations",
+        "items": [
+          {
+            "id": "blk-1775386023918",
+            "text": "QuickBooks integration inquiry — replied with tech stack details, awaiting scope/cost estimate",
+            "status": "done",
+            "completedAt": "2026-04-05"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "proj-010",
+    "name": "B2C Online Growth",
+    "description": "Drive B2C growth by acquiring NY customers, optimizing shipping costs, and improving Shopify product offerings.",
+    "status": "active",
+    "owner": "Tad",
+    "kpis": "NY customer acquisition growth | Shipping cost reduction | Shopify product conversion improvement",
+    "deliverables": "NY customer acquisition campaigns, shipping cost optimization analysis, Shopify product improvements",
+    "startDate": "2026-03-29",
+    "dueDate": "2026-12-31",
+    "progress": 33,
+    "blocks": [
+      {
+        "name": "Tasks",
+        "items": [
+          {
+            "id": "blk-1774798847144",
+            "text": "Add reimbursement to ShipFare #7859 — due 2026-04-03",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1774798998710",
+            "text": "SNS post — big conger eel (anago) just arrived — due 2026-03-31, Low",
+            "status": "pending",
+            "completedAt": null
+          }
+        ]
+      },
+      {
+        "name": "General",
+        "items": [
+          {
+            "id": "blk-1774876034309",
+            "text": "Update credit card authorization form — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1774876047396",
+            "text": "Invoice collection from Japan — get prices, convert to USD cost, confirm with Mitsuki — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1774888116583",
+            "text": "Update credit card authorization form — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1774888123149",
+            "text": "Invoice collection from Japan — get prices, convert to USD, confirm with Mitsuki — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1774888126223",
+            "text": "SNS post — big anago just arrived — due Mar 31, Low",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1774898997372",
+            "text": "Respond to all customer inquiries — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775031891824",
+            "text": "Email follow-up #7878 — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775034702789",
+            "text": "Credit Memo follow-up #7878 via ShipFare — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775035038223",
+            "text": "Credit Memo follow-up #7848 via ShipFare — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775116107824",
+            "text": "家計簿 (household budget) — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775132283388",
+            "text": "家計簿 (household budget) — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775165048248",
+            "text": "Add new products to Shopify — Anago, Ikura, Hotate, Tako — due tomorrow, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775165052850",
+            "text": "Add new product photos — Melon, Strawberry, Pear, Firefly Squid (Hotaru-ika) — due tomorrow, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775166819183",
+            "text": "Product photos uploaded — Pear, Melon, Strawberry, Firefly Squid ✅ done",
+            "status": "done",
+            "completedAt": "2026-04-02"
+          },
+          {
+            "id": "blk-1775207361821",
+            "text": "Enter mileage log — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775207365111",
+            "text": "Cancel ChatGPT and Gemini subscriptions — save $40/month — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775207373837",
+            "text": "Enter mileage log — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775207376501",
+            "text": "Cancel ChatGPT and Gemini subscriptions — save $40/month — due today, High",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775213290903",
+            "text": "Website taglines live — Japanese Melon + Hotaru Ika ✅",
+            "status": "done",
+            "completedAt": "2026-04-03"
+          },
+          {
+            "id": "blk-1775213297779",
+            "text": "HUS Creative OS defined — Apple-like color system: #2D2D2D / #C9A96E / #EBEBEB ✅",
+            "status": "done",
+            "completedAt": "2026-04-03"
+          }
+        ]
+      },
+      {
+        "name": "Creative OS",
+        "items": [
+          {
+            "id": "blk-1775213717430",
+            "text": "HUS Creative OS策定 — カラーシステム確定（Apple的ミニマル薄色パレット）",
+            "status": "done",
+            "completedAt": "2026-04-03"
+          },
+          {
+            "id": "blk-1775213740514",
+            "text": "Website Tagline実装 — Japanese Melon / Hotaru Ika 2本完了",
+            "status": "done",
+            "completedAt": "2026-04-03"
+          },
+          {
+            "id": "blk-1775213743947",
+            "text": "Wholesale Price List整備 — Farm to Kitchen 53品目 / Ocean to Kitchen 28品目（A4印刷対応）",
+            "status": "done",
+            "completedAt": "2026-04-03"
+          },
+          {
+            "id": "blk-1775214003678",
+            "text": "カタログPDF軽量化 — 29MB → 2.1MB（93%削減）+ ブック形式14ページ再編集",
+            "status": "done",
+            "completedAt": "2026-04-03"
+          },
+          {
+            "id": "blk-1775214006956",
+            "text": "帆立スポットオファーシート — 英語・日本語版作成（FOB東京・¥6,390/kg・1MT・前払い）",
+            "status": "done",
+            "completedAt": "2026-04-03"
+          },
+          {
+            "id": "blk-1775245787575",
+            "text": "JFK Price List PDF — ロゴ・QRコード・会社情報・HUSパレット統一、A4 3ページ",
+            "status": "done",
+            "completedAt": "2026-04-03"
+          },
+          {
+            "id": "blk-1775393784550",
+            "text": "Dashboard HUS Creative OS リニューアル仕様確定 — Cormorant Garamond導入・Gold #C9A96E統一・Sidebar再設計・ロゴ追加（ナランチャ実装待ち）",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775394417744",
+            "text": "Dashboard デザインリニューアル — ローカル実装完了・Vercelデプロイ待ち（ロゴ配置 + GitHub push + Vercel連携が残タスク）",
+            "status": "pending",
+            "completedAt": null
+          }
+        ]
+      },
+      {
+        "name": "Technical Sprint 2026-04-03",
+        "items": [
+          {
+            "id": "blk-1775226734362",
+            "text": "Shopify Client Secret更新 → Vercelに追加 → Redeploy",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775226739119",
+            "text": "Shopifyトークン自動更新 → ナランチャがauto-refresh実装",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775226741850",
+            "text": "MCP add_taskツールのテスト → Tadが直接タスク追加できるか確認",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775226744497",
+            "text": "領域展開テスト → ナランチャ実装コマンドの動作確認",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775226748327",
+            "text": "Supabaseチェックボックス永続化確認 → リロード後も消えないか",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775226751791",
+            "text": "Vercel Analytics有効化 → $20/月の価値を最大化",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775226944763",
+            "text": "Shopify Client Secret更新 → Vercelに追加 → Redeploy",
+            "status": "done",
+            "completedAt": "2026-04-03"
+          },
+          {
+            "id": "blk-1775226990150",
+            "text": "Shopifyトークン自動更新 → ナランチャがauto-refresh実装 → 動作確認済み",
+            "status": "done",
+            "completedAt": "2026-04-03"
+          },
+          {
+            "id": "blk-1775226996959",
+            "text": "MCP add_taskテスト用ダミータスク → 削除OK",
+            "status": "done",
+            "completedAt": "2026-04-03"
+          },
+          {
+            "id": "blk-1775227051951",
+            "text": "Shopifyトークン自動更新 → 動作確認待ち ⚠️",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775229993359",
+            "text": "Shopify 401解消 → client_credentials自動取得実装済み、APIデータ正常返答確認済み",
+            "status": "done",
+            "completedAt": "2026-04-03"
+          },
+          {
+            "id": "blk-1775261417310",
+            "text": "Anago、Ikura、Hotate、Tako → Shopifyに追加完了",
+            "status": "done",
+            "completedAt": "2026-04-04"
+          }
+        ]
+      },
+      {
+        "name": "ダッシュボード完成タスク",
+        "items": [
+          {
+            "id": "blk-1775294379225",
+            "text": "Shopify接続監視 → 落ちたら即アラート出る仕組みをナランチャに実装させる",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775294381991",
+            "text": "Supabaseチェックボックス永続化 → リロード後も消えない実装",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775294384883",
+            "text": "Vercel Analytics有効化 → Speed Insights込みで$20/月フル活用",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775294388362",
+            "text": "Mailchimp連携実装",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775294391241",
+            "text": "B2Bセールス自動化実装",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775294394241",
+            "text": "HUS Level System UI実装",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775294396839",
+            "text": "NY顧客獲得・配送コストKPI追加",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775294400021",
+            "text": "QuickBooks連携実装",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775380766976",
+            "text": "GA4リアルタイムAPI接続 → CVR・セッション・チャネル別流入をダッシュボードで可視化（最優先）",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775383170108",
+            "text": "Shopify接続監視 → 赤アラートバナー実装済み・Retry/Close動作確認済み",
+            "status": "done",
+            "completedAt": "2026-04-05"
+          },
+          {
+            "id": "blk-1775383172730",
+            "text": "Supabaseチェックボックス永続化 → status/pdca変更含め完全永続化確認済み",
+            "status": "done",
+            "completedAt": "2026-04-05"
+          },
+          {
+            "id": "blk-1775383176197",
+            "text": "Vercel Analytics + Speed Insights → インストール・コード組み込み済み。Tadが手動でVercel Settings → Analytics → Enable をクリックして完了",
+            "status": "done",
+            "completedAt": "2026-04-05"
+          },
+          {
+            "id": "blk-1775385186423",
+            "text": "HUS Level System UI → スコア5指標・Lv1-5表示・設定ファイルで改善余地あり（ナランチャ実装待ち）",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775386244502",
+            "text": "HUS Level System → Lv.3軌道に乗った・Score52/100・動作確認済み",
+            "status": "done",
+            "completedAt": "2026-04-05"
+          },
+          {
+            "id": "blk-1775386247839",
+            "text": "GA4・Mailchimp・B2B・NY顧客KPI → UI実装完了、APIキー待ちで正常グレースフルデグレード確認済み",
+            "status": "done",
+            "completedAt": "2026-04-05"
+          }
+        ]
+      },
+      {
+        "name": "今週のアクション",
+        "items": [
+          {
+            "id": "blk-1775386742430",
+            "text": "Mailchimp 4,000件リスト活用 → 脳汁担当・今週中・CVR改善直結・休眠顧客再活性化",
+            "status": "pending",
+            "completedAt": null
+          }
+        ]
+      }
+    ],
+    "followups": [
+      {
+        "id": "fu-1775206943522",
+        "text": "Vercel Pro plan payment — April 9. Make full use of $20/month: enable Analytics, Speed Insights, custom domain.",
+        "addedAt": "2026-04-03",
+        "status": "pending"
+      },
+      {
+        "id": "fu-1775214009995",
+        "text": "帆立バイヤーへ英語オファーシート送付 → 返答次第でPO確保へ動く",
+        "addedAt": "2026-04-03",
+        "status": "pending"
+      },
+      {
+        "id": "fu-1775386027043",
+        "text": "Mailchimp — Vercelに MAILCHIMP_API_KEY + MAILCHIMP_LIST_ID を追加してダッシュボード連携を有効化（ナランチャへ）",
+        "addedAt": "2026-04-05",
+        "status": "pending"
+      }
+    ]
+  }
+]

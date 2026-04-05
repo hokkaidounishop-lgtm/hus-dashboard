@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Serif+JP:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── HUS Creative OS Design Tokens ─────────────────────────────────────── */
+:root {
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #FAFAF8;
+  --bg-sidebar: #1C2B3A;
+  --text-primary: #2D2D2D;
+  --text-secondary: #9A9A9A;
+  --text-tertiary: #BBBBBB;
+  --accent-gold: #C9A96E;
+  --accent-gold-light: #F2EBE0;
+  --accent-gold-dark: #B08D4A;
+  --border: #EBEBEB;
+  --alert-red: #C0392B;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Selection */
+::selection {
+  background: rgba(201, 169, 110, 0.2);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(201, 169, 110, 0.2); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(201, 169, 110, 0.35); }
+
+@layer components {
+  .label {
+    @apply block text-xs font-medium mb-1.5;
+    color: #6B6B6B;
+    letter-spacing: 0.02em;
+  }
+
+  .input {
+    @apply w-full rounded-xl px-3.5 py-2.5 text-sm transition-all;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+  }
+  .input:focus {
+    outline: none;
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.10), 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .input::placeholder {
+    color: var(--text-tertiary);
+  }
+  .input:is(select) {
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    @apply flex items-center gap-1.5 text-white text-sm font-medium px-5 py-2.5 rounded-xl transition-all;
+    background: linear-gradient(135deg, #C9A96E 0%, #B08D4A 100%);
+    box-shadow: 0 1px 3px rgba(201,169,110,0.25), 0 1px 2px rgba(0,0,0,0.05);
+  }
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #D4BC8A 0%, #C9A96E 100%);
+    box-shadow: 0 4px 12px rgba(201,169,110,0.35), 0 1px 3px rgba(0,0,0,0.06);
+    transform: translateY(-0.5px);
+  }
+  .btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(201,169,110,0.20);
+  }
+
+  .btn-ghost {
+    @apply px-5 py-2.5 rounded-xl text-sm font-medium transition-all;
+    border: 1px solid var(--border);
+    color: #6B6B6B;
+    background: var(--bg-primary);
+  }
+  .btn-ghost:hover {
+    background: #F5F3F0;
+    border-color: #D4CFC8;
+    color: var(--text-primary);
+  }
+
+  /* HUS Card */
+  .hus-card {
+    @apply rounded-card;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.02);
+    transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+  .hus-card:hover {
+    border-color: #D4CFC8;
+    box-shadow: 0 4px 16px 0 rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.03);
+  }
+
+  /* Section heading — serif */
+  .hus-heading {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    @apply font-medium;
+    color: var(--text-primary);
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    @apply h-1.5 rounded-full overflow-hidden;
+    background: #EDEBE8;
+  }
+  .progress-bar-fill {
+    @apply h-full rounded-full;
+    background: linear-gradient(90deg, #C9A96E, #D4BC8A);
+    transition: width 0.5s ease;
+  }
+}

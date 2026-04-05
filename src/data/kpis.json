@@ -1,0 +1,186 @@
+{
+  "targets": {
+    "cvr": 1,
+    "aov": 420,
+    "monthlyRevenue": 90000,
+    "totalOrders": 220
+  },
+  "current": {
+    "cvr": 0.3,
+    "aov": 386,
+    "totalOrders": 847,
+    "totalRevenue": 792400
+  },
+  "monthlyRevenue": [
+    { "month": "Apr '24", "revenue": 45200,  "orders": 117 },
+    { "month": "May '24", "revenue": 38900,  "orders": 101 },
+    { "month": "Jun '24", "revenue": 52300,  "orders": 135 },
+    { "month": "Jul '24", "revenue": 48700,  "orders": 126 },
+    { "month": "Aug '24", "revenue": 61200,  "orders": 158 },
+    { "month": "Sep '24", "revenue": 55800,  "orders": 144 },
+    { "month": "Oct '24", "revenue": 49300,  "orders": 128 },
+    { "month": "Nov '24", "revenue": 67400,  "orders": 174 },
+    { "month": "Dec '24", "revenue": 72100,  "orders": 187 },
+    { "month": "Jan '25", "revenue": 81300,  "orders": 210 },
+    { "month": "Feb '25", "revenue": 95600,  "orders": 248 },
+    { "month": "Mar '25", "revenue": 124800, "orders": 323 }
+  ],
+  "regionBreakdown": [
+    { "region": "New York",     "revenue": 491288, "orders": 525, "pct": 62 },
+    { "region": "California",   "revenue": 126784, "orders": 135, "pct": 16 },
+    { "region": "Texas",        "revenue": 63392,  "orders": 68,  "pct": 8  },
+    { "region": "Florida",      "revenue": 47544,  "orders": 51,  "pct": 6  },
+    { "region": "Other States", "revenue": 63392,  "orders": 68,  "pct": 8  }
+  ],
+  "regionTrend": [
+    { "month": "Apr '24", "newYork": 28024, "california": 7232, "texas": 3616, "florida": 2712, "other": 3616 },
+    { "month": "May '24", "newYork": 24118, "california": 6224, "texas": 3112, "florida": 2334, "other": 3112 },
+    { "month": "Jun '24", "newYork": 32426, "california": 8368, "texas": 4184, "florida": 3138, "other": 4184 },
+    { "month": "Jul '24", "newYork": 30194, "california": 7792, "texas": 3896, "florida": 2922, "other": 3896 },
+    { "month": "Aug '24", "newYork": 37944, "california": 9792, "texas": 4896, "florida": 3672, "other": 4896 },
+    { "month": "Sep '24", "newYork": 34596, "california": 8928, "texas": 4464, "florida": 3348, "other": 4464 },
+    { "month": "Oct '24", "newYork": 30566, "california": 7888, "texas": 3944, "florida": 2958, "other": 3944 },
+    { "month": "Nov '24", "newYork": 41788, "california": 10784,"texas": 5392, "florida": 4044, "other": 5392 },
+    { "month": "Dec '24", "newYork": 44702, "california": 11536,"texas": 5768, "florida": 4326, "other": 5768 },
+    { "month": "Jan '25", "newYork": 50406, "california": 13008,"texas": 6504, "florida": 4878, "other": 6504 },
+    { "month": "Feb '25", "newYork": 59272, "california": 15296,"texas": 7648, "florida": 5736, "other": 7648 },
+    { "month": "Mar '25", "newYork": 77376, "california": 19968,"texas": 9984, "florida": 7488, "other": 9984 }
+  ],
+  "nyBreakdown": [
+    { "area": "New York City",  "revenue": 393030, "orders": 420, "pct": 80, "avgFreq": 2.1 },
+    { "area": "Long Island",    "revenue": 49128,  "orders": 53,  "pct": 10, "avgFreq": 1.8 },
+    { "area": "Albany Region",  "revenue": 24565,  "orders": 26,  "pct": 5,  "avgFreq": 1.5 },
+    { "area": "Western NY",     "revenue": 14738,  "orders": 16,  "pct": 3,  "avgFreq": 1.3 },
+    { "area": "Other NY",       "revenue": 9827,   "orders": 10,  "pct": 2,  "avgFreq": 1.2 }
+  ],
+  "nyMetrics": {
+    "nyCustomers": 312,
+    "nyOrders": 525,
+    "nyRevenue": 491288,
+    "nyAvgShippingCost": 18.50,
+    "nyTotalShippingCost": 9713,
+    "nyShippingAsPercentOfRevenue": 2.0
+  },
+  "topProducts": [
+    {
+      "id": "prod-001",
+      "name": "Hokkaido Uni (AAA Grade)",
+      "sku": "UNI-AAA-100G",
+      "unitsSold": 428, "prevUnitsSold": 372,
+      "revenue": 214000, "prevRevenue": 185000,
+      "pctOfTotal": 27.0,
+      "inventory": 12, "lowStockThreshold": 20,
+      "price": 500,
+      "launchDate": "2022-04-01",
+      "linkedProject": null
+    },
+    {
+      "id": "prod-002",
+      "name": "Hokkaido Uni (A Grade)",
+      "sku": "UNI-A-100G",
+      "unitsSold": 312, "prevUnitsSold": 345,
+      "revenue": 124800, "prevRevenue": 138000,
+      "pctOfTotal": 15.7,
+      "inventory": 45, "lowStockThreshold": 20,
+      "price": 400,
+      "launchDate": "2022-04-01",
+      "linkedProject": null
+    },
+    {
+      "id": "prod-003",
+      "name": "Wagyu Beef (A5 Grade)",
+      "sku": "WAGYU-A5-500G",
+      "unitsSold": 189, "prevUnitsSold": 167,
+      "revenue": 94500, "prevRevenue": 83500,
+      "pctOfTotal": 11.9,
+      "inventory": 28, "lowStockThreshold": 15,
+      "price": 500,
+      "launchDate": "2023-01-15",
+      "linkedProject": null
+    },
+    {
+      "id": "prod-004",
+      "name": "King Crab (Live)",
+      "sku": "CRAB-LIVE-2KG",
+      "unitsSold": 143, "prevUnitsSold": 158,
+      "revenue": 71500, "prevRevenue": 79000,
+      "pctOfTotal": 9.0,
+      "inventory": 8, "lowStockThreshold": 15,
+      "price": 500,
+      "launchDate": "2022-10-01",
+      "linkedProject": null
+    },
+    {
+      "id": "prod-005",
+      "name": "Premium Scallops (1kg)",
+      "sku": "SCALLOP-1KG",
+      "unitsSold": 267, "prevUnitsSold": 231,
+      "revenue": 53400, "prevRevenue": 46200,
+      "pctOfTotal": 6.7,
+      "inventory": 62, "lowStockThreshold": 20,
+      "price": 200,
+      "launchDate": "2022-04-01",
+      "linkedProject": null
+    },
+    {
+      "id": "prod-006",
+      "name": "Sea Urchin Pasta Kit",
+      "sku": "PASTA-UNI-2P",
+      "unitsSold": 198, "prevUnitsSold": 224,
+      "revenue": 39600, "prevRevenue": 44800,
+      "pctOfTotal": 5.0,
+      "inventory": 34, "lowStockThreshold": 20,
+      "price": 200,
+      "launchDate": "2023-06-01",
+      "linkedProject": null
+    },
+    {
+      "id": "prod-007",
+      "name": "Jubako Uni Gift Box",
+      "sku": "JUBAKO-GIFT",
+      "unitsSold": 87, "prevUnitsSold": 64,
+      "revenue": 52200, "prevRevenue": 38400,
+      "pctOfTotal": 6.6,
+      "inventory": 18, "lowStockThreshold": 15,
+      "price": 600,
+      "launchDate": "2023-11-01",
+      "linkedProject": null
+    },
+    {
+      "id": "prod-008",
+      "name": "Nodoguro (Blackthroat)",
+      "sku": "NODO-WHOLE",
+      "unitsSold": 34, "prevUnitsSold": 0,
+      "revenue": 17000, "prevRevenue": 0,
+      "pctOfTotal": 2.1,
+      "inventory": 22, "lowStockThreshold": 10,
+      "price": 500,
+      "launchDate": "2025-10-15",
+      "linkedProject": "proj-003"
+    },
+    {
+      "id": "prod-009",
+      "name": "Amadai (Tilefish)",
+      "sku": "TILEFISH-WHOLE",
+      "unitsSold": 28, "prevUnitsSold": 0,
+      "revenue": 11200, "prevRevenue": 0,
+      "pctOfTotal": 1.4,
+      "inventory": 19, "lowStockThreshold": 10,
+      "price": 400,
+      "launchDate": "2025-11-01",
+      "linkedProject": "proj-003"
+    },
+    {
+      "id": "prod-010",
+      "name": "Conger Eel (Anago)",
+      "sku": "ANAGO-FILLET",
+      "unitsSold": 3, "prevUnitsSold": 0,
+      "revenue": 1200, "prevRevenue": 0,
+      "pctOfTotal": 0.2,
+      "inventory": 31, "lowStockThreshold": 10,
+      "price": 400,
+      "launchDate": "2026-01-15",
+      "linkedProject": "proj-003"
+    }
+  ]
+}

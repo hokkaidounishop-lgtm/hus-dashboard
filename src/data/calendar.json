@@ -1,0 +1,98 @@
+[
+  {
+    "id": "evt-001",
+    "title": "Meta Ads Creative Review",
+    "date": "2026-03-25",
+    "project": "proj-001",
+    "color": "red",
+    "notes": "Review 5 new video creatives with marketing team — CVR Recovery sprint"
+  },
+  {
+    "id": "evt-002",
+    "title": "FUNDINNO Advisor Call",
+    "date": "2026-03-26",
+    "project": "proj-002",
+    "color": "blue",
+    "notes": "Quarterly check-in with FUNDINNO platform representative"
+  },
+  {
+    "id": "evt-003",
+    "title": "Tuna Show Planning Meeting",
+    "date": "2026-03-27",
+    "project": "proj-005",
+    "color": "purple",
+    "notes": "Venue shortlist review and chef partner discussion"
+  },
+  {
+    "id": "evt-004",
+    "title": "CVR Sprint Retrospective",
+    "date": "2026-03-28",
+    "project": "proj-001",
+    "color": "red",
+    "notes": "Review PDP redesign A/B test results and agree on next sprint"
+  },
+  {
+    "id": "evt-005",
+    "title": "Tsushima Supplier Call",
+    "date": "2026-03-31",
+    "project": "proj-003",
+    "color": "green",
+    "notes": "Conger eel & nodoguro availability, pricing, and cold-chain logistics"
+  },
+  {
+    "id": "evt-006",
+    "title": "Order Audit System Demo",
+    "date": "2026-04-01",
+    "project": "proj-008",
+    "color": "orange",
+    "notes": "Internal demo of Shopify webhook integration and Slack alerts"
+  },
+  {
+    "id": "evt-007",
+    "title": "EU Uni Export Kickoff",
+    "date": "2026-04-03",
+    "project": "proj-007",
+    "color": "indigo",
+    "notes": "Kick off Paris / Amsterdam premium sushi restaurant research"
+  },
+  {
+    "id": "evt-008",
+    "title": "UK Compliance Workshop",
+    "date": "2026-04-08",
+    "project": "proj-006",
+    "color": "teal",
+    "notes": "APHA permit process walkthrough with legal and logistics team"
+  },
+  {
+    "id": "evt-009",
+    "title": "Tuna Show Venue Visits",
+    "date": "2026-04-05",
+    "project": "proj-005",
+    "color": "purple",
+    "notes": "Visit Tribeca and Meatpacking event space options"
+  },
+  {
+    "id": "evt-010",
+    "title": "FUNDINNO Video Pitch Recording",
+    "date": "2026-04-10",
+    "project": "proj-002",
+    "color": "blue",
+    "notes": "Studio recording session for investor pitch video"
+  },
+  {
+    "id": "evt-011",
+    "title": "Yumemakura Recovery Review",
+    "date": "2026-03-29",
+    "project": "proj-004",
+    "color": "amber",
+    "notes": "Present root cause analysis findings and proposed recovery plan"
+  },
+  {
+    "id": "evt-012",
+    "title": "All-Hands Weekly Sync",
+    "date": "2026-03-30",
+    "project": null,
+    "color": "slate",
+    "notes": "Q2 planning review"
+  }
+]

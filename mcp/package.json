@@ -1,0 +1,14 @@
+{
+  "name": "hus-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for HUS Dashboard — reads/writes src/data/*.json",
+  "type": "module",
+  "main": "hus-server.js",
+  "scripts": {
+    "start": "node hus-server.js",
+    "inspect": "npx @modelcontextprotocol/inspector node hus-server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0"
+  }
+}
