@@ -3,16 +3,16 @@
     "id": "proj-001",
     "name": "CVR Recovery",
     "description": "Address Shopify conversion rate crisis. Optimize product pages, checkout flow, and launch DropShip Meta ads campaign to drive qualified traffic.",
-    "status": "behind",
+    "status": "ACTIVE",
     "owner": "飛べない豚",
-    "kpis": "CVR ≥ 1% | ROAS ≥ 2.5x | CPM < $18",
+    "kpis": "CVR目標3.0% | ATC率改善（現状5.3%） | チェックアウト完了率改善（現状28.9%） | ROAS ≥ 2.5x | CPM &lt; $18",
     "deliverables": "PDP redesign, checkout UX audit, Meta ads creative library, A/B test framework",
     "startDate": "2026-01-15",
     "dueDate": "2026-06-30",
-    "progress": 0,
+    "progress": 35,
     "blocks": [
       {
-        "blockName": "Shopify Product & Collection Updates",
+        "name": "Shopify Product & Collection Updates",
         "items": [
           {
             "text": "Add new Item to Collection — identify missing SKUs and create new collection entry",
@@ -322,7 +322,7 @@
     "deliverables": "NY customer acquisition campaigns, shipping cost optimization analysis, Shopify product improvements",
     "startDate": "2026-03-29",
     "dueDate": "2026-12-31",
-    "progress": 34,
+    "progress": 35,
     "blocks": [
       {
         "name": "Tasks",
@@ -522,6 +522,12 @@
             "text": "Dashboard HUS Creative OS — Vercelデプロイ完了 (hus-dashboard.vercel.app) · 残: ロゴ画像配置のみ",
             "status": "done",
             "completedAt": "2026-04-05"
+          },
+          {
+            "id": "blk-1775407168029",
+            "text": "Dashboard デザインリニューアル完全完了 — Kumagai Budget Appスタイル、Uniロゴ、Inter統一、暖かいグレー背景、ホワイトカード",
+            "status": "done",
+            "completedAt": "2026-04-05"
           }
         ]
       },
@@ -703,6 +709,28 @@
           {
             "id": "blk-1775386742430",
             "text": "Mailchimp 4,000件リスト活用 → 脳汁担当・今週中・CVR改善直結・休眠顧客再活性化",
+            "status": "pending",
+            "completedAt": null
+          }
+        ]
+      },
+      {
+        "name": "CVR施策完了",
+        "items": [
+          {
+            "id": "blk-1775424489771",
+            "text": "PDP改善・カートクロスセル30商品・Goalifyテキスト修正・送料表記統一・FAQ更新・MIDAヒートマップ分析完了",
+            "status": "done",
+            "completedAt": "2026-04-05"
+          }
+        ]
+      },
+      {
+        "name": "CVR来週最優先",
+        "items": [
+          {
+            "id": "blk-1775424494502",
+            "text": "🔴 Ora King Salmon URL修正 / MIDA Survey設置（離脱理由特定）/ Gokujo PDP「どのUniを選ぶか」コピー追加 → ATC率5.3%改善が最重要",
             "status": "pending",
             "completedAt": null
           }
