@@ -57,7 +57,7 @@ function ShopifyAlertBanner() {
 function MainContent() {
   const { activeSection } = useApp()
   return (
-    <div className="flex-1 flex flex-col min-w-0 min-h-screen" style={{ background: '#F8F7F5' }}>
+    <div className="flex-1 flex flex-col min-w-0 min-h-screen" style={{ background: '#EDECEA' }}>
       <ShopifyAlertBanner />
       <Header />
       <main className="flex-1 p-7 overflow-auto">
@@ -74,7 +74,7 @@ function MainContent() {
 
 export default function App() {
   return (
-    <div className="flex min-h-screen" style={{ background: '#F8F7F5' }}>
+    <div className="flex min-h-screen" style={{ background: '#EDECEA' }}>
       <Sidebar />
       <MainContent />
     </div>

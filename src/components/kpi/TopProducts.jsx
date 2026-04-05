@@ -33,10 +33,10 @@ function SortHeader({ label, sortKey, current, direction, onSort }) {
     <button
       onClick={() => onSort(sortKey)}
       className="flex items-center gap-1 text-xs font-medium uppercase tracking-wide transition-colors"
-      style={{ color: active ? '#C9A96E' : '#999999' }}
+      style={{ color: active ? '#1A1A1A' : '#999999' }}
     >
       {label}
-      <ArrowUpDown size={11} style={{ color: active ? '#C9A96E' : '#D4C9BC' }} />
+      <ArrowUpDown size={11} style={{ color: active ? '#1A1A1A' : '#D4C9BC' }} />
     </button>
   )
 }
@@ -63,14 +63,14 @@ export default function TopProducts({ onNavigateToProject }) {
 
   return (
     <div
-      className="rounded-card overflow-hidden"
+      className="rounded-lg overflow-hidden"
       style={{ background: '#FFFFFF', border: '1px solid #F0F0F0', boxShadow: '0 1px 4px 0 rgba(26,18,8,0.05)' }}
     >
       <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid #F0F0F0' }}>
         <div>
           <div
             className="text-sm font-medium"
-            style={{ fontFamily: '"Noto Serif JP", Georgia, serif', color: '#1A1A1A' }}
+            style={{ fontFamily: '"Inter", system-ui, sans-serif', color: '#1A1A1A' }}
           >
             Top Products
           </div>
@@ -127,7 +127,7 @@ export default function TopProducts({ onNavigateToProject }) {
                           className="inline-flex items-center gap-0.5 text-xs px-1.5 py-0.5 rounded font-medium"
                           style={{
                             background: '#F5F5F5',
-                            color: criticalStock ? '#C0392B' : '#C9A96E',
+                            color: criticalStock ? '#C0392B' : '#1A1A1A',
                           }}
                         >
                           <AlertTriangle size={10} />
@@ -139,7 +139,7 @@ export default function TopProducts({ onNavigateToProject }) {
                           onClick={() => onNavigateToProject?.()}
                           className="transition-colors"
                           title="View linked project"
-                          style={{ color: '#C9A96E', opacity: 0.6 }}
+                          style={{ color: '#1A1A1A', opacity: 0.6 }}
                           onMouseEnter={(e) => { e.currentTarget.style.opacity = '1' }}
                           onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.6' }}
                         >
@@ -162,7 +162,7 @@ export default function TopProducts({ onNavigateToProject }) {
                           className="h-full rounded-full"
                           style={{
                             width: `${Math.min(p.pctOfTotal, 100)}%`,
-                            background: '#C9A96E',
+                            background: '#1A1A1A',
                           }}
                         />
                       </div>
@@ -178,7 +178,7 @@ export default function TopProducts({ onNavigateToProject }) {
                     <span
                       className="text-xs font-medium tabular-nums"
                       style={{
-                        color: criticalStock ? '#C0392B' : lowStock ? '#C9A96E' : '#999999',
+                        color: criticalStock ? '#C0392B' : lowStock ? '#1A1A1A' : '#999999',
                       }}
                     >
                       {p.inventory} units

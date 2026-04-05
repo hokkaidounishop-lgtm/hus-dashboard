@@ -39,7 +39,7 @@ export default function ShopifySyncButton() {
       <button
         onClick={sync}
         disabled={loading}
-        className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-xl transition-all"
+        className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-all"
         style={{
           background: '#FFFFFF',
           border: '1px solid #F0F0F0',
@@ -48,8 +48,8 @@ export default function ShopifySyncButton() {
         }}
         onMouseEnter={(e) => {
           if (!loading) {
-            e.currentTarget.style.borderColor = '#C9A96E'
-            e.currentTarget.style.color = '#C9A96E'
+            e.currentTarget.style.borderColor = '#1A1A1A'
+            e.currentTarget.style.color = '#1A1A1A'
           }
         }}
         onMouseLeave={(e) => {

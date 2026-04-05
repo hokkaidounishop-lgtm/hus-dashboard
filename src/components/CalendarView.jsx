@@ -11,10 +11,10 @@ import { useApp } from '../context/AppContext'
 // Warm-toned event color palette
 const EVENT_COLORS = {
   red:    { dot: '#A93226', chip: { bg: 'rgba(192,57,43,0.10)',  color: '#A93226',  border: 'rgba(192,57,43,0.2)' } },
-  gold:   { dot: '#C9A96E', chip: { bg: 'rgba(201,169,110,0.12)', color: '#B08D4A',  border: 'rgba(201,169,110,0.25)' } },
+  gold:   { dot: '#1A1A1A', chip: { bg: 'rgba(201,169,110,0.12)', color: '#333333',  border: 'rgba(0,0,0,0.10)' } },
   teal:   { dot: '#2D5B6B', chip: { bg: 'rgba(45,91,107,0.10)',  color: '#2D5B6B',  border: 'rgba(45,91,107,0.2)' } },
   green:  { dot: '#3D7A5C', chip: { bg: 'rgba(61,122,92,0.10)',  color: '#3D7A5C',  border: 'rgba(61,122,92,0.2)' } },
-  amber:  { dot: '#C9A96E', chip: { bg: 'rgba(201,169,110,0.08)', color: '#B08D4A',  border: 'rgba(201,169,110,0.15)' } },
+  amber:  { dot: '#1A1A1A', chip: { bg: 'rgba(201,169,110,0.08)', color: '#333333',  border: 'rgba(0,0,0,0.06)' } },
   purple: { dot: '#7B5EA7', chip: { bg: 'rgba(123,94,167,0.10)', color: '#7B5EA7',  border: 'rgba(123,94,167,0.2)' } },
   indigo: { dot: '#3D5A8A', chip: { bg: 'rgba(61,90,138,0.10)',  color: '#3D5A8A',  border: 'rgba(61,90,138,0.2)' } },
   orange: { dot: '#C06030', chip: { bg: 'rgba(192,96,48,0.10)',  color: '#C06030',  border: 'rgba(192,96,48,0.2)' } },
@@ -51,7 +51,7 @@ function EventForm({ value, onChange, projects }) {
                 style={{
                   background: EVENT_COLORS[c]?.dot || '#999999',
                   opacity: value.color === c ? 1 : 0.5,
-                  outline: value.color === c ? '2px solid #C9A96E' : 'none',
+                  outline: value.color === c ? '2px solid #1A1A1A' : 'none',
                   outlineOffset: '2px',
                   transform: value.color === c ? 'scale(1.15)' : 'scale(1)',
                 }}
@@ -107,7 +107,7 @@ function EventDetail({ event, onEdit, onDelete, onClose, projects }) {
         <button
           onClick={onEdit}
           className="flex items-center gap-1.5 text-xs font-medium"
-          style={{ color: '#C9A96E' }}
+          style={{ color: '#1A1A1A' }}
         >
           <Edit2 size={12} /> Edit
         </button>
@@ -165,14 +165,14 @@ export default function CalendarView() {
     <div className="space-y-4">
       {/* Calendar card */}
       <div
-        className="rounded-card overflow-hidden"
+        className="rounded-lg overflow-hidden"
         style={{ background: '#FFFFFF', border: '1px solid #F0F0F0', boxShadow: '0 1px 4px 0 rgba(26,18,8,0.05)' }}
       >
         {/* Month nav */}
         <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: '1px solid #F0F0F0' }}>
           <h2
             className="text-base font-medium"
-            style={{ fontFamily: '"Noto Serif JP", Georgia, serif', color: '#1A1A1A' }}
+            style={{ fontFamily: '"Inter", system-ui, sans-serif', color: '#1A1A1A' }}
           >
             {format(currentMonth, 'MMMM yyyy')}
           </h2>
@@ -239,7 +239,7 @@ export default function CalendarView() {
                 <div
                   className="text-xs font-medium w-6 h-6 flex items-center justify-center rounded-full mb-1"
                   style={{
-                    background: isTodayDate ? '#C9A96E' : 'transparent',
+                    background: isTodayDate ? '#1A1A1A' : 'transparent',
                     color: isTodayDate ? '#FFFFFF' : '#999999',
                   }}
                 >

@@ -15,10 +15,10 @@ const SEVERITY = {
   },
   warning: {
     icon: Clock,
-    leftBorder: '#C9A96E',
-    text: '#C9A96E',
-    badge: { bg: '#F5F5F5', color: '#C9A96E' },
-    dot: '#C9A96E',
+    leftBorder: '#1A1A1A',
+    text: '#1A1A1A',
+    badge: { bg: '#F5F5F5', color: '#1A1A1A' },
+    dot: '#1A1A1A',
   },
   info: {
     icon: PauseCircle,
@@ -35,7 +35,7 @@ function AlertCard({ alert, onNavigate }) {
 
   return (
     <div
-      className="rounded-xl p-4 flex gap-3"
+      className="rounded-lg p-4 flex gap-3"
       style={{ background: '#FFFFFF', border: '1px solid #F0F0F0', borderLeft: `3px solid ${s.leftBorder}` }}
     >
       <Icon size={17} className="shrink-0 mt-0.5" style={{ color: s.text }} />
@@ -70,7 +70,7 @@ function Section({ title, count, children }) {
       <div className="flex items-center gap-2">
         <h3
           className="text-sm font-medium"
-          style={{ fontFamily: '"Noto Serif JP", Georgia, serif', color: '#1A1A1A' }}
+          style={{ fontFamily: '"Inter", system-ui, sans-serif', color: '#1A1A1A' }}
         >
           {title}
         </h3>
@@ -187,7 +187,7 @@ export default function AlertsPanel() {
         <div className="text-center">
           <div
             className="text-lg font-medium"
-            style={{ fontFamily: '"Noto Serif JP", Georgia, serif', color: '#1A1A1A' }}
+            style={{ fontFamily: '"Inter", system-ui, sans-serif', color: '#1A1A1A' }}
           >
             All Clear
           </div>

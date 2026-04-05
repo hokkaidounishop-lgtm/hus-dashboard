@@ -82,7 +82,7 @@ const pct   = (a,b) => b>0 ? (((a-b)/b)*100).toFixed(1) : null
 // ── Brand colors ──────────────────────────────────────────────────────────────
 
 const REGION_COLORS = {
-  newYork: '#C9A96E', california: '#2D5B6B', texas: '#3D7A5C', florida: '#C0392B', other: '#999999',
+  newYork: '#1A1A1A', california: '#2D5B6B', texas: '#3D7A5C', florida: '#C0392B', other: '#999999',
 }
 
 // ── KPI Card status config ────────────────────────────────────────────────────
@@ -93,8 +93,8 @@ function statusColor(val, tgt) {
 }
 
 const SS = {
-  green:  { borderColor:'#F0F0F0', badge:{ bg:'#F5F5F5', color:'#999999' }, bar:'#C9A96E', text:'#999999', icon:CheckCircle,   label:'On Target'    },
-  yellow: { borderColor:'#F0F0F0', badge:{ bg:'#F5F5F5', color:'#C9A96E' }, bar:'#C9A96E', text:'#C9A96E', icon:AlertTriangle, label:'Near Target'  },
+  green:  { borderColor:'#F0F0F0', badge:{ bg:'#F5F5F5', color:'#999999' }, bar:'#1A1A1A', text:'#999999', icon:CheckCircle,   label:'On Target'    },
+  yellow: { borderColor:'#F0F0F0', badge:{ bg:'#F5F5F5', color:'#1A1A1A' }, bar:'#1A1A1A', text:'#1A1A1A', icon:AlertTriangle, label:'Near Target'  },
   red:    { borderColor:'#F0F0F0', badge:{ bg:'#F5F5F5', color:'#C0392B' }, bar:'#C0392B', text:'#C0392B', icon:TrendingDown,  label:'Below Target' },
 }
 
@@ -122,7 +122,7 @@ function KPICard({ label, value, target, unit='', prefix='', description, period
 
   return (
     <div
-      className="rounded-card p-5 flex flex-col gap-3"
+      className="rounded-lg p-5 flex flex-col gap-3"
       style={{
         background: '#FFFFFF',
         border: `1px solid ${s.borderColor}`,
@@ -189,7 +189,7 @@ const ChartTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null
   return (
     <div
-      className="rounded-xl px-3 py-2 text-xs"
+      className="rounded-lg px-3 py-2 text-xs"
       style={{ background: '#FFFFFF', border: '1px solid #F0F0F0', boxShadow: '0 4px 16px rgba(26,18,8,0.12)' }}
     >
       <div className="font-medium mb-1" style={{ color: '#999999' }}>{label}</div>
@@ -223,7 +223,7 @@ const COMP_OPTS = [
 function SegmentedControl({ options, value, onChange }) {
   return (
     <div
-      className="flex items-center rounded-xl p-0.5 gap-0.5 flex-wrap"
+      className="flex items-center rounded-lg p-0.5 gap-0.5 flex-wrap"
       style={{ background: '#F5F5F5' }}
     >
       {options.map(o => (
@@ -248,19 +248,19 @@ function SegmentedControl({ options, value, onChange }) {
 
 function RegionalSpotlight({ kpis, filteredTrend }) {
   const regionColors = [
-    '#C9A96E', '#2D5B6B', '#3D7A5C', '#C0392B', '#999999',
+    '#1A1A1A', '#2D5B6B', '#3D7A5C', '#C0392B', '#999999',
   ]
 
   return (
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
       {/* NY vs States trend */}
       <div
-        className="xl:col-span-2 rounded-card p-5"
+        className="xl:col-span-2 rounded-lg p-5"
         style={{ background: '#FFFFFF', border: '1px solid #F0F0F0', boxShadow: '0 1px 3px 0 rgba(0,0,0,0.04)' }}
       >
         <div
           className="text-sm font-medium mb-0.5"
-          style={{ fontFamily: '"Noto Serif JP", Georgia, serif', color: '#1A1A1A' }}
+          style={{ fontFamily: '"Inter", system-ui, sans-serif', color: '#1A1A1A' }}
         >
           Revenue by Region — Trend
         </div>
@@ -281,7 +281,7 @@ function RegionalSpotlight({ kpis, filteredTrend }) {
               <YAxis tickFormatter={f$} tick={{ fontSize:10, fill:'#999999' }} axisLine={false} tickLine={false} width={42}/>
               <Tooltip formatter={(v,n)=>[fFull$(v),n]} contentStyle={{ background:'#FFFFFF', border:'1px solid #F0F0F0', borderRadius:'10px', fontSize:11 }}/>
               <Legend wrapperStyle={{ fontSize:11, color:'#999999' }}/>
-              <Line type="monotone" dataKey="newYork"    name="New York"   stroke="#C9A96E" strokeWidth={2.5} dot={false}/>
+              <Line type="monotone" dataKey="newYork"    name="New York"   stroke="#1A1A1A" strokeWidth={2.5} dot={false}/>
               <Line type="monotone" dataKey="california" name="California" stroke="#2D5B6B" strokeWidth={2} dot={false}/>
               <Line type="monotone" dataKey="texas"      name="Texas"      stroke="#3D7A5C" strokeWidth={2} dot={false} strokeDasharray="4 2"/>
               <Line type="monotone" dataKey="florida"    name="Florida"    stroke="#C0392B" strokeWidth={2} dot={false} strokeDasharray="4 2"/>
@@ -297,12 +297,12 @@ function RegionalSpotlight({ kpis, filteredTrend }) {
 
       {/* NY city breakdown */}
       <div
-        className="rounded-card p-5"
+        className="rounded-lg p-5"
         style={{ background: '#FFFFFF', border: '1px solid #F0F0F0', boxShadow: '0 1px 3px 0 rgba(0,0,0,0.04)' }}
       >
         <div
           className="text-sm font-medium mb-0.5"
-          style={{ fontFamily: '"Noto Serif JP", Georgia, serif', color: '#1A1A1A' }}
+          style={{ fontFamily: '"Inter", system-ui, sans-serif', color: '#1A1A1A' }}
         >
           New York — City Breakdown
         </div>
@@ -428,7 +428,7 @@ export default function KPIDashboard() {
 
       {/* ── Controls bar ── */}
       <div
-        className="rounded-card px-5 py-4 space-y-3"
+        className="rounded-lg px-5 py-4 space-y-3"
         style={{ background: '#FFFFFF', border: '1px solid #F0F0F0' }}
       >
         <div className="flex flex-wrap items-center gap-3 justify-between">
@@ -443,14 +443,14 @@ export default function KPIDashboard() {
                 onClick={startEdit}
                 className="flex items-center gap-1.5 text-xs transition-colors"
                 style={{ color: '#999999' }}
-                onMouseEnter={(e) => { e.currentTarget.style.color = '#C9A96E' }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = '#1A1A1A' }}
                 onMouseLeave={(e) => { e.currentTarget.style.color = '#999999' }}
               >
                 <Edit2 size={13}/> Edit KPIs
               </button>
             ) : (
               <div className="flex gap-3">
-                <button onClick={saveEdit} className="flex items-center gap-1 text-xs" style={{ color: '#C9A96E' }}><Check size={13}/> Save</button>
+                <button onClick={saveEdit} className="flex items-center gap-1 text-xs" style={{ color: '#1A1A1A' }}><Check size={13}/> Save</button>
                 <button onClick={()=>setEditing(false)} className="flex items-center gap-1 text-xs" style={{ color: '#999999' }}><X size={13}/> Cancel</button>
               </div>
             )}
@@ -465,7 +465,7 @@ export default function KPIDashboard() {
             </span>
           )}
           {compMode !== 'none' && !hasComp && currentData.length > 0 && (
-            <span className="text-xs" style={{ color: '#C9A96E' }}>No comparison data available for this period</span>
+            <span className="text-xs" style={{ color: '#1A1A1A' }}>No comparison data available for this period</span>
           )}
         </div>
         {showCustom && (
@@ -495,7 +495,7 @@ export default function KPIDashboard() {
       {/* ── KPI Cards ── */}
       {editing ? (
         <div
-          className="rounded-card p-5"
+          className="rounded-lg p-5"
           style={{ background: '#FFFFFF', border: '1px solid #F0F0F0' }}
         >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -552,14 +552,14 @@ export default function KPIDashboard() {
 
       {/* ── Revenue & Orders chart ── */}
       <div
-        className="rounded-card p-5"
+        className="rounded-lg p-5"
         style={{ background: '#FFFFFF', border: '1px solid #F0F0F0', boxShadow: '0 1px 3px 0 rgba(0,0,0,0.04)' }}
       >
         <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
           <div>
             <div
               className="text-sm font-medium"
-              style={{ fontFamily: '"Noto Serif JP", Georgia, serif', color: '#1A1A1A' }}
+              style={{ fontFamily: '"Inter", system-ui, sans-serif', color: '#1A1A1A' }}
             >
               Monthly Revenue &amp; Orders
             </div>
@@ -567,7 +567,7 @@ export default function KPIDashboard() {
           </div>
           <div className="flex items-center gap-4 text-xs flex-wrap" style={{ color: '#999999' }}>
             <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded inline-block" style={{ background: '#C9A96E' }}/> Revenue
+              <span className="w-3 h-3 rounded inline-block" style={{ background: '#1A1A1A' }}/> Revenue
             </span>
             {hasComp && (
               <span className="flex items-center gap-1.5">
@@ -587,7 +587,7 @@ export default function KPIDashboard() {
               <YAxis yAxisId="l" tickFormatter={f$} tick={{ fontSize:10, fill:'#999999' }} axisLine={false} tickLine={false} width={42}/>
               <YAxis yAxisId="r" orientation="right" tick={{ fontSize:10, fill:'#999999' }} axisLine={false} tickLine={false} width={32}/>
               <Tooltip content={<ChartTooltip/>}/>
-              <Bar yAxisId="l" dataKey="revenue"     name="Revenue"      fill="#C9A96E" radius={[4,4,0,0]} barSize={hasComp?14:18}/>
+              <Bar yAxisId="l" dataKey="revenue"     name="Revenue"      fill="#1A1A1A" radius={[4,4,0,0]} barSize={hasComp?14:18}/>
               {hasComp && <Bar yAxisId="l" dataKey="compRevenue" name="Prev Revenue" fill="#D4C9BC" radius={[4,4,0,0]} barSize={14}/>}
               <Line yAxisId="r" type="monotone" dataKey="orders" name="Orders" stroke="#999999" strokeWidth={2} dot={{ r:3, fill:'#999999' }}/>
             </ComposedChart>
@@ -652,7 +652,7 @@ export default function KPIDashboard() {
             ].map((card) => (
               <div
                 key={card.label}
-                className="rounded-card p-4"
+                className="rounded-lg p-4"
                 style={{
                   background: '#FFFFFF',
                   border: `1px solid ${card.alert ? '#FECACA' : '#F0F0F0'}`,
@@ -703,7 +703,7 @@ export default function KPIDashboard() {
       {/* ── CVR alert banner ── */}
       {kpis.current.cvr < kpis.targets.cvr && (
         <div
-          className="rounded-xl px-5 py-4 flex items-start gap-3"
+          className="rounded-lg px-5 py-4 flex items-start gap-3"
           style={{ background: '#FFFFFF', border: '1px solid #F0F0F0', borderLeft: '3px solid #C0392B' }}
         >
           <AlertTriangle size={18} className="shrink-0 mt-0.5" style={{ color: '#C0392B' }}/>

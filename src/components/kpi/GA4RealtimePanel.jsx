@@ -2,7 +2,7 @@ import { RefreshCw, Users, MousePointerClick, Activity, Globe } from 'lucide-rea
 import { useGA4Realtime } from '../../hooks/useGA4Realtime'
 
 const CHANNEL_COLORS = {
-  'Organic Search':  '#C9A96E',
+  'Organic Search':  '#1A1A1A',
   'Direct':          '#2D5B6B',
   'Organic Social':  '#3D7A5C',
   'Paid Search':     '#C0392B',
@@ -15,8 +15,8 @@ const CHANNEL_COLORS = {
 function StatCard({ icon: Icon, label, value, sub }) {
   return (
     <div
-      className="rounded-xl p-4 flex flex-col gap-1"
-      style={{ background: '#F8F7F5', border: '1px solid #F0F0F0' }}
+      className="rounded-lg p-4 flex flex-col gap-1"
+      style={{ background: '#EDECEA', border: '1px solid #F0F0F0' }}
     >
       <div className="flex items-center gap-1.5 text-xs font-medium" style={{ color: '#999999' }}>
         <Icon size={12} />
@@ -35,14 +35,14 @@ export default function GA4RealtimePanel() {
 
   return (
     <div
-      className="rounded-card p-5"
+      className="rounded-lg p-5"
       style={{ background: '#FFFFFF', border: '1px solid #F0F0F0', boxShadow: '0 1px 3px 0 rgba(0,0,0,0.04)' }}
     >
       <div className="flex items-center justify-between mb-4">
         <div>
           <div
             className="text-sm font-medium"
-            style={{ fontFamily: '"Noto Serif JP", Georgia, serif', color: '#1A1A1A' }}
+            style={{ fontFamily: '"Inter", system-ui, sans-serif', color: '#1A1A1A' }}
           >
             Live Analytics
           </div>
@@ -64,7 +64,7 @@ export default function GA4RealtimePanel() {
               color: loading ? '#CCCCCC' : '#999999',
               border: '1px solid #F0F0F0',
             }}
-            onMouseEnter={(e) => { if (!loading) { e.currentTarget.style.borderColor = '#C9A96E'; e.currentTarget.style.color = '#C9A96E' } }}
+            onMouseEnter={(e) => { if (!loading) { e.currentTarget.style.borderColor = '#1A1A1A'; e.currentTarget.style.color = '#1A1A1A' } }}
             onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#F0F0F0'; e.currentTarget.style.color = loading ? '#CCCCCC' : '#999999' }}
           >
             <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />

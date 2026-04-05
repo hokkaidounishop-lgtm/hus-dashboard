@@ -20,26 +20,25 @@ export default function Header() {
       className="px-8 py-5 flex items-center justify-between shrink-0"
       style={{
         background: '#FFFFFF',
-        borderBottom: '1px solid #EAE7E2',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+        borderBottom: '1px solid rgba(0,0,0,0.06)',
       }}
     >
       <div>
         <h1
-          className="text-lg font-medium leading-tight"
+          className="text-lg font-semibold leading-tight"
           style={{
-            fontFamily: '"Noto Serif JP", Georgia, serif',
+            fontFamily: 'Inter, system-ui, sans-serif',
             color: '#1A1A1A',
             letterSpacing: '-0.01em',
           }}
         >
           {label}
         </h1>
-        <p className="text-xs mt-0.5" style={{ color: '#9B9590' }}>{sub}</p>
+        <p className="text-xs mt-0.5" style={{ color: '#999999' }}>{sub}</p>
       </div>
       <div
         className="text-sm font-medium"
-        style={{ color: '#9B9590', letterSpacing: '0.01em' }}
+        style={{ color: '#999999', letterSpacing: '0.01em' }}
       >
         {today}
       </div>

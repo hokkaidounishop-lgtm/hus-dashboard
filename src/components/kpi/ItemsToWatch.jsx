@@ -12,9 +12,9 @@ const SEV = {
   },
   warning: {
     icon: TrendingDown,
-    leftBorder: '#C9A96E',
-    badge: { bg: '#F5F5F5', color: '#C9A96E' },
-    text: '#C9A96E',
+    leftBorder: '#1A1A1A',
+    badge: { bg: '#F5F5F5', color: '#1A1A1A' },
+    text: '#1A1A1A',
   },
   info: {
     icon: Info,
@@ -29,7 +29,7 @@ function WatchItem({ item, onNavigate }) {
   const Icon = s.icon
   return (
     <div
-      className="rounded-xl p-4 flex gap-3"
+      className="rounded-lg p-4 flex gap-3"
       style={{ background: '#FFFFFF', border: '1px solid #F0F0F0', borderLeft: `3px solid ${s.leftBorder}` }}
     >
       <Icon size={16} className="shrink-0 mt-0.5" style={{ color: s.text }} />
@@ -149,7 +149,7 @@ export default function ItemsToWatch({ onNavigate }) {
   if (!items.length) {
     return (
       <div
-        className="rounded-card p-6 flex flex-col items-center gap-3 text-center"
+        className="rounded-lg p-6 flex flex-col items-center gap-3 text-center"
         style={{ background: '#FFFFFF', border: '1px solid #F0F0F0' }}
       >
         <CheckCircle size={32} style={{ color: '#999999', opacity: 0.7 }} />
@@ -161,14 +161,14 @@ export default function ItemsToWatch({ onNavigate }) {
 
   return (
     <div
-      className="rounded-card overflow-hidden"
+      className="rounded-lg overflow-hidden"
       style={{ background: '#FFFFFF', border: '1px solid #F0F0F0', boxShadow: '0 1px 4px 0 rgba(26,18,8,0.05)' }}
     >
       <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid #F0F0F0' }}>
         <div>
           <div
             className="text-sm font-medium"
-            style={{ fontFamily: '"Noto Serif JP", Georgia, serif', color: '#1A1A1A' }}
+            style={{ fontFamily: '"Inter", system-ui, sans-serif', color: '#1A1A1A' }}
           >
             Items to Watch
           </div>

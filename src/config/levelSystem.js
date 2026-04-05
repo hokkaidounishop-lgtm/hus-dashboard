@@ -13,10 +13,10 @@ export const LEVEL_WEIGHTS = {
 
 export const LEVEL_DEFINITIONS = [
   { level: 1, name: '起動中',    min: 0,  max: 20, color: '#999999', bgGradient: 'linear-gradient(135deg, #E8E8E8 0%, #D5D5D5 100%)' },
-  { level: 2, name: '成長中',    min: 21, max: 40, color: '#C9A96E', bgGradient: 'linear-gradient(135deg, #F5E6C8 0%, #E8D4A8 100%)' },
+  { level: 2, name: '成長中',    min: 21, max: 40, color: '#1A1A1A', bgGradient: 'linear-gradient(135deg, #F5E6C8 0%, #E8D4A8 100%)' },
   { level: 3, name: '軌道に乗った', min: 41, max: 60, color: '#2D5B6B', bgGradient: 'linear-gradient(135deg, #C8DDE5 0%, #A8C8D5 100%)' },
   { level: 4, name: '本格稼働',   min: 61, max: 80, color: '#3D7A5C', bgGradient: 'linear-gradient(135deg, #C8E5D4 0%, #A8D5B8 100%)' },
-  { level: 5, name: '領域展開',   min: 81, max: 100, color: '#C9A96E', bgGradient: 'linear-gradient(135deg, #1A1A1A 0%, #2D2520 100%)' },
+  { level: 5, name: '領域展開',   min: 81, max: 100, color: '#1A1A1A', bgGradient: 'linear-gradient(135deg, #1A1A1A 0%, #2D2520 100%)' },
 ]
 
 /**

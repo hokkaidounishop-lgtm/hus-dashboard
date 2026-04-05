@@ -12,13 +12,13 @@ const IN7   = addDays(new Date(), 7).toISOString().slice(0, 10)
 // ── Badge configs ─────────────────────────────────────────────────────────────
 const PRIORITY = {
   high:   { label: 'High',   bg: '#F5F5F5', color: '#C0392B' },
-  medium: { label: 'Medium', bg: '#F5F5F5', color: '#C9A96E' },
+  medium: { label: 'Medium', bg: '#F5F5F5', color: '#1A1A1A' },
   low:    { label: 'Low',    bg: '#F5F5F5', color: '#999999' },
 }
 
 const PDCA = {
   Plan:  { bg: '#F5F5F5', color: '#999999' },
-  Do:    { bg: '#F5F5F5', color: '#C9A96E' },
+  Do:    { bg: '#F5F5F5', color: '#1A1A1A' },
   Check: { bg: '#F5F5F5', color: '#C0392B' },
   Act:   { bg: '#F5F5F5', color: '#999999' },
 }
@@ -28,7 +28,7 @@ const STATUS = {
   'in-progress': { label: 'In Progress', bg: '#F5F5F5', color: '#999999' },
   'overdue':     { label: 'Overdue',     bg: '#F5F5F5', color: '#C0392B' },
   'done':        { label: 'Done',        bg: '#F5F5F5', color: '#999999' },
-  'blocked':     { label: 'Blocked',     bg: '#F5F5F5', color: '#C9A96E' },
+  'blocked':     { label: 'Blocked',     bg: '#F5F5F5', color: '#1A1A1A' },
   'todo':        { label: 'To Do',       bg: '#F5F5F5', color: '#999999' },
 }
 
@@ -50,7 +50,7 @@ function urgency(t) {
 const URGENCY_STYLE = {
   overdue: { leftBorder: '#C0392B', rowBg: 'transparent', hoverBg: '#F9F9F9' },
   today:   { leftBorder: '#C0392B', rowBg: 'transparent', hoverBg: '#F9F9F9' },
-  soon:    { leftBorder: '#C9A96E', rowBg: 'transparent', hoverBg: '#F9F9F9' },
+  soon:    { leftBorder: '#1A1A1A', rowBg: 'transparent', hoverBg: '#F9F9F9' },
   none:    { leftBorder: 'transparent', rowBg: 'transparent', hoverBg: '#F9F9F9' },
 }
 
@@ -76,7 +76,7 @@ const GROUPS = [
     key: 'week',
     label: 'Due This Week',
     headerBg: '#F5F5F5',
-    headerColor: '#C9A96E',
+    headerColor: '#1A1A1A',
     headerBorder: '#F0F0F0',
     match: (t) => t.dueDate && t.dueDate > TODAY && t.dueDate <= IN7,
   },
@@ -160,16 +160,16 @@ const QUICK_FILTERS = [
     key: 'thisWeek',
     label: 'Due This Week',
     activeBg: 'rgba(201,169,110,0.08)',
-    activeColor: '#C9A96E',
-    activeBorder: 'rgba(201,169,110,0.25)',
+    activeColor: '#1A1A1A',
+    activeBorder: 'rgba(0,0,0,0.10)',
     match: (t) => t.dueDate && t.dueDate >= TODAY && t.dueDate <= IN7,
   },
   {
     key: 'mine',
     label: 'My Tasks (Tad)',
     activeBg: 'rgba(201,169,110,0.08)',
-    activeColor: '#C9A96E',
-    activeBorder: 'rgba(201,169,110,0.25)',
+    activeColor: '#1A1A1A',
+    activeBorder: 'rgba(0,0,0,0.10)',
     match: (t) => t.owner?.toLowerCase() === 'tad',
   },
 ]
@@ -235,13 +235,13 @@ function FilterSelect({ label, value, onChange, options }) {
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="appearance-none text-xs font-medium pl-3 pr-7 py-2 rounded-xl focus:outline-none cursor-pointer transition-colors"
+        className="appearance-none text-xs font-medium pl-3 pr-7 py-2 rounded-lg focus:outline-none cursor-pointer transition-colors"
         style={{
           background: '#FFFFFF',
           border: '1px solid #F0F0F0',
           color: value ? '#1A1A1A' : '#999999',
         }}
-        onFocus={(e) => { e.currentTarget.style.borderColor = '#C9A96E'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(201,169,110,0.12)' }}
+        onFocus={(e) => { e.currentTarget.style.borderColor = '#1A1A1A'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(201,169,110,0.12)' }}
         onBlur={(e) => { e.currentTarget.style.borderColor = '#F0F0F0'; e.currentTarget.style.boxShadow = 'none' }}
       >
         <option value="">{label}: All</option>
@@ -258,9 +258,9 @@ function SortSelect({ value, onChange }) {
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="appearance-none text-xs font-medium pl-3 pr-7 py-2 rounded-xl focus:outline-none cursor-pointer transition-colors"
+        className="appearance-none text-xs font-medium pl-3 pr-7 py-2 rounded-lg focus:outline-none cursor-pointer transition-colors"
         style={{ background: '#FFFFFF', border: '1px solid #F0F0F0', color: '#1A1A1A' }}
-        onFocus={(e) => { e.currentTarget.style.borderColor = '#C9A96E'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(201,169,110,0.12)' }}
+        onFocus={(e) => { e.currentTarget.style.borderColor = '#1A1A1A'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(201,169,110,0.12)' }}
         onBlur={(e) => { e.currentTarget.style.borderColor = '#F0F0F0'; e.currentTarget.style.boxShadow = 'none' }}
       >
         {SORT_OPTS.map((o) => <option key={o.key} value={o.key}>{o.label}</option>)}
@@ -332,8 +332,8 @@ function TaskRow({ t, projectName, expandedId, setExpandedId, toggleDone, openEd
           onClick={(e) => { e.stopPropagation(); toggleDone(t) }}
           className="w-4 h-4 rounded flex items-center justify-center transition-colors"
           style={{
-            background: isDone ? '#C9A96E' : 'transparent',
-            border: `1.5px solid ${isDone ? '#C9A96E' : '#DDDDDD'}`,
+            background: isDone ? '#1A1A1A' : 'transparent',
+            border: `1.5px solid ${isDone ? '#1A1A1A' : '#DDDDDD'}`,
             color: '#FFFFFF',
           }}
         >
@@ -373,7 +373,7 @@ function TaskRow({ t, projectName, expandedId, setExpandedId, toggleDone, openEd
         <span
           className="text-xs"
           style={{
-            color: u === 'overdue' ? '#C0392B' : u === 'today' ? '#C0392B' : u === 'soon' ? '#C9A96E' : '#999999',
+            color: u === 'overdue' ? '#C0392B' : u === 'today' ? '#C0392B' : u === 'soon' ? '#1A1A1A' : '#999999',
             fontWeight: u !== 'none' ? 500 : 400,
           }}
         >
@@ -411,7 +411,7 @@ function TaskRow({ t, projectName, expandedId, setExpandedId, toggleDone, openEd
             onClick={(e) => { e.stopPropagation(); openEdit(t) }}
             className="p-1 rounded transition-colors"
             style={{ color: '#DDDDDD' }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(201,169,110,0.1)'; e.currentTarget.style.color = '#C9A96E' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(201,169,110,0.1)'; e.currentTarget.style.color = '#1A1A1A' }}
             onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#DDDDDD' }}
           >
             <Edit2 size={13} />
@@ -622,11 +622,11 @@ export default function TaskList() {
           {/* Group by toggle */}
           <button
             onClick={() => setGroupByDate((v) => !v)}
-            className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-xl transition-all"
+            className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-lg transition-all"
             style={{
               background: groupByDate ? 'rgba(201,169,110,0.08)' : '#FFFFFF',
-              border: `1px solid ${groupByDate ? 'rgba(201,169,110,0.25)' : '#F0F0F0'}`,
-              color: groupByDate ? '#C9A96E' : '#999999',
+              border: `1px solid ${groupByDate ? 'rgba(0,0,0,0.10)' : '#F0F0F0'}`,
+              color: groupByDate ? '#1A1A1A' : '#999999',
             }}
           >
             <Layers size={13} />
@@ -637,7 +637,7 @@ export default function TaskList() {
             <button
               onClick={() => { setFilters({ project: '', priority: '', pdca: '', status: '' }); setActiveQuick(new Set()) }}
               className="text-xs px-2 font-medium"
-              style={{ color: '#C9A96E' }}
+              style={{ color: '#1A1A1A' }}
             >
               Clear all
             </button>
@@ -651,7 +651,7 @@ export default function TaskList() {
 
       {/* ── Table ── */}
       <div
-        className="rounded-card overflow-hidden"
+        className="rounded-lg overflow-hidden"
         style={{ background: '#FFFFFF', border: '1px solid #F0F0F0', boxShadow: '0 1px 3px 0 rgba(0,0,0,0.04)' }}
       >
         {groupByDate ? (

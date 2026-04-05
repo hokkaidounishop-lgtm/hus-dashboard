@@ -4,7 +4,7 @@ import { useApp } from '../context/AppContext'
 import { computeHUSLevel, LEVEL_DEFINITIONS } from '../config/levelSystem'
 
 const BREAKDOWN_CONFIG = {
-  revenue:      { label: 'Revenue Achievement',   icon: TrendingUp, color: '#C9A96E' },
+  revenue:      { label: 'Revenue Achievement',   icon: TrendingUp, color: '#1A1A1A' },
   cvr:          { label: 'CVR Achievement',        icon: Target,     color: '#C0392B' },
   taskComplete: { label: 'Task Completion',        icon: CheckSquare, color: '#3D7A5C' },
   projectAvg:   { label: 'Project Progress',       icon: Layers,     color: '#2D5B6B' },
@@ -32,14 +32,14 @@ export default function LevelSystem() {
 
   return (
     <div
-      className="rounded-card overflow-hidden"
+      className="rounded-lg overflow-hidden"
       style={{
         background: isMaxLevel
           ? 'linear-gradient(135deg, #1A1612 0%, #2D2520 50%, #1A1A1A 100%)'
-          : 'linear-gradient(135deg, #1C2B3A 0%, #162230 50%, #1A2940 100%)',
-        border: `1px solid ${isMaxLevel ? 'rgba(201,169,110,0.3)' : 'rgba(201,169,110,0.15)'}`,
+          : 'linear-gradient(135deg, #EDECEA 0%, #1A1A1A 50%, #222222 100%)',
+        border: `1px solid ${isMaxLevel ? 'rgba(201,169,110,0.3)' : 'rgba(0,0,0,0.06)'}`,
         boxShadow: isMaxLevel
-          ? '0 4px 32px 0 rgba(201,169,110,0.15), inset 0 1px 0 rgba(255,255,255,0.04)'
+          ? '0 4px 32px 0 rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.04)'
           : '0 4px 24px 0 rgba(0,0,0,0.20), inset 0 1px 0 rgba(255,255,255,0.04)',
       }}
     >
@@ -48,8 +48,8 @@ export default function LevelSystem() {
         className="h-0.5"
         style={{
           background: isMaxLevel
-            ? 'linear-gradient(90deg, transparent, #D4BC8A, #C9A96E, #D4BC8A, transparent)'
-            : 'linear-gradient(90deg, transparent, #C9A96E, #D4BC8A, #C9A96E, transparent)',
+            ? 'linear-gradient(90deg, transparent, #444444, #1A1A1A, #444444, transparent)'
+            : 'linear-gradient(90deg, transparent, #1A1A1A, #444444, #1A1A1A, transparent)',
         }}
       />
 
@@ -60,15 +60,15 @@ export default function LevelSystem() {
             <div
               className="w-8 h-8 rounded-lg flex items-center justify-center"
               style={{
-                background: 'linear-gradient(135deg, rgba(201,169,110,0.25), rgba(212,188,138,0.15))',
-                boxShadow: '0 0 12px rgba(201,169,110,0.15)',
+                background: 'linear-gradient(135deg, rgba(0,0,0,0.10), rgba(212,188,138,0.15))',
+                boxShadow: '0 0 12px rgba(0,0,0,0.06)',
               }}
             >
-              <Trophy size={15} style={{ color: '#D4BC8A' }} />
+              <Trophy size={15} style={{ color: '#444444' }} />
             </div>
             <h3
               className="text-sm font-medium"
-              style={{ fontFamily: '"Noto Serif JP", Georgia, serif', color: '#E8E0D4' }}
+              style={{ fontFamily: '"Inter", system-ui, sans-serif', color: '#E8E0D4' }}
             >
               HUS Level System
             </h3>
@@ -77,11 +77,11 @@ export default function LevelSystem() {
             className="flex items-center gap-1.5 px-2.5 py-1 rounded-full"
             style={{
               background: 'rgba(201,169,110,0.12)',
-              border: '1px solid rgba(201,169,110,0.15)',
+              border: '1px solid rgba(0,0,0,0.06)',
             }}
           >
-            <Zap size={11} style={{ color: '#D4BC8A' }} />
-            <span className="text-xs font-semibold" style={{ color: '#D4BC8A' }}>
+            <Zap size={11} style={{ color: '#444444' }} />
+            <span className="text-xs font-semibold" style={{ color: '#444444' }}>
               Score: {score}/100
             </span>
           </div>
@@ -95,11 +95,11 @@ export default function LevelSystem() {
                 className="text-4xl font-bold"
                 style={{
                   background: isMaxLevel
-                    ? 'linear-gradient(135deg, #FFD700 0%, #D4BC8A 50%, #C9A96E 100%)'
-                    : 'linear-gradient(135deg, #D4BC8A 0%, #C9A96E 100%)',
+                    ? 'linear-gradient(135deg, #FFD700 0%, #444444 50%, #1A1A1A 100%)'
+                    : '#333333',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
-                  fontFamily: '"Noto Serif JP", Georgia, serif',
+                  fontFamily: '"Inter", system-ui, sans-serif',
                   lineHeight: 1,
                 }}
               >
@@ -107,7 +107,7 @@ export default function LevelSystem() {
               </span>
               <span
                 className="text-base font-medium"
-                style={{ color: '#E8E0D4', fontFamily: '"Noto Serif JP", Georgia, serif' }}
+                style={{ color: '#E8E0D4', fontFamily: '"Inter", system-ui, sans-serif' }}
               >
                 {level.name}
               </span>
@@ -115,7 +115,7 @@ export default function LevelSystem() {
 
             <div className="text-xs mb-5" style={{ color: 'rgba(232,224,212,0.45)' }}>
               Overall Score:{' '}
-              <span style={{ color: '#D4BC8A', fontWeight: 600 }}>
+              <span style={{ color: '#444444', fontWeight: 600 }}>
                 {score}
               </span>
               /100
@@ -125,7 +125,7 @@ export default function LevelSystem() {
             <div className="flex justify-between text-xs mb-2" style={{ color: 'rgba(232,224,212,0.45)' }}>
               <span>Lv.{level.level} {level.name}</span>
               {nextLevel && <span>Lv.{nextLevel.level} {nextLevel.name}</span>}
-              {isMaxLevel && <span style={{ color: '#D4BC8A' }}>MAX</span>}
+              {isMaxLevel && <span style={{ color: '#444444' }}>MAX</span>}
             </div>
             <div
               className="w-full h-3 rounded-full overflow-hidden relative"
@@ -139,10 +139,10 @@ export default function LevelSystem() {
                 style={{
                   width: `${progressPct}%`,
                   background: isMaxLevel
-                    ? 'linear-gradient(90deg, #C9A96E, #D4BC8A, #FFD700)'
-                    : 'linear-gradient(90deg, #B08D4A, #C9A96E, #D4BC8A)',
+                    ? 'linear-gradient(90deg, #1A1A1A, #444444, #FFD700)'
+                    : 'linear-gradient(90deg, #333333, #1A1A1A, #444444)',
                   transition: 'width 0.7s ease',
-                  boxShadow: '0 0 8px rgba(201,169,110,0.4)',
+                  boxShadow: '0 0 8px rgba(0,0,0,0.15)',
                 }}
               >
                 <div
@@ -158,7 +158,7 @@ export default function LevelSystem() {
               <div className="flex items-center gap-1.5 mt-2.5">
                 <Target size={11} style={{ color: 'rgba(232,224,212,0.35)' }} />
                 <span className="text-xs" style={{ color: 'rgba(232,224,212,0.5)' }}>
-                  <span style={{ color: '#D4BC8A', fontWeight: 600 }}>
+                  <span style={{ color: '#444444', fontWeight: 600 }}>
                     {pointsToNext} points
                   </span>{' '}
                   to next level
@@ -167,7 +167,7 @@ export default function LevelSystem() {
             ) : (
               <div
                 className="text-xs font-semibold uppercase tracking-widest mt-2.5 flex items-center gap-2"
-                style={{ color: '#D4BC8A', letterSpacing: '0.15em' }}
+                style={{ color: '#444444', letterSpacing: '0.15em' }}
               >
                 MAXIMUM LEVEL ACHIEVED
               </div>
@@ -176,7 +176,7 @@ export default function LevelSystem() {
 
           {/* Right — score breakdown */}
           <div
-            className="rounded-xl p-4"
+            className="rounded-lg p-4"
             style={{
               background: 'rgba(0,0,0,0.15)',
               border: '1px solid rgba(255,255,255,0.04)',
@@ -184,7 +184,7 @@ export default function LevelSystem() {
           >
             <div
               className="text-xs font-semibold uppercase tracking-wide mb-3"
-              style={{ color: '#C9A96E', letterSpacing: '0.10em' }}
+              style={{ color: '#1A1A1A', letterSpacing: '0.10em' }}
             >
               Score Breakdown
             </div>
@@ -213,7 +213,7 @@ export default function LevelSystem() {
                         </span>
                         <span
                           className="text-xs font-bold tabular-nums px-1.5 py-0.5 rounded-full"
-                          style={{ background: 'rgba(201,169,110,0.15)', color: '#D4BC8A', minWidth: 28, textAlign: 'center' }}
+                          style={{ background: 'rgba(0,0,0,0.06)', color: '#444444', minWidth: 28, textAlign: 'center' }}
                         >
                           +{data.weighted}
                         </span>

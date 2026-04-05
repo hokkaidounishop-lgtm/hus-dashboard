@@ -15,23 +15,23 @@ const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 }
 function Section({ icon: Icon, title, accent = false, children }) {
   return (
     <div
-      className="rounded-card p-5 space-y-4"
+      className="rounded-lg p-5 space-y-4"
       style={{
         background: '#FFFFFF',
-        border: `1px solid ${accent ? 'rgba(192,57,43,0.15)' : '#EAE7E2'}`,
+        border: `1px solid ${accent ? 'rgba(192,57,43,0.15)' : 'rgba(0,0,0,0.06)'}`,
         boxShadow: '0 1px 3px 0 rgba(0,0,0,0.03)',
       }}
     >
       <div className="flex items-center gap-2.5">
         <div
           className="w-7 h-7 rounded-lg flex items-center justify-center"
-          style={{ background: 'rgba(201,169,110,0.08)', color: '#C9A96E' }}
+          style={{ background: 'rgba(0,0,0,0.04)', color: '#1A1A1A' }}
         >
           <Icon size={14} />
         </div>
         <h3
           className="text-sm font-medium"
-          style={{ fontFamily: '"Noto Serif JP", Georgia, serif', color: '#1A1A1A' }}
+          style={{ fontFamily: '"Inter", system-ui, sans-serif', color: '#1A1A1A' }}
         >
           {title}
         </h3>
@@ -56,23 +56,23 @@ function PriorityItem({ task, projects }) {
   else if (daysUntil !== null) dueLabel = `${daysUntil}d left`
 
   return (
-    <div className="flex items-start gap-3 py-2.5 last:border-0" style={{ borderBottom: '1px solid #F0EDE8' }}>
+    <div className="flex items-start gap-3 py-2.5 last:border-0" style={{ borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
       <div
         className="mt-1.5 w-2 h-2 rounded-full shrink-0"
         style={{
           background: task.priority === 'high' ? '#C0392B' :
-                      task.priority === 'medium' ? '#C9A96E' : '#D4CFC8',
+                      task.priority === 'medium' ? '#1A1A1A' : 'rgba(0,0,0,0.08)',
           boxShadow: task.priority === 'high' ? '0 0 6px rgba(192,57,43,0.3)' : 'none',
         }}
       />
       <div className="flex-1 min-w-0">
         <div className="text-sm font-medium truncate" style={{ color: '#1A1A1A' }}>{task.task}</div>
-        <div className="text-xs mt-0.5" style={{ color: '#9B9590' }}>
+        <div className="text-xs mt-0.5" style={{ color: '#999999' }}>
           {project?.name && <span>{project.name} · </span>}
           {task.owner && <span>{task.owner} · </span>}
           <span
             className="font-medium"
-            style={{ color: overdue ? '#C0392B' : dueToday ? '#C9A96E' : '#9B9590' }}
+            style={{ color: overdue ? '#C0392B' : dueToday ? '#1A1A1A' : '#999999' }}
           >
             {dueLabel}
           </span>
@@ -81,10 +81,10 @@ function PriorityItem({ task, projects }) {
       <span
         className="shrink-0 text-xs px-2 py-0.5 rounded-full font-medium"
         style={{
-          background: task.pdca === 'Do' ? 'rgba(201,169,110,0.08)' :
-                      task.pdca === 'Check' ? 'rgba(192,57,43,0.06)' : '#F5F3F0',
-          color: task.pdca === 'Do' ? '#C9A96E' :
-                 task.pdca === 'Check' ? '#C0392B' : '#9B9590',
+          background: task.pdca === 'Do' ? 'rgba(0,0,0,0.04)' :
+                      task.pdca === 'Check' ? 'rgba(192,57,43,0.06)' : 'rgba(0,0,0,0.03)',
+          color: task.pdca === 'Do' ? '#1A1A1A' :
+                 task.pdca === 'Check' ? '#C0392B' : '#999999',
         }}
       >
         {task.pdca}
@@ -99,8 +99,8 @@ function KPIStatusRow({ label, value, target, unit, prefix = '', invert = false 
   const isWarn = invert ? (pct > 100 && pct <= 150) : (pct >= 80 && pct < 100)
 
   return (
-    <div className="flex items-center justify-between py-2.5 last:border-0" style={{ borderBottom: '1px solid #F0EDE8' }}>
-      <span className="text-sm" style={{ color: '#9B9590' }}>{label}</span>
+    <div className="flex items-center justify-between py-2.5 last:border-0" style={{ borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
+      <span className="text-sm" style={{ color: '#999999' }}>{label}</span>
       <div className="flex items-center gap-2.5">
         <span className="text-sm font-semibold tabular-nums" style={{ color: '#1A1A1A' }}>
           {prefix}{typeof value === 'number' ? value.toLocaleString() : value}{unit}
@@ -108,8 +108,8 @@ function KPIStatusRow({ label, value, target, unit, prefix = '', invert = false 
         <span
           className="text-xs px-2 py-0.5 rounded-full font-medium"
           style={{
-            background: isGood ? '#F5F3F0' : isWarn ? 'rgba(201,169,110,0.08)' : 'rgba(192,57,43,0.06)',
-            color: isGood ? '#9B9590' : isWarn ? '#C9A96E' : '#C0392B',
+            background: isGood ? 'rgba(0,0,0,0.03)' : isWarn ? 'rgba(0,0,0,0.04)' : 'rgba(192,57,43,0.06)',
+            color: isGood ? '#999999' : isWarn ? '#1A1A1A' : '#C0392B',
           }}
         >
           {isGood ? '✓' : isWarn ? '~' : '✗'} {Math.round(pct)}%
@@ -160,10 +160,9 @@ export default function MorningBriefing() {
 
       {/* Hero greeting */}
       <div
-        className="rounded-card p-7 text-white relative overflow-hidden"
+        className="rounded-lg p-7 text-white relative overflow-hidden"
         style={{
-          background: 'linear-gradient(135deg, #1C2B3A 0%, #162230 50%, #1A2940 100%)',
-          boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
+          background: '#1A1A1A',
         }}
       >
         {/* Subtle wave texture overlay */}
@@ -175,55 +174,54 @@ export default function MorningBriefing() {
         />
         <div className="relative flex items-start gap-4">
           <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+            className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
             style={{
-              background: 'rgba(201,169,110,0.15)',
-              boxShadow: '0 0 20px rgba(201,169,110,0.1)',
+              background: 'rgba(255,255,255,0.1)',
             }}
           >
-            <Sunrise size={20} style={{ color: '#D4BC8A' }} />
+            <Sunrise size={20} style={{ color: '#FFFFFF' }} />
           </div>
           <div>
             <div
               className="text-xl font-medium"
-              style={{ fontFamily: '"Noto Serif JP", Georgia, serif', letterSpacing: '-0.01em' }}
+              style={{ fontFamily: '"Inter", system-ui, sans-serif', letterSpacing: '-0.01em' }}
             >
               Good morning — here's what's up.
             </div>
-            <div className="text-sm mt-1.5" style={{ color: 'rgba(232,224,212,0.6)' }}>
+            <div className="text-sm mt-1.5" style={{ color: 'rgba(255,255,255,0.6)' }}>
               {format(TODAY, 'EEEE, MMMM d, yyyy')} · HUS Management Dashboard
             </div>
             <div className="flex flex-wrap gap-5 mt-5">
               <div className="flex items-center gap-2">
-                <AlertTriangle size={14} style={{ color: briefing.overdue.length > 0 ? '#E5A0A0' : 'rgba(232,224,212,0.4)' }} />
-                <span className="text-sm" style={{ color: briefing.overdue.length > 0 ? '#F0C4C4' : 'rgba(232,224,212,0.6)', fontWeight: briefing.overdue.length > 0 ? 600 : 400 }}>
+                <AlertTriangle size={14} style={{ color: briefing.overdue.length > 0 ? '#FF8A8A' : 'rgba(255,255,255,0.4)' }} />
+                <span className="text-sm" style={{ color: briefing.overdue.length > 0 ? '#FF9E9E' : 'rgba(255,255,255,0.6)', fontWeight: briefing.overdue.length > 0 ? 600 : 400 }}>
                   {briefing.overdue.length} overdue task{briefing.overdue.length !== 1 ? 's' : ''}
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckSquare size={14} style={{ color: 'rgba(232,224,212,0.4)' }} />
-                <span className="text-sm" style={{ color: 'rgba(232,224,212,0.6)' }}>
+                <CheckSquare size={14} style={{ color: 'rgba(255,255,255,0.4)' }} />
+                <span className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
                   {briefing.todayEvents.length} meeting{briefing.todayEvents.length !== 1 ? 's' : ''} today
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <FolderKanban size={14} style={{ color: 'rgba(232,224,212,0.4)' }} />
-                <span className="text-sm" style={{ color: 'rgba(232,224,212,0.6)' }}>
+                <FolderKanban size={14} style={{ color: 'rgba(255,255,255,0.4)' }} />
+                <span className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
                   {briefing.critProjects.length} project{briefing.critProjects.length !== 1 ? 's' : ''} need attention
                 </span>
               </div>
             </div>
           </div>
         </div>
-        {/* Gold accent bar at bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-0.5" style={{ background: 'linear-gradient(90deg, transparent, #C9A96E, #D4BC8A, #C9A96E, transparent)' }} />
+        {/* Accent bar at bottom */}
+        <div className="absolute bottom-0 left-0 right-0 h-0.5" style={{ background: 'rgba(255,255,255,0.1)' }} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {/* Top Priorities */}
         <Section icon={CheckSquare} title="Today's Top Priorities">
           {briefing.topTasks.length === 0 ? (
-            <p className="text-sm" style={{ color: '#9B9590' }}>No open tasks. Clear!</p>
+            <p className="text-sm" style={{ color: '#999999' }}>No open tasks. Clear!</p>
           ) : (
             <div>
               {briefing.topTasks.map((t) => (
@@ -234,9 +232,9 @@ export default function MorningBriefing() {
           <button
             onClick={() => setActiveSection('tasks')}
             className="flex items-center gap-1 text-xs font-medium mt-1 transition-colors"
-            style={{ color: '#C9A96E' }}
-            onMouseEnter={(e) => { e.currentTarget.style.color = '#B08D4A' }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = '#C9A96E' }}
+            style={{ color: '#1A1A1A' }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = '#333333' }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = '#1A1A1A' }}
           >
             View all tasks <ArrowRight size={11} />
           </button>
@@ -245,14 +243,14 @@ export default function MorningBriefing() {
         {/* Overdue items */}
         <Section icon={AlertTriangle} title="Overdue Items" accent={briefing.overdue.length > 0}>
           {briefing.overdue.length === 0 ? (
-            <p className="text-sm font-medium" style={{ color: '#9B9590' }}>No overdue tasks — well done!</p>
+            <p className="text-sm font-medium" style={{ color: '#999999' }}>No overdue tasks — well done!</p>
           ) : (
             <div>
               {briefing.overdue.slice(0, 4).map((t) => {
                 const daysLate = differenceInDays(TODAY, parseISO(t.dueDate))
                 const project = projects.find((p) => p.id === t.project)
                 return (
-                  <div key={t.id} className="flex items-start gap-2 py-2.5 last:border-0" style={{ borderBottom: '1px solid #F0EDE8' }}>
+                  <div key={t.id} className="flex items-start gap-2 py-2.5 last:border-0" style={{ borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
                     <AlertTriangle size={13} className="shrink-0 mt-0.5" style={{ color: '#C0392B' }} />
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium truncate" style={{ color: '#1A1A1A' }}>{t.task}</div>
@@ -262,7 +260,7 @@ export default function MorningBriefing() {
                 )
               })}
               {briefing.overdue.length > 4 && (
-                <div className="text-xs pt-2" style={{ color: '#9B9590' }}>+{briefing.overdue.length - 4} more overdue</div>
+                <div className="text-xs pt-2" style={{ color: '#999999' }}>+{briefing.overdue.length - 4} more overdue</div>
               )}
             </div>
           )}
@@ -281,9 +279,9 @@ export default function MorningBriefing() {
           <button
             onClick={() => setActiveSection('dashboard')}
             className="flex items-center gap-1 text-xs font-medium mt-1 transition-colors"
-            style={{ color: '#C9A96E' }}
-            onMouseEnter={(e) => { e.currentTarget.style.color = '#B08D4A' }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = '#C9A96E' }}
+            style={{ color: '#1A1A1A' }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = '#333333' }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = '#1A1A1A' }}
           >
             Full KPI dashboard <ArrowRight size={11} />
           </button>
@@ -292,18 +290,18 @@ export default function MorningBriefing() {
         {/* Today's calendar */}
         <Section icon={Clock} title="Today's Meetings">
           {briefing.todayEvents.length === 0 ? (
-            <p className="text-sm" style={{ color: '#9B9590' }}>No meetings scheduled today.</p>
+            <p className="text-sm" style={{ color: '#999999' }}>No meetings scheduled today.</p>
           ) : (
             <div>
               {briefing.todayEvents.map((e) => {
                 const project = projects.find((p) => p.id === e.project)
                 return (
-                  <div key={e.id} className="flex items-start gap-2 py-2.5 last:border-0" style={{ borderBottom: '1px solid #F0EDE8' }}>
-                    <Clock size={13} className="shrink-0 mt-0.5" style={{ color: '#C9A96E' }} />
+                  <div key={e.id} className="flex items-start gap-2 py-2.5 last:border-0" style={{ borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
+                    <Clock size={13} className="shrink-0 mt-0.5" style={{ color: '#1A1A1A' }} />
                     <div>
                       <div className="text-sm font-medium" style={{ color: '#1A1A1A' }}>{e.title}</div>
-                      {project && <div className="text-xs mt-0.5" style={{ color: '#9B9590' }}>{project.name}</div>}
-                      {e.notes && <div className="text-xs mt-0.5 italic" style={{ color: '#9B9590' }}>{e.notes}</div>}
+                      {project && <div className="text-xs mt-0.5" style={{ color: '#999999' }}>{project.name}</div>}
+                      {e.notes && <div className="text-xs mt-0.5 italic" style={{ color: '#999999' }}>{e.notes}</div>}
                     </div>
                   </div>
                 )
@@ -313,9 +311,9 @@ export default function MorningBriefing() {
           <button
             onClick={() => setActiveSection('calendar')}
             className="flex items-center gap-1 text-xs font-medium mt-1 transition-colors"
-            style={{ color: '#C9A96E' }}
-            onMouseEnter={(e) => { e.currentTarget.style.color = '#B08D4A' }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = '#C9A96E' }}
+            style={{ color: '#1A1A1A' }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = '#333333' }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = '#1A1A1A' }}
           >
             Open calendar <ArrowRight size={11} />
           </button>
@@ -329,10 +327,10 @@ export default function MorningBriefing() {
             {briefing.critProjects.map((p) => (
               <div
                 key={p.id}
-                className="rounded-xl p-3.5"
+                className="rounded-lg p-3.5"
                 style={{
-                  border: '1px solid #EAE7E2',
-                  borderLeft: `3px solid ${p.status === 'stalled' ? '#C0392B' : '#C9A96E'}`,
+                  border: '1px solid rgba(0,0,0,0.06)',
+                  borderLeft: `3px solid ${p.status === 'stalled' ? '#C0392B' : '#1A1A1A'}`,
                   background: '#FFFFFF',
                 }}
               >
@@ -341,14 +339,14 @@ export default function MorningBriefing() {
                   <span
                     className="text-xs px-2 py-0.5 rounded-full font-medium"
                     style={{
-                      background: p.status === 'stalled' ? 'rgba(192,57,43,0.06)' : 'rgba(201,169,110,0.08)',
-                      color: p.status === 'stalled' ? '#C0392B' : '#C9A96E',
+                      background: p.status === 'stalled' ? 'rgba(192,57,43,0.06)' : 'rgba(0,0,0,0.04)',
+                      color: p.status === 'stalled' ? '#C0392B' : '#1A1A1A',
                     }}
                   >
                     {p.status}
                   </span>
                 </div>
-                <div className="text-xs mt-1" style={{ color: '#9B9590' }}>{p.owner} · {p.progress}% complete</div>
+                <div className="text-xs mt-1" style={{ color: '#999999' }}>{p.owner} · {p.progress}% complete</div>
               </div>
             ))}
           </div>
@@ -357,26 +355,26 @@ export default function MorningBriefing() {
 
       {/* AI Suggestion */}
       <div
-        className="rounded-card p-5 flex gap-4"
+        className="rounded-lg p-5 flex gap-4"
         style={{
-          background: 'linear-gradient(135deg, #1C2B3A 0%, #162230 100%)',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.10)',
+          background: '#FFFFFF',
+          border: '1px solid rgba(0,0,0,0.06)',
         }}
       >
         <div
           className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-          style={{ background: 'rgba(212,188,138,0.12)' }}
+          style={{ background: 'rgba(0,0,0,0.04)' }}
         >
-          <Lightbulb size={15} style={{ color: '#D4BC8A' }} />
+          <Lightbulb size={15} style={{ color: '#1A1A1A' }} />
         </div>
         <div>
           <div
             className="text-xs font-semibold uppercase tracking-wide mb-1.5"
-            style={{ color: '#C9A96E', letterSpacing: '0.12em' }}
+            style={{ color: '#1A1A1A', letterSpacing: '0.12em' }}
           >
             AI Suggestion for Today
           </div>
-          <p className="text-sm leading-relaxed" style={{ color: 'rgba(232,224,212,0.8)' }}>{briefing.suggestion}</p>
+          <p className="text-sm leading-relaxed" style={{ color: '#666666' }}>{briefing.suggestion}</p>
         </div>
       </div>
     </div>

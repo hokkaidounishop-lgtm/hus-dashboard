@@ -74,7 +74,7 @@ function ProjectCard({ project, onEdit, onDelete }) {
 
   return (
     <div
-      className="rounded-card p-5 flex flex-col gap-4 group transition-all cursor-default"
+      className="rounded-lg p-5 flex flex-col gap-4 group transition-all cursor-default"
       style={{
         background: '#FFFFFF',
         border: '1px solid #F0F0F0',
@@ -95,7 +95,7 @@ function ProjectCard({ project, onEdit, onDelete }) {
         <div className="flex-1 min-w-0">
           <div
             className="font-medium text-sm leading-snug"
-            style={{ fontFamily: '"Noto Serif JP", Georgia, serif', color: '#1A1A1A' }}
+            style={{ fontFamily: '"Inter", system-ui, sans-serif', color: '#1A1A1A' }}
           >
             {project.name}
           </div>
@@ -143,7 +143,7 @@ function ProjectCard({ project, onEdit, onDelete }) {
             onClick={() => onEdit(project)}
             className="p-1.5 rounded-lg transition-colors"
             style={{ color: '#C4BBB3' }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(201,169,110,0.1)'; e.currentTarget.style.color = '#C9A96E' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(201,169,110,0.1)'; e.currentTarget.style.color = '#1A1A1A' }}
             onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#C4BBB3' }}
           >
             <Edit2 size={13} />
