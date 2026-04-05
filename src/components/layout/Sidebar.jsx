@@ -33,17 +33,25 @@ export default function Sidebar() {
       }}
     >
       {/* Brand */}
-      <div className="px-5 pt-6 pb-5" style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
-        <div
-          style={{
-            fontFamily: 'Inter, system-ui, sans-serif',
-            fontWeight: 700,
-            fontSize: '11px',
-            letterSpacing: '0.08em',
-            color: '#1A1A1A',
-          }}
-        >
-          HOKKAIDO UNI SHOP
+      <div className="px-4 pt-5 pb-4" style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+        <div className="flex items-center gap-2.5">
+          <img
+            src="/hus-logo.png"
+            alt="Hokkaido Uni Shop"
+            className="w-8 h-8 object-contain"
+            onError={(e) => { e.currentTarget.style.display = 'none' }}
+          />
+          <div>
+            <p
+              className="text-[11px] font-bold tracking-wide"
+              style={{ color: '#1A1A1A' }}
+            >
+              Hokkaido Uni Shop
+            </p>
+            <p className="text-[10px]" style={{ color: '#999999' }}>
+              HUS Dashboard
+            </p>
+          </div>
         </div>
       </div>
 

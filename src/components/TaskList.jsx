@@ -159,7 +159,7 @@ const QUICK_FILTERS = [
   {
     key: 'thisWeek',
     label: 'Due This Week',
-    activeBg: 'rgba(201,169,110,0.08)',
+    activeBg: 'rgba(0,0,0,0.04)',
     activeColor: '#1A1A1A',
     activeBorder: 'rgba(0,0,0,0.10)',
     match: (t) => t.dueDate && t.dueDate >= TODAY && t.dueDate <= IN7,
@@ -167,7 +167,7 @@ const QUICK_FILTERS = [
   {
     key: 'mine',
     label: 'My Tasks (Tad)',
-    activeBg: 'rgba(201,169,110,0.08)',
+    activeBg: 'rgba(0,0,0,0.04)',
     activeColor: '#1A1A1A',
     activeBorder: 'rgba(0,0,0,0.10)',
     match: (t) => t.owner?.toLowerCase() === 'tad',
@@ -241,7 +241,7 @@ function FilterSelect({ label, value, onChange, options }) {
           border: '1px solid #F0F0F0',
           color: value ? '#1A1A1A' : '#999999',
         }}
-        onFocus={(e) => { e.currentTarget.style.borderColor = '#1A1A1A'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(201,169,110,0.12)' }}
+        onFocus={(e) => { e.currentTarget.style.borderColor = '#1A1A1A'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(0,0,0,0.06)' }}
         onBlur={(e) => { e.currentTarget.style.borderColor = '#F0F0F0'; e.currentTarget.style.boxShadow = 'none' }}
       >
         <option value="">{label}: All</option>
@@ -260,7 +260,7 @@ function SortSelect({ value, onChange }) {
         onChange={(e) => onChange(e.target.value)}
         className="appearance-none text-xs font-medium pl-3 pr-7 py-2 rounded-lg focus:outline-none cursor-pointer transition-colors"
         style={{ background: '#FFFFFF', border: '1px solid #F0F0F0', color: '#1A1A1A' }}
-        onFocus={(e) => { e.currentTarget.style.borderColor = '#1A1A1A'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(201,169,110,0.12)' }}
+        onFocus={(e) => { e.currentTarget.style.borderColor = '#1A1A1A'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(0,0,0,0.06)' }}
         onBlur={(e) => { e.currentTarget.style.borderColor = '#F0F0F0'; e.currentTarget.style.boxShadow = 'none' }}
       >
         {SORT_OPTS.map((o) => <option key={o.key} value={o.key}>{o.label}</option>)}
@@ -411,7 +411,7 @@ function TaskRow({ t, projectName, expandedId, setExpandedId, toggleDone, openEd
             onClick={(e) => { e.stopPropagation(); openEdit(t) }}
             className="p-1 rounded transition-colors"
             style={{ color: '#DDDDDD' }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(201,169,110,0.1)'; e.currentTarget.style.color = '#1A1A1A' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.05)'; e.currentTarget.style.color = '#1A1A1A' }}
             onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#DDDDDD' }}
           >
             <Edit2 size={13} />
@@ -624,7 +624,7 @@ export default function TaskList() {
             onClick={() => setGroupByDate((v) => !v)}
             className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-lg transition-all"
             style={{
-              background: groupByDate ? 'rgba(201,169,110,0.08)' : '#FFFFFF',
+              background: groupByDate ? 'rgba(0,0,0,0.04)' : '#FFFFFF',
               border: `1px solid ${groupByDate ? 'rgba(0,0,0,0.10)' : '#F0F0F0'}`,
               color: groupByDate ? '#1A1A1A' : '#999999',
             }}

@@ -11,10 +11,10 @@ import { useApp } from '../context/AppContext'
 // Warm-toned event color palette
 const EVENT_COLORS = {
   red:    { dot: '#A93226', chip: { bg: 'rgba(192,57,43,0.10)',  color: '#A93226',  border: 'rgba(192,57,43,0.2)' } },
-  gold:   { dot: '#1A1A1A', chip: { bg: 'rgba(201,169,110,0.12)', color: '#333333',  border: 'rgba(0,0,0,0.10)' } },
+  gold:   { dot: '#1A1A1A', chip: { bg: 'rgba(0,0,0,0.06)', color: '#333333',  border: 'rgba(0,0,0,0.10)' } },
   teal:   { dot: '#2D5B6B', chip: { bg: 'rgba(45,91,107,0.10)',  color: '#2D5B6B',  border: 'rgba(45,91,107,0.2)' } },
   green:  { dot: '#3D7A5C', chip: { bg: 'rgba(61,122,92,0.10)',  color: '#3D7A5C',  border: 'rgba(61,122,92,0.2)' } },
-  amber:  { dot: '#1A1A1A', chip: { bg: 'rgba(201,169,110,0.08)', color: '#333333',  border: 'rgba(0,0,0,0.06)' } },
+  amber:  { dot: '#1A1A1A', chip: { bg: 'rgba(0,0,0,0.04)', color: '#333333',  border: 'rgba(0,0,0,0.06)' } },
   purple: { dot: '#7B5EA7', chip: { bg: 'rgba(123,94,167,0.10)', color: '#7B5EA7',  border: 'rgba(123,94,167,0.2)' } },
   indigo: { dot: '#3D5A8A', chip: { bg: 'rgba(61,90,138,0.10)',  color: '#3D5A8A',  border: 'rgba(61,90,138,0.2)' } },
   orange: { dot: '#C06030', chip: { bg: 'rgba(192,96,48,0.10)',  color: '#C06030',  border: 'rgba(192,96,48,0.2)' } },

@@ -143,7 +143,7 @@ function ProjectCard({ project, onEdit, onDelete }) {
             onClick={() => onEdit(project)}
             className="p-1.5 rounded-lg transition-colors"
             style={{ color: '#C4BBB3' }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(201,169,110,0.1)'; e.currentTarget.style.color = '#1A1A1A' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.05)'; e.currentTarget.style.color = '#1A1A1A' }}
             onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#C4BBB3' }}
           >
             <Edit2 size={13} />
