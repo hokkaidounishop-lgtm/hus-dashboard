@@ -25,80 +25,73 @@ export default function Sidebar() {
   ).length
 
   return (
-    <aside
-      className="w-56 shrink-0 flex flex-col min-h-screen"
+    <nav
+      className="sticky top-0 z-50 shrink-0"
       style={{
-        background: '#EDECEA',
-        borderRight: '1px solid rgba(0,0,0,0.06)',
+        background: '#ffffff',
+        borderBottom: '1px solid rgba(0,0,0,0.08)',
       }}
     >
-      {/* Brand */}
-      <div className="px-4 pt-5 pb-4" style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
-        <div className="flex items-center gap-2.5">
+      <div
+        className="flex items-center gap-6 px-6 py-2.5 mx-auto"
+        style={{ maxWidth: 1120 }}
+      >
+        {/* Brand */}
+        <div className="flex items-center gap-2 shrink-0 mr-2">
           <img
             src="/hus-logo.png"
-            alt="Hokkaido Uni Shop"
-            className="w-8 h-8 object-contain"
+            alt="HUS"
+            className="w-7 h-7 object-contain"
             onError={(e) => { e.currentTarget.style.display = 'none' }}
           />
-          <div>
-            <p
-              className="text-[11px] font-bold tracking-wide"
-              style={{ color: '#1A1A1A' }}
-            >
-              Hokkaido Uni Shop
-            </p>
-            <p className="text-[10px]" style={{ color: '#999999' }}>
-              HUS Dashboard
-            </p>
-          </div>
+          <span
+            className="text-xs font-semibold tracking-wide"
+            style={{ color: '#1a1a18' }}
+          >
+            HUS
+          </span>
+        </div>
+
+        {/* Nav items */}
+        <div className="flex items-center gap-1 flex-1">
+          {NAV.map(({ id, label, icon: Icon }) => {
+            const isActive = activeSection === id
+            return (
+              <button
+                key={id}
+                onClick={() => setActiveSection(id)}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium transition-all relative"
+                style={{
+                  color: isActive ? '#ffffff' : '#6b6b66',
+                  background: isActive ? '#1a1a18' : 'transparent',
+                  borderRadius: 20,
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.background = 'rgba(0,0,0,0.05)'
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.background = 'transparent'
+                  }
+                }}
+              >
+                <Icon size={14} className="shrink-0" />
+                <span>{label}</span>
+                {id === 'alerts' && overdueCount > 0 && (
+                  <span
+                    className="text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center"
+                    style={{ background: '#dc2626' }}
+                  >
+                    {overdueCount > 9 ? '9+' : overdueCount}
+                  </span>
+                )}
+              </button>
+            )
+          })}
         </div>
       </div>
-
-      {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-0.5">
-        {NAV.map(({ id, label, icon: Icon }) => {
-          const isActive = activeSection === id
-          return (
-            <button
-              key={id}
-              onClick={() => setActiveSection(id)}
-              className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-medium transition-all text-left rounded-md"
-              style={{
-                color: isActive ? '#FFFFFF' : '#666666',
-                background: isActive ? '#1A1A1A' : 'transparent',
-              }}
-              onMouseEnter={(e) => {
-                if (!isActive) {
-                  e.currentTarget.style.background = 'rgba(0,0,0,0.05)'
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isActive) {
-                  e.currentTarget.style.background = 'transparent'
-                }
-              }}
-            >
-              <Icon size={15} className="shrink-0" />
-              <span>{label}</span>
-              {id === 'alerts' && overdueCount > 0 && (
-                <span
-                  className="ml-auto text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
-                  style={{ background: '#C0392B' }}
-                >
-                  {overdueCount > 9 ? '9+' : overdueCount}
-                </span>
-              )}
-            </button>
-          )
-        })}
-      </nav>
-
-      {/* Footer */}
-      <div className="px-5 py-4" style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-        <div className="text-xs" style={{ color: '#999999' }}>Dashboard v1.0</div>
-        <div className="text-xs mt-0.5" style={{ color: '#BBBBBB' }}>HUS Inc.</div>
-      </div>
-    </aside>
+    </nav>
   )
 }

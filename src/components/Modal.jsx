@@ -20,21 +20,20 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
       <div
         className={`relative w-full ${SIZES[size]} max-h-[90vh] flex flex-col`}
         style={{
-          background: '#FFFFFF',
-          borderRadius: '8px',
-          border: '1px solid rgba(0,0,0,0.06)',
+          background: '#ffffff',
+          borderRadius: 12,
+          border: '1px solid rgba(0,0,0,0.08)',
           boxShadow: '0 25px 60px 0 rgba(0,0,0,0.15)',
         }}
       >
         <div
           className="flex items-center justify-between px-6 py-4 shrink-0"
-          style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}
+          style={{ borderBottom: '1px solid rgba(0,0,0,0.08)' }}
         >
           <h2
             className="text-base font-semibold"
             style={{
-              fontFamily: 'Inter, system-ui, sans-serif',
-              color: '#1A1A1A',
+              color: '#1a1a18',
             }}
           >
             {title}
@@ -42,14 +41,14 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
           <button
             onClick={onClose}
             className="p-1.5 rounded-md transition-all"
-            style={{ color: '#999999' }}
+            style={{ color: '#9b9b94' }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = 'rgba(0,0,0,0.05)'
-              e.currentTarget.style.color = '#1A1A1A'
+              e.currentTarget.style.color = '#1a1a18'
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.background = 'transparent'
-              e.currentTarget.style.color = '#999999'
+              e.currentTarget.style.color = '#9b9b94'
             }}
           >
             <X size={18} />

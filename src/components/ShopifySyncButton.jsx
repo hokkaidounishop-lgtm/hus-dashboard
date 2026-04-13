@@ -10,7 +10,7 @@ export default function ShopifySyncButton() {
       {lastSync && !error && (
         <span
           className="inline-flex items-center gap-1 text-xs"
-          style={{ color: '#999999' }}
+          style={{ color: '#9b9b94' }}
         >
           <CheckCircle size={11} />
           Synced {format(lastSync, 'HH:mm')}
@@ -19,7 +19,7 @@ export default function ShopifySyncButton() {
       {lastSync && !error && (
         <span
           className="inline-flex items-center gap-1 text-xs"
-          style={{ color: 'rgba(153,153,153,0.6)' }}
+          style={{ color: 'rgba(155,155,148,0.6)' }}
           title="Auto-syncs every 6 hours"
         >
           <Timer size={10} />
@@ -29,7 +29,7 @@ export default function ShopifySyncButton() {
       {error && (
         <span
           className="inline-flex items-center gap-1 text-xs max-w-[220px] truncate"
-          style={{ color: '#C0392B' }}
+          style={{ color: '#dc2626' }}
           title={error}
         >
           <AlertCircle size={11} className="shrink-0" />
@@ -39,23 +39,24 @@ export default function ShopifySyncButton() {
       <button
         onClick={sync}
         disabled={loading}
-        className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-all"
+        className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 transition-all"
         style={{
-          background: '#FFFFFF',
-          border: '1px solid #F0F0F0',
-          color: loading ? '#CCCCCC' : '#999999',
+          borderRadius: 8,
+          background: '#ffffff',
+          border: '1px solid rgba(0,0,0,0.08)',
+          color: loading ? '#9b9b94' : '#6b6b66',
           cursor: loading ? 'not-allowed' : 'pointer',
         }}
         onMouseEnter={(e) => {
           if (!loading) {
-            e.currentTarget.style.borderColor = '#1A1A1A'
-            e.currentTarget.style.color = '#1A1A1A'
+            e.currentTarget.style.borderColor = '#1a1a18'
+            e.currentTarget.style.color = '#1a1a18'
           }
         }}
         onMouseLeave={(e) => {
           if (!loading) {
-            e.currentTarget.style.borderColor = '#F0F0F0'
-            e.currentTarget.style.color = '#999999'
+            e.currentTarget.style.borderColor = 'rgba(0,0,0,0.08)'
+            e.currentTarget.style.color = '#6b6b66'
           }
         }}
       >

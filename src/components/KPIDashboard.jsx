@@ -82,7 +82,7 @@ const pct   = (a,b) => b>0 ? (((a-b)/b)*100).toFixed(1) : null
 // ── Brand colors ──────────────────────────────────────────────────────────────
 
 const REGION_COLORS = {
-  newYork: '#1A1A1A', california: '#2D5B6B', texas: '#3D7A5C', florida: '#C0392B', other: '#999999',
+  newYork: '#1a1a18', california: '#2563eb', texas: '#0d9488', florida: '#dc2626', other: '#9b9b94',
 }
 
 // ── KPI Card status config ────────────────────────────────────────────────────
@@ -93,9 +93,9 @@ function statusColor(val, tgt) {
 }
 
 const SS = {
-  green:  { borderColor:'#F0F0F0', badge:{ bg:'#F5F5F5', color:'#999999' }, bar:'#1A1A1A', text:'#999999', icon:CheckCircle,   label:'On Target'    },
-  yellow: { borderColor:'#F0F0F0', badge:{ bg:'#F5F5F5', color:'#1A1A1A' }, bar:'#1A1A1A', text:'#1A1A1A', icon:AlertTriangle, label:'Near Target'  },
-  red:    { borderColor:'#F0F0F0', badge:{ bg:'#F5F5F5', color:'#C0392B' }, bar:'#C0392B', text:'#C0392B', icon:TrendingDown,  label:'Below Target' },
+  green:  { borderColor:'rgba(0,0,0,0.08)', badge:{ bg:'#dcfce7', color:'#15803d' }, bar:'#16a34a', text:'#16a34a', icon:CheckCircle,   label:'On Target'    },
+  yellow: { borderColor:'rgba(0,0,0,0.08)', badge:{ bg:'#fef3c7', color:'#92400e' }, bar:'#d97706', text:'#d97706', icon:AlertTriangle, label:'Near Target'  },
+  red:    { borderColor:'rgba(0,0,0,0.08)', badge:{ bg:'#fee2e2', color:'#b91c1c' }, bar:'#dc2626', text:'#dc2626', icon:TrendingDown,  label:'Below Target' },
 }
 
 function CompDelta({ current, comp, prefix='', unit='' }) {
@@ -106,7 +106,7 @@ function CompDelta({ current, comp, prefix='', unit='' }) {
   return (
     <div
       className="inline-flex items-center gap-1 text-xs font-medium mt-1"
-      style={{ color: up ? '#999999' : '#C0392B' }}
+      style={{ color: up ? '#9b9b94' : '#dc2626' }}
     >
       {up ? <ArrowUp size={10}/> : <ArrowDown size={10}/>}
       {prefix}{Math.abs(Number(p)).toFixed(1)}% vs prev
@@ -122,24 +122,25 @@ function KPICard({ label, value, target, unit='', prefix='', description, period
 
   return (
     <div
-      className="rounded-lg p-5 flex flex-col gap-3"
+      className="rounded-lg flex flex-col gap-3"
       style={{
-        background: '#FFFFFF',
+        background: '#ffffff',
         border: `1px solid ${s.borderColor}`,
-        boxShadow: '0 1px 3px 0 rgba(0,0,0,0.04)',
+        borderRadius: 12,
+        padding: '14px 16px',
       }}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <div
             className="text-xs font-medium uppercase tracking-wide"
-            style={{ color: '#999999' }}
+            style={{ color: '#9b9b94' }}
           >
             {label}
           </div>
           <div
             className="text-2xl font-bold mt-1.5 leading-none tabular-nums"
-            style={{ color: '#1A1A1A' }}
+            style={{ color: '#1a1a18', fontFamily: "'DM Mono', monospace" }}
           >
             {prefix}{typeof value==='number' ? value.toLocaleString() : value}{unit}
           </div>
@@ -147,18 +148,18 @@ function KPICard({ label, value, target, unit='', prefix='', description, period
             <CompDelta current={value} comp={compValue} prefix={prefix} unit={unit} />
           )}
           {compValue != null && (
-            <div className="text-xs mt-0.5" style={{ color: '#999999' }}>
+            <div className="text-xs mt-0.5" style={{ color: '#9b9b94' }}>
               Prev: {prefix}{compValue.toLocaleString()}{unit}
-              {compLabel && <span className="ml-1" style={{ color: '#C4BBB3' }}>({compLabel})</span>}
+              {compLabel && <span className="ml-1" style={{ color: '#9b9b94' }}>({compLabel})</span>}
             </div>
           )}
           {description && !compValue && (
-            <div className="text-xs mt-1" style={{ color: '#999999' }}>{description}</div>
+            <div className="text-xs mt-1" style={{ color: '#9b9b94' }}>{description}</div>
           )}
           {periodLabel && (
             <div
               className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded text-xs font-medium"
-              style={{ background: '#F5F5F5', color: '#999999' }}
+              style={{ background: '#f0efe9', color: '#9b9b94' }}
             >
               <CalendarDays size={10} className="shrink-0"/>
               {periodLabel}
@@ -173,7 +174,7 @@ function KPICard({ label, value, target, unit='', prefix='', description, period
         </span>
       </div>
       <div>
-        <div className="flex justify-between text-xs mb-1.5" style={{ color: '#999999' }}>
+        <div className="flex justify-between text-xs mb-1.5" style={{ color: '#9b9b94' }}>
           <span>Target: {prefix}{target.toLocaleString()}{unit}</span>
           <span style={{ color: s.text }}>{p}%</span>
         </div>
@@ -190,9 +191,9 @@ const ChartTooltip = ({ active, payload, label }) => {
   return (
     <div
       className="rounded-lg px-3 py-2 text-xs"
-      style={{ background: '#FFFFFF', border: '1px solid #F0F0F0', boxShadow: '0 4px 16px rgba(26,18,8,0.12)' }}
+      style={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12 }}
     >
-      <div className="font-medium mb-1" style={{ color: '#999999' }}>{label}</div>
+      <div className="font-medium mb-1" style={{ color: '#9b9b94' }}>{label}</div>
       {payload.map(p => (
         <div key={p.name} style={{ color: p.color }}>
           {p.name}: {p.name.toLowerCase().includes('revenue') || p.name.toLowerCase().includes('rev')
@@ -224,7 +225,7 @@ function SegmentedControl({ options, value, onChange }) {
   return (
     <div
       className="flex items-center rounded-lg p-0.5 gap-0.5 flex-wrap"
-      style={{ background: '#F5F5F5' }}
+      style={{ background: '#f0efe9' }}
     >
       {options.map(o => (
         <button
@@ -232,8 +233,8 @@ function SegmentedControl({ options, value, onChange }) {
           onClick={() => onChange(o.key)}
           className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap"
           style={{
-            background: value===o.key ? '#FFFFFF' : 'transparent',
-            color: value===o.key ? '#1A1A1A' : '#999999',
+            background: value===o.key ? '#ffffff' : 'transparent',
+            color: value===o.key ? '#1a1a18' : '#9b9b94',
             boxShadow: value===o.key ? '0 1px 3px rgba(26,18,8,0.10)' : 'none',
           }}
         >
@@ -248,25 +249,25 @@ function SegmentedControl({ options, value, onChange }) {
 
 function RegionalSpotlight({ kpis, filteredTrend }) {
   const regionColors = [
-    '#1A1A1A', '#2D5B6B', '#3D7A5C', '#C0392B', '#999999',
+    '#1a1a18', '#2563eb', '#0d9488', '#dc2626', '#9b9b94',
   ]
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 xl:grid-cols-3 gap-3">
       {/* NY vs States trend */}
       <div
-        className="xl:col-span-2 rounded-lg p-5"
-        style={{ background: '#FFFFFF', border: '1px solid #F0F0F0', boxShadow: '0 1px 3px 0 rgba(0,0,0,0.04)' }}
+        className="xl:col-span-2 rounded-lg"
+        style={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12, padding: '14px 16px' }}
       >
         <div
           className="text-sm font-medium mb-0.5"
-          style={{ fontFamily: '"Inter", system-ui, sans-serif', color: '#1A1A1A' }}
+          style={{ color: '#1a1a18' }}
         >
           Revenue by Region — Trend
         </div>
         <div
           className="inline-flex items-center gap-1 mb-4 px-2 py-0.5 rounded text-xs font-medium"
-          style={{ background: '#F5F5F5', color: '#999999' }}
+          style={{ background: '#f0efe9', color: '#9b9b94' }}
         >
           <CalendarDays size={10}/>
           {filteredTrend.length
@@ -276,20 +277,20 @@ function RegionalSpotlight({ kpis, filteredTrend }) {
         {filteredTrend.length ? (
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={filteredTrend} margin={{ top:4,right:4,left:0,bottom:0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#F0F0F0"/>
-              <XAxis dataKey="month" tick={{ fontSize:10, fill:'#999999' }} axisLine={false} tickLine={false}/>
-              <YAxis tickFormatter={f$} tick={{ fontSize:10, fill:'#999999' }} axisLine={false} tickLine={false} width={42}/>
-              <Tooltip formatter={(v,n)=>[fFull$(v),n]} contentStyle={{ background:'#FFFFFF', border:'1px solid #F0F0F0', borderRadius:'10px', fontSize:11 }}/>
-              <Legend wrapperStyle={{ fontSize:11, color:'#999999' }}/>
-              <Line type="monotone" dataKey="newYork"    name="New York"   stroke="#1A1A1A" strokeWidth={2.5} dot={false}/>
-              <Line type="monotone" dataKey="california" name="California" stroke="#2D5B6B" strokeWidth={2} dot={false}/>
-              <Line type="monotone" dataKey="texas"      name="Texas"      stroke="#3D7A5C" strokeWidth={2} dot={false} strokeDasharray="4 2"/>
-              <Line type="monotone" dataKey="florida"    name="Florida"    stroke="#C0392B" strokeWidth={2} dot={false} strokeDasharray="4 2"/>
-              <Line type="monotone" dataKey="other"      name="Other"      stroke="#999999" strokeWidth={1.5} dot={false} strokeDasharray="2 3"/>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" vertical={false}/>
+              <XAxis dataKey="month" tick={{ fontSize:10, fill:'#9b9b94', fontFamily:'DM Mono' }} axisLine={false} tickLine={false}/>
+              <YAxis tickFormatter={f$} tick={{ fontSize:10, fill:'#9b9b94', fontFamily:'DM Mono' }} axisLine={false} tickLine={false} width={42}/>
+              <Tooltip formatter={(v,n)=>[fFull$(v),n]} contentStyle={{ background:'#ffffff', border:'1px solid rgba(0,0,0,0.08)', borderRadius:'10px', fontSize:11 }}/>
+              <Legend wrapperStyle={{ fontSize:11, color:'#9b9b94' }}/>
+              <Line type="monotone" dataKey="newYork"    name="New York"   stroke="#1a1a18" strokeWidth={2.5} dot={false}/>
+              <Line type="monotone" dataKey="california" name="California" stroke="#2563eb" strokeWidth={2} dot={false}/>
+              <Line type="monotone" dataKey="texas"      name="Texas"      stroke="#0d9488" strokeWidth={2} dot={false} strokeDasharray="4 2"/>
+              <Line type="monotone" dataKey="florida"    name="Florida"    stroke="#dc2626" strokeWidth={2} dot={false} strokeDasharray="4 2"/>
+              <Line type="monotone" dataKey="other"      name="Other"      stroke="#9b9b94" strokeWidth={1.5} dot={false} strokeDasharray="2 3"/>
             </LineChart>
           </ResponsiveContainer>
         ) : (
-          <div className="h-[200px] flex items-center justify-center text-sm" style={{ color: '#C4BBB3' }}>
+          <div className="h-[200px] flex items-center justify-center text-sm" style={{ color: '#9b9b94' }}>
             No data for selected period
           </div>
         )}
@@ -297,41 +298,41 @@ function RegionalSpotlight({ kpis, filteredTrend }) {
 
       {/* NY city breakdown */}
       <div
-        className="rounded-lg p-5"
-        style={{ background: '#FFFFFF', border: '1px solid #F0F0F0', boxShadow: '0 1px 3px 0 rgba(0,0,0,0.04)' }}
+        className="rounded-lg"
+        style={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12, padding: '14px 16px' }}
       >
         <div
           className="text-sm font-medium mb-0.5"
-          style={{ fontFamily: '"Inter", system-ui, sans-serif', color: '#1A1A1A' }}
+          style={{ color: '#1a1a18' }}
         >
           New York — City Breakdown
         </div>
-        <div className="text-xs mb-4" style={{ color: '#999999' }}>62% of total B2C revenue</div>
+        <div className="text-xs mb-4" style={{ color: '#9b9b94' }}>62% of total B2C revenue</div>
         <div className="space-y-3">
           {kpis.nyBreakdown.map((a) => (
             <div key={a.area}>
               <div className="flex justify-between text-xs mb-1">
-                <span className="font-medium" style={{ color: '#1A1A1A' }}>{a.area}</span>
-                <span style={{ color: '#999999' }}>{a.pct}% · {a.orders} orders</span>
+                <span className="font-medium" style={{ color: '#1a1a18' }}>{a.area}</span>
+                <span style={{ color: '#9b9b94' }}>{a.pct}% · {a.orders} orders</span>
               </div>
               <div className="progress-bar">
                 <div className="progress-bar-fill" style={{ width:`${a.pct}%` }}/>
               </div>
-              <div className="text-xs mt-0.5 flex justify-between" style={{ color: '#999999' }}>
+              <div className="text-xs mt-0.5 flex justify-between" style={{ color: '#9b9b94' }}>
                 <span>{fFull$(a.revenue)}</span>
                 <span>{a.avgFreq}x avg order freq</span>
               </div>
             </div>
           ))}
         </div>
-        <div className="mt-4 pt-4" style={{ borderTop: '1px solid #F0F0F0' }}>
-          <div className="text-xs font-medium mb-2" style={{ color: '#999999' }}>Repeat order rate by state</div>
+        <div className="mt-4 pt-4" style={{ borderTop: '1px solid rgba(0,0,0,0.08)' }}>
+          <div className="text-xs font-medium mb-2" style={{ color: '#9b9b94' }}>Repeat order rate by state</div>
           {kpis.regionBreakdown.map((r, i) => (
             <div key={r.region} className="flex items-center gap-2 text-xs py-1">
               <span className="w-2 h-2 rounded-full shrink-0" style={{ background: regionColors[i] }}/>
-              <span className="flex-1" style={{ color: '#999999' }}>{r.region}</span>
-              <span style={{ color: '#999999' }}>{r.orders} orders</span>
-              <span className="font-medium" style={{ color: '#1A1A1A' }}>{r.pct}%</span>
+              <span className="flex-1" style={{ color: '#9b9b94' }}>{r.region}</span>
+              <span style={{ color: '#9b9b94' }}>{r.orders} orders</span>
+              <span className="font-medium" style={{ color: '#1a1a18' }}>{r.pct}%</span>
             </div>
           ))}
         </div>
@@ -421,19 +422,19 @@ export default function KPIDashboard() {
   }
 
   return (
-    <div className="space-y-7">
+    <div className="space-y-3">
 
       {/* ── HUS Level System ── */}
       <LevelSystem />
 
       {/* ── Controls bar ── */}
       <div
-        className="rounded-lg px-5 py-4 space-y-3"
-        style={{ background: '#FFFFFF', border: '1px solid #F0F0F0' }}
+        className="rounded-lg space-y-3"
+        style={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12, padding: '14px 16px' }}
       >
         <div className="flex flex-wrap items-center gap-3 justify-between">
           <div className="flex items-center gap-3 flex-wrap">
-            <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#999999' }}>Period</span>
+            <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#9b9b94' }}>Period</span>
             <SegmentedControl options={RANGE_OPTS} value={rangeKey} onChange={(k)=>{setRangeKey(k);setShowCustom(k==='custom')}}/>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
@@ -442,49 +443,49 @@ export default function KPIDashboard() {
               <button
                 onClick={startEdit}
                 className="flex items-center gap-1.5 text-xs transition-colors"
-                style={{ color: '#999999' }}
-                onMouseEnter={(e) => { e.currentTarget.style.color = '#1A1A1A' }}
-                onMouseLeave={(e) => { e.currentTarget.style.color = '#999999' }}
+                style={{ color: '#9b9b94' }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = '#1a1a18' }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = '#9b9b94' }}
               >
                 <Edit2 size={13}/> Edit KPIs
               </button>
             ) : (
               <div className="flex gap-3">
-                <button onClick={saveEdit} className="flex items-center gap-1 text-xs" style={{ color: '#1A1A1A' }}><Check size={13}/> Save</button>
-                <button onClick={()=>setEditing(false)} className="flex items-center gap-1 text-xs" style={{ color: '#999999' }}><X size={13}/> Cancel</button>
+                <button onClick={saveEdit} className="flex items-center gap-1 text-xs" style={{ color: '#1a1a18' }}><Check size={13}/> Save</button>
+                <button onClick={()=>setEditing(false)} className="flex items-center gap-1 text-xs" style={{ color: '#9b9b94' }}><X size={13}/> Cancel</button>
               </div>
             )}
           </div>
         </div>
         <div className="flex items-center gap-3 flex-wrap">
-          <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#999999' }}>Compare to</span>
+          <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#9b9b94' }}>Compare to</span>
           <SegmentedControl options={COMP_OPTS} value={compMode} onChange={setCompMode}/>
           {hasComp && (
-            <span className="text-xs italic" style={{ color: '#999999' }}>
+            <span className="text-xs italic" style={{ color: '#9b9b94' }}>
               Comparing {currentData.length} vs {compData.length} month{compData.length!==1?'s':''}
             </span>
           )}
           {compMode !== 'none' && !hasComp && currentData.length > 0 && (
-            <span className="text-xs" style={{ color: '#1A1A1A' }}>No comparison data available for this period</span>
+            <span className="text-xs" style={{ color: '#1a1a18' }}>No comparison data available for this period</span>
           )}
         </div>
         {showCustom && (
-          <div className="flex items-center gap-3 pt-1" style={{ borderTop: '1px solid #F0F0F0' }}>
-            <span className="text-xs" style={{ color: '#999999' }}>From</span>
+          <div className="flex items-center gap-3 pt-1" style={{ borderTop: '1px solid rgba(0,0,0,0.08)' }}>
+            <span className="text-xs" style={{ color: '#9b9b94' }}>From</span>
             <select
               value={customStart}
               onChange={e=>setCustomStart(e.target.value)}
               className="rounded-lg px-2 py-1.5 text-xs"
-              style={{ border: '1px solid #F0F0F0', color: '#1A1A1A' }}
+              style={{ border: '1px solid rgba(0,0,0,0.08)', color: '#1a1a18' }}
             >
               {allMonths.map(m=><option key={m} value={m}>{m}</option>)}
             </select>
-            <span className="text-xs" style={{ color: '#999999' }}>to</span>
+            <span className="text-xs" style={{ color: '#9b9b94' }}>to</span>
             <select
               value={customEnd}
               onChange={e=>setCustomEnd(e.target.value)}
               className="rounded-lg px-2 py-1.5 text-xs"
-              style={{ border: '1px solid #F0F0F0', color: '#1A1A1A' }}
+              style={{ border: '1px solid rgba(0,0,0,0.08)', color: '#1a1a18' }}
             >
               {allMonths.map(m=><option key={m} value={m}>{m}</option>)}
             </select>
@@ -495,8 +496,8 @@ export default function KPIDashboard() {
       {/* ── KPI Cards ── */}
       {editing ? (
         <div
-          className="rounded-lg p-5"
-          style={{ background: '#FFFFFF', border: '1px solid #F0F0F0' }}
+          className="rounded-lg"
+          style={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12, padding: '14px 16px' }}
         >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
@@ -552,48 +553,48 @@ export default function KPIDashboard() {
 
       {/* ── Revenue & Orders chart ── */}
       <div
-        className="rounded-lg p-5"
-        style={{ background: '#FFFFFF', border: '1px solid #F0F0F0', boxShadow: '0 1px 3px 0 rgba(0,0,0,0.04)' }}
+        className="rounded-lg"
+        style={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12, padding: '14px 16px' }}
       >
         <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
           <div>
             <div
               className="text-sm font-medium"
-              style={{ fontFamily: '"Inter", system-ui, sans-serif', color: '#1A1A1A' }}
+              style={{ color: '#1a1a18' }}
             >
               Monthly Revenue &amp; Orders
             </div>
-            <div className="text-xs mt-0.5" style={{ color: '#999999' }}>{chartTitle}</div>
+            <div className="text-xs mt-0.5" style={{ color: '#9b9b94' }}>{chartTitle}</div>
           </div>
-          <div className="flex items-center gap-4 text-xs flex-wrap" style={{ color: '#999999' }}>
+          <div className="flex items-center gap-4 text-xs flex-wrap" style={{ color: '#9b9b94' }}>
             <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded inline-block" style={{ background: '#1A1A1A' }}/> Revenue
+              <span className="w-3 h-3 rounded inline-block" style={{ background: '#1a1a18' }}/> Revenue
             </span>
             {hasComp && (
               <span className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded inline-block" style={{ background: '#D4C9BC' }}/> Prev Revenue
+                <span className="w-3 h-3 rounded inline-block" style={{ background: '#9b9b94' }}/> Prev Revenue
               </span>
             )}
             <span className="flex items-center gap-1.5">
-              <span className="w-3 h-1 rounded inline-block" style={{ background: '#999999' }}/> Orders
+              <span className="w-3 h-1 rounded inline-block" style={{ background: '#9b9b94' }}/> Orders
             </span>
           </div>
         </div>
         {currentData.length ? (
           <ResponsiveContainer width="100%" height={240}>
             <ComposedChart data={mergedChartData} barGap={2} barCategoryGap={hasComp ? '20%' : '30%'} margin={{ top:4,right:4,left:0,bottom:0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#F0F0F0"/>
-              <XAxis dataKey="label" tick={{ fontSize:10, fill:'#999999' }} axisLine={false} tickLine={false}/>
-              <YAxis yAxisId="l" tickFormatter={f$} tick={{ fontSize:10, fill:'#999999' }} axisLine={false} tickLine={false} width={42}/>
-              <YAxis yAxisId="r" orientation="right" tick={{ fontSize:10, fill:'#999999' }} axisLine={false} tickLine={false} width={32}/>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" vertical={false}/>
+              <XAxis dataKey="label" tick={{ fontSize:10, fill:'#9b9b94', fontFamily:'DM Mono' }} axisLine={false} tickLine={false}/>
+              <YAxis yAxisId="l" tickFormatter={f$} tick={{ fontSize:10, fill:'#9b9b94', fontFamily:'DM Mono' }} axisLine={false} tickLine={false} width={42}/>
+              <YAxis yAxisId="r" orientation="right" tick={{ fontSize:10, fill:'#9b9b94', fontFamily:'DM Mono' }} axisLine={false} tickLine={false} width={32}/>
               <Tooltip content={<ChartTooltip/>}/>
-              <Bar yAxisId="l" dataKey="revenue"     name="Revenue"      fill="#1A1A1A" radius={[4,4,0,0]} barSize={hasComp?14:18}/>
-              {hasComp && <Bar yAxisId="l" dataKey="compRevenue" name="Prev Revenue" fill="#D4C9BC" radius={[4,4,0,0]} barSize={14}/>}
-              <Line yAxisId="r" type="monotone" dataKey="orders" name="Orders" stroke="#999999" strokeWidth={2} dot={{ r:3, fill:'#999999' }}/>
+              <Bar yAxisId="l" dataKey="revenue"     name="Revenue"      fill="#1a1a18" radius={[4,4,0,0]} barSize={hasComp?14:18}/>
+              {hasComp && <Bar yAxisId="l" dataKey="compRevenue" name="Prev Revenue" fill="#9b9b94" radius={[4,4,0,0]} barSize={14}/>}
+              <Line yAxisId="r" type="monotone" dataKey="orders" name="Orders" stroke="#9b9b94" strokeWidth={2} dot={{ r:3, fill:'#9b9b94' }}/>
             </ComposedChart>
           </ResponsiveContainer>
         ) : (
-          <div className="h-[240px] flex flex-col items-center justify-center gap-2" style={{ color: '#C4BBB3' }}>
+          <div className="h-[240px] flex flex-col items-center justify-center gap-2" style={{ color: '#9b9b94' }}>
             <CalendarDays size={28}/>
             <div className="text-sm">No data for this period</div>
           </div>
@@ -604,7 +605,7 @@ export default function KPIDashboard() {
       <div>
         <h3
           className="text-xs font-semibold uppercase tracking-widest mb-4"
-          style={{ color: '#999999', letterSpacing: '0.12em' }}
+          style={{ color: '#9b9b94', letterSpacing: '0.12em' }}
         >
           Live Analytics
         </h3>
@@ -615,7 +616,7 @@ export default function KPIDashboard() {
       <div>
         <h3
           className="text-xs font-semibold uppercase tracking-widest mb-4"
-          style={{ color: '#999999', letterSpacing: '0.12em' }}
+          style={{ color: '#9b9b94', letterSpacing: '0.12em' }}
         >
           Email Marketing
         </h3>
@@ -626,7 +627,7 @@ export default function KPIDashboard() {
       <div>
         <h3
           className="text-xs font-semibold uppercase tracking-widest mb-4"
-          style={{ color: '#999999', letterSpacing: '0.12em' }}
+          style={{ color: '#9b9b94', letterSpacing: '0.12em' }}
         >
           B2B Sales
         </h3>
@@ -638,7 +639,7 @@ export default function KPIDashboard() {
         <div>
           <h3
             className="text-xs font-semibold uppercase tracking-widest mb-4"
-            style={{ color: '#999999', letterSpacing: '0.12em' }}
+            style={{ color: '#9b9b94', letterSpacing: '0.12em' }}
           >
             NY Customer Acquisition
           </h3>
@@ -652,23 +653,24 @@ export default function KPIDashboard() {
             ].map((card) => (
               <div
                 key={card.label}
-                className="rounded-lg p-4"
+                className="rounded-lg"
                 style={{
-                  background: '#FFFFFF',
-                  border: `1px solid ${card.alert ? '#FECACA' : '#F0F0F0'}`,
-                  boxShadow: '0 1px 3px 0 rgba(0,0,0,0.04)',
+                  background: '#ffffff',
+                  border: `1px solid ${card.alert ? '#fee2e2' : 'rgba(0,0,0,0.08)'}`,
+                  borderRadius: 12,
+                  padding: '14px 16px',
                 }}
               >
-                <div className="text-xs font-medium uppercase tracking-wide" style={{ color: '#999999' }}>
+                <div className="text-xs font-medium uppercase tracking-wide" style={{ color: '#9b9b94' }}>
                   {card.label}
                 </div>
                 <div
                   className="text-xl font-bold mt-1 tabular-nums"
-                  style={{ color: card.alert ? '#DC2626' : '#1A1A1A' }}
+                  style={{ color: card.alert ? '#dc2626' : '#1a1a18', fontFamily: "'DM Mono', monospace" }}
                 >
                   {card.value}
                 </div>
-                {card.sub && <div className="text-xs mt-0.5" style={{ color: '#999999' }}>{card.sub}</div>}
+                {card.sub && <div className="text-xs mt-0.5" style={{ color: '#9b9b94' }}>{card.sub}</div>}
               </div>
             ))}
           </div>
@@ -679,7 +681,7 @@ export default function KPIDashboard() {
       <div>
         <h3
           className="text-xs font-semibold uppercase tracking-widest mb-4"
-          style={{ color: '#999999', letterSpacing: '0.12em' }}
+          style={{ color: '#9b9b94', letterSpacing: '0.12em' }}
         >
           Regional Spotlight
         </h3>
@@ -690,11 +692,11 @@ export default function KPIDashboard() {
       <div>
         <h3
           className="text-xs font-semibold uppercase tracking-widest mb-4"
-          style={{ color: '#999999', letterSpacing: '0.12em' }}
+          style={{ color: '#9b9b94', letterSpacing: '0.12em' }}
         >
           Product Intelligence
         </h3>
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
           <TopProducts onNavigateToProject={()=>setActiveSection('projects')}/>
           <ItemsToWatch onNavigate={setActiveSection}/>
         </div>
@@ -703,15 +705,15 @@ export default function KPIDashboard() {
       {/* ── CVR alert banner ── */}
       {kpis.current.cvr < kpis.targets.cvr && (
         <div
-          className="rounded-lg px-5 py-4 flex items-start gap-3"
-          style={{ background: '#FFFFFF', border: '1px solid #F0F0F0', borderLeft: '3px solid #C0392B' }}
+          className="rounded-lg flex items-start gap-3"
+          style={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.08)', borderLeft: '3px solid #dc2626', borderRadius: 12, padding: '14px 16px' }}
         >
-          <AlertTriangle size={18} className="shrink-0 mt-0.5" style={{ color: '#C0392B' }}/>
+          <AlertTriangle size={18} className="shrink-0 mt-0.5" style={{ color: '#dc2626' }}/>
           <div>
-            <div className="text-sm font-semibold" style={{ color: '#C0392B' }}>CVR Critical Alert</div>
-            <div className="text-xs mt-0.5" style={{ color: '#999999' }}>
-              CVR is <strong style={{ color: '#1A1A1A' }}>{kpis.current.cvr}%</strong> — {((kpis.current.cvr/kpis.targets.cvr)*100).toFixed(0)}% of the{' '}
-              <strong style={{ color: '#1A1A1A' }}>{kpis.targets.cvr}%</strong> target. Immediate action needed on checkout UX audit and A/B test framework.
+            <div className="text-sm font-semibold" style={{ color: '#dc2626' }}>CVR Critical Alert</div>
+            <div className="text-xs mt-0.5" style={{ color: '#9b9b94' }}>
+              CVR is <strong style={{ color: '#1a1a18' }}>{kpis.current.cvr}%</strong> — {((kpis.current.cvr/kpis.targets.cvr)*100).toFixed(0)}% of the{' '}
+              <strong style={{ color: '#1a1a18' }}>{kpis.targets.cvr}%</strong> target. Immediate action needed on checkout UX audit and A/B test framework.
             </div>
           </div>
         </div>

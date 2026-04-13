@@ -2,30 +2,30 @@ import { RefreshCw, Users, MousePointerClick, Activity, Globe } from 'lucide-rea
 import { useGA4Realtime } from '../../hooks/useGA4Realtime'
 
 const CHANNEL_COLORS = {
-  'Organic Search':  '#1A1A1A',
+  'Organic Search':  '#1a1a18',
   'Direct':          '#2D5B6B',
-  'Organic Social':  '#3D7A5C',
-  'Paid Search':     '#C0392B',
+  'Organic Social':  '#16a34a',
+  'Paid Search':     '#dc2626',
   'Email':           '#7C5CFC',
   'Referral':        '#E08B3A',
   'Paid Social':     '#4A90D9',
-  'Display':         '#999999',
+  'Display':         '#9b9b94',
 }
 
 function StatCard({ icon: Icon, label, value, sub }) {
   return (
     <div
-      className="rounded-lg p-4 flex flex-col gap-1"
-      style={{ background: '#EDECEA', border: '1px solid #F0F0F0' }}
+      className="flex flex-col gap-1"
+      style={{ background: '#f0efe9', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12, padding: '14px 16px' }}
     >
-      <div className="flex items-center gap-1.5 text-xs font-medium" style={{ color: '#999999' }}>
+      <div className="flex items-center gap-1.5 text-xs font-medium" style={{ color: '#9b9b94' }}>
         <Icon size={12} />
         {label}
       </div>
-      <div className="text-2xl font-bold tabular-nums" style={{ color: '#1A1A1A' }}>
+      <div className="text-2xl font-bold tabular-nums" style={{ color: '#1a1a18', fontFamily: "'DM Mono', monospace" }}>
         {value}
       </div>
-      {sub && <div className="text-xs" style={{ color: '#999999' }}>{sub}</div>}
+      {sub && <div className="text-xs" style={{ color: '#9b9b94' }}>{sub}</div>}
     </div>
   )
 }
@@ -35,24 +35,23 @@ export default function GA4RealtimePanel() {
 
   return (
     <div
-      className="rounded-lg p-5"
-      style={{ background: '#FFFFFF', border: '1px solid #F0F0F0', boxShadow: '0 1px 3px 0 rgba(0,0,0,0.04)' }}
+      style={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12, padding: '14px 16px' }}
     >
       <div className="flex items-center justify-between mb-4">
         <div>
           <div
             className="text-sm font-medium"
-            style={{ fontFamily: '"Inter", system-ui, sans-serif', color: '#1A1A1A' }}
+            style={{ color: '#1a1a18' }}
           >
             Live Analytics
           </div>
-          <div className="text-xs mt-0.5" style={{ color: '#999999' }}>
+          <div className="text-xs mt-0.5" style={{ color: '#9b9b94' }}>
             Google Analytics 4 — Realtime
           </div>
         </div>
         <div className="flex items-center gap-2">
           {data?.fetchedAt && (
-            <span className="text-xs" style={{ color: '#C4BBB3' }}>
+            <span className="text-xs" style={{ color: '#9b9b94' }}>
               {new Date(data.fetchedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </span>
           )}
@@ -61,21 +60,21 @@ export default function GA4RealtimePanel() {
             disabled={loading}
             className="p-1.5 rounded-lg transition-colors"
             style={{
-              color: loading ? '#CCCCCC' : '#999999',
-              border: '1px solid #F0F0F0',
+              color: loading ? '#CCCCCC' : '#9b9b94',
+              border: '1px solid rgba(0,0,0,0.08)',
             }}
-            onMouseEnter={(e) => { if (!loading) { e.currentTarget.style.borderColor = '#1A1A1A'; e.currentTarget.style.color = '#1A1A1A' } }}
-            onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#F0F0F0'; e.currentTarget.style.color = loading ? '#CCCCCC' : '#999999' }}
+            onMouseEnter={(e) => { if (!loading) { e.currentTarget.style.borderColor = '#1a1a18'; e.currentTarget.style.color = '#1a1a18' } }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(0,0,0,0.08)'; e.currentTarget.style.color = loading ? '#CCCCCC' : '#9b9b94' }}
           >
             <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
           </button>
           <span
-            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium"
-            style={{ background: error ? '#FEF2F2' : '#F0FDF4', color: error ? '#DC2626' : '#16A34A' }}
+            className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium"
+            style={{ background: error ? '#FEF2F2' : '#F0FDF4', color: error ? '#dc2626' : '#16A34A', borderRadius: 20 }}
           >
             <span
               className="w-1.5 h-1.5 rounded-full"
-              style={{ background: error ? '#DC2626' : '#16A34A' }}
+              style={{ background: error ? '#dc2626' : '#16A34A' }}
             />
             {error ? 'Offline' : 'Live'}
           </span>
@@ -83,7 +82,7 @@ export default function GA4RealtimePanel() {
       </div>
 
       {error && !data ? (
-        <div className="text-xs py-8 text-center" style={{ color: '#999999' }}>
+        <div className="text-xs py-8 text-center" style={{ color: '#9b9b94' }}>
           {error}
         </div>
       ) : (
@@ -118,7 +117,7 @@ export default function GA4RealtimePanel() {
           {/* Channel breakdown */}
           {data?.channels?.length > 0 && (
             <div>
-              <div className="text-xs font-medium uppercase tracking-wide mb-2" style={{ color: '#999999' }}>
+              <div className="text-xs font-medium uppercase tracking-wide mb-2" style={{ color: '#9b9b94' }}>
                 Channel Breakdown
               </div>
               <div className="space-y-2">
@@ -126,12 +125,12 @@ export default function GA4RealtimePanel() {
                   const pct = data.todaySessions > 0
                     ? Math.round((ch.sessions / data.todaySessions) * 100)
                     : 0
-                  const color = CHANNEL_COLORS[ch.channel] || '#999999'
+                  const color = CHANNEL_COLORS[ch.channel] || '#9b9b94'
                   return (
                     <div key={ch.channel}>
                       <div className="flex justify-between text-xs mb-0.5">
-                        <span style={{ color: '#1A1A1A' }}>{ch.channel}</span>
-                        <span style={{ color: '#999999' }}>
+                        <span style={{ color: '#1a1a18' }}>{ch.channel}</span>
+                        <span style={{ color: '#9b9b94', fontFamily: "'DM Mono', monospace" }}>
                           {ch.sessions} sessions · {pct}%
                         </span>
                       </div>

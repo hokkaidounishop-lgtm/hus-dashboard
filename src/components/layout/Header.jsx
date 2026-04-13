@@ -17,28 +17,24 @@ export default function Header() {
 
   return (
     <header
-      className="px-8 py-5 flex items-center justify-between shrink-0"
-      style={{
-        background: '#FFFFFF',
-        borderBottom: '1px solid rgba(0,0,0,0.06)',
-      }}
+      className="px-4 sm:px-6 pt-6 pb-4 flex items-center justify-between shrink-0 mx-auto w-full"
+      style={{ maxWidth: 1120 }}
     >
       <div>
         <h1
           className="text-lg font-semibold leading-tight"
           style={{
-            fontFamily: 'Inter, system-ui, sans-serif',
-            color: '#1A1A1A',
+            color: '#1a1a18',
             letterSpacing: '-0.01em',
           }}
         >
           {label}
         </h1>
-        <p className="text-xs mt-0.5" style={{ color: '#999999' }}>{sub}</p>
+        <p className="text-xs mt-0.5" style={{ color: '#9b9b94' }}>{sub}</p>
       </div>
       <div
-        className="text-sm font-medium"
-        style={{ color: '#999999', letterSpacing: '0.01em' }}
+        className="text-sm font-medium font-mono"
+        style={{ color: '#9b9b94', letterSpacing: '0.01em', fontFamily: "'DM Mono', monospace" }}
       >
         {today}
       </div>

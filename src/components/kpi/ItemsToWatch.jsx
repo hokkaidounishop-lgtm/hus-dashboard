@@ -6,21 +6,21 @@ import { useApp } from '../../context/AppContext'
 const SEV = {
   critical: {
     icon: AlertTriangle,
-    leftBorder: '#C0392B',
-    badge: { bg: '#F5F5F5', color: '#C0392B' },
-    text: '#C0392B',
+    leftBorder: '#dc2626',
+    badge: { bg: '#f0efe9', color: '#dc2626' },
+    text: '#dc2626',
   },
   warning: {
     icon: TrendingDown,
-    leftBorder: '#1A1A1A',
-    badge: { bg: '#F5F5F5', color: '#1A1A1A' },
-    text: '#1A1A1A',
+    leftBorder: '#1a1a18',
+    badge: { bg: '#f0efe9', color: '#1a1a18' },
+    text: '#1a1a18',
   },
   info: {
     icon: Info,
-    leftBorder: '#999999',
-    badge: { bg: '#F5F5F5', color: '#999999' },
-    text: '#999999',
+    leftBorder: '#9b9b94',
+    badge: { bg: '#f0efe9', color: '#9b9b94' },
+    text: '#9b9b94',
   },
 }
 
@@ -30,22 +30,22 @@ function WatchItem({ item, onNavigate }) {
   return (
     <div
       className="rounded-lg p-4 flex gap-3"
-      style={{ background: '#FFFFFF', border: '1px solid #F0F0F0', borderLeft: `3px solid ${s.leftBorder}` }}
+      style={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.08)', borderLeft: `3px solid ${s.leftBorder}`, borderRadius: 12 }}
     >
       <Icon size={16} className="shrink-0 mt-0.5" style={{ color: s.text }} />
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2 flex-wrap">
-          <span className="text-sm font-medium" style={{ color: '#1A1A1A' }}>{item.product}</span>
+          <span className="text-sm font-medium" style={{ color: '#1a1a18' }}>{item.product}</span>
           <span
-            className="shrink-0 text-xs px-2 py-0.5 rounded-full font-medium"
-            style={{ background: s.badge.bg, color: s.badge.color }}
+            className="shrink-0 text-xs px-2 py-0.5 font-medium"
+            style={{ background: s.badge.bg, color: s.badge.color, borderRadius: 20 }}
           >
             {item.severity}
           </span>
         </div>
-        <p className="text-xs mt-0.5 leading-relaxed" style={{ color: '#999999' }}>{item.issue}</p>
+        <p className="text-xs mt-0.5 leading-relaxed" style={{ color: '#9b9b94' }}>{item.issue}</p>
         <div className="flex items-center gap-3 mt-2">
-          <span className="text-xs italic" style={{ color: '#999999' }}>{item.action}</span>
+          <span className="text-xs italic" style={{ color: '#9b9b94' }}>{item.action}</span>
           {item.linkedProject && (
             <button
               onClick={() => onNavigate?.('projects')}
@@ -150,11 +150,11 @@ export default function ItemsToWatch({ onNavigate }) {
     return (
       <div
         className="rounded-lg p-6 flex flex-col items-center gap-3 text-center"
-        style={{ background: '#FFFFFF', border: '1px solid #F0F0F0' }}
+        style={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12 }}
       >
-        <CheckCircle size={32} style={{ color: '#999999', opacity: 0.7 }} />
-        <div className="text-sm font-medium" style={{ color: '#1A1A1A' }}>Nothing to Watch</div>
-        <div className="text-xs" style={{ color: '#999999' }}>All products and KPIs are within healthy ranges.</div>
+        <CheckCircle size={32} style={{ color: '#9b9b94', opacity: 0.7 }} />
+        <div className="text-sm font-medium" style={{ color: '#1a1a18' }}>Nothing to Watch</div>
+        <div className="text-xs" style={{ color: '#9b9b94' }}>All products and KPIs are within healthy ranges.</div>
       </div>
     )
   }
@@ -162,17 +162,17 @@ export default function ItemsToWatch({ onNavigate }) {
   return (
     <div
       className="rounded-lg overflow-hidden"
-      style={{ background: '#FFFFFF', border: '1px solid #F0F0F0', boxShadow: '0 1px 4px 0 rgba(26,18,8,0.05)' }}
+      style={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12 }}
     >
-      <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid #F0F0F0' }}>
+      <div className="flex items-center justify-between" style={{ padding: '14px 16px', borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
         <div>
           <div
             className="text-sm font-medium"
-            style={{ fontFamily: '"Inter", system-ui, sans-serif', color: '#1A1A1A' }}
+            style={{ color: '#1a1a18' }}
           >
             Items to Watch
           </div>
-          <div className="text-xs mt-0.5" style={{ color: '#999999' }}>Auto-generated from live product and KPI data</div>
+          <div className="text-xs mt-0.5" style={{ color: '#9b9b94' }}>Auto-generated from live product and KPI data</div>
         </div>
         <div className="flex gap-1.5 text-xs">
           {['critical', 'warning', 'info'].map((sev) => {
@@ -181,8 +181,8 @@ export default function ItemsToWatch({ onNavigate }) {
             return (
               <span
                 key={sev}
-                className="px-2 py-0.5 rounded-full font-medium"
-                style={{ background: SEV[sev].badge.bg, color: SEV[sev].badge.color }}
+                className="px-2 py-0.5 font-medium"
+                style={{ background: SEV[sev].badge.bg, color: SEV[sev].badge.color, borderRadius: 20 }}
               >
                 {count} {sev}
               </span>

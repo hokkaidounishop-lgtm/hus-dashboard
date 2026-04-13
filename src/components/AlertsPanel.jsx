@@ -8,24 +8,27 @@ const TODAY = new Date().toISOString().slice(0, 10)
 const SEVERITY = {
   critical: {
     icon: AlertTriangle,
-    leftBorder: '#C0392B',
-    text: '#C0392B',
-    badge: { bg: '#F5F5F5', color: '#C0392B' },
-    dot: '#C0392B',
+    leftBorder: '#dc2626',
+    text: '#dc2626',
+    badge: { bg: '#fee2e2', color: '#dc2626' },
+    dot: '#dc2626',
+    cardBg: '#fee2e2',
   },
   warning: {
     icon: Clock,
-    leftBorder: '#1A1A1A',
-    text: '#1A1A1A',
-    badge: { bg: '#F5F5F5', color: '#1A1A1A' },
-    dot: '#1A1A1A',
+    leftBorder: '#1a1a18',
+    text: '#1a1a18',
+    badge: { bg: '#f0efe9', color: '#1a1a18' },
+    dot: '#1a1a18',
+    cardBg: '#fef3c7',
   },
   info: {
     icon: PauseCircle,
-    leftBorder: '#999999',
-    text: '#999999',
-    badge: { bg: '#F5F5F5', color: '#999999' },
-    dot: '#999999',
+    leftBorder: '#9b9b94',
+    text: '#9b9b94',
+    badge: { bg: '#f0efe9', color: '#9b9b94' },
+    dot: '#9b9b94',
+    cardBg: '#f0efe9',
   },
 }
 
@@ -35,21 +38,26 @@ function AlertCard({ alert, onNavigate }) {
 
   return (
     <div
-      className="rounded-lg p-4 flex gap-3"
-      style={{ background: '#FFFFFF', border: '1px solid #F0F0F0', borderLeft: `3px solid ${s.leftBorder}` }}
+      className="rounded-xl flex gap-3"
+      style={{
+        borderRadius: 12,
+        padding: '14px 16px',
+        background: s.cardBg,
+        borderLeft: `3px solid ${s.leftBorder}`,
+      }}
     >
       <Icon size={17} className="shrink-0 mt-0.5" style={{ color: s.text }} />
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
-          <div className="text-sm font-medium" style={{ color: '#1A1A1A' }}>{alert.title}</div>
+          <div className="text-sm font-medium" style={{ color: '#1a1a18' }}>{alert.title}</div>
           <span
-            className="shrink-0 px-2 py-0.5 rounded-full text-xs font-medium"
-            style={{ background: s.badge.bg, color: s.badge.color }}
+            className="shrink-0 px-2 py-0.5 text-xs font-medium"
+            style={{ borderRadius: 20, background: s.badge.bg, color: s.badge.color }}
           >
             {alert.severity}
           </span>
         </div>
-        <p className="text-xs mt-1 leading-relaxed" style={{ color: '#999999' }}>{alert.description}</p>
+        <p className="text-xs mt-1 leading-relaxed" style={{ color: '#9b9b94' }}>{alert.description}</p>
         {alert.action && (
           <button
             onClick={() => onNavigate && onNavigate(alert.link)}
@@ -70,14 +78,14 @@ function Section({ title, count, children }) {
       <div className="flex items-center gap-2">
         <h3
           className="text-sm font-medium"
-          style={{ fontFamily: '"Inter", system-ui, sans-serif', color: '#1A1A1A' }}
+          style={{ color: '#1a1a18' }}
         >
           {title}
         </h3>
         {count > 0 && (
           <span
-            className="text-xs font-bold px-2 py-0.5 rounded-full"
-            style={{ background: '#F5F5F5', color: '#999999' }}
+            className="text-xs font-bold px-2 py-0.5"
+            style={{ borderRadius: 20, background: '#f0efe9', color: '#9b9b94' }}
           >
             {count}
           </span>
@@ -183,23 +191,23 @@ export default function AlertsPanel() {
   if (total === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-4">
-        <CheckCircle size={48} style={{ color: '#999999', opacity: 0.7 }} />
+        <CheckCircle size={48} style={{ color: '#9b9b94', opacity: 0.7 }} />
         <div className="text-center">
           <div
             className="text-lg font-medium"
-            style={{ fontFamily: '"Inter", system-ui, sans-serif', color: '#1A1A1A' }}
+            style={{ color: '#1a1a18' }}
           >
             All Clear
           </div>
-          <div className="text-sm mt-1" style={{ color: '#999999' }}>No active alerts. Everything looks good.</div>
+          <div className="text-sm mt-1" style={{ color: '#9b9b94' }}>No active alerts. Everything looks good.</div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-8">
-      <div className="text-xs" style={{ color: '#999999' }}>
+    <div className="space-y-3">
+      <div className="text-xs" style={{ color: '#9b9b94' }}>
         {total} active alert{total !== 1 ? 's' : ''} — auto-computed from live data
       </div>
 

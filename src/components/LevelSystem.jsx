@@ -3,10 +3,18 @@ import { Trophy, TrendingUp, CheckSquare, Target, Layers, DollarSign, Zap } from
 import { useApp } from '../context/AppContext'
 import { computeHUSLevel, LEVEL_DEFINITIONS } from '../config/levelSystem'
 
+const LEVEL_COLORS = {
+  1: '#9b9b94',
+  2: '#1a1a18',
+  3: '#2563eb',
+  4: '#0d9488',
+  5: '#1a1a18',
+}
+
 const BREAKDOWN_CONFIG = {
-  revenue:      { label: 'Revenue Achievement',   icon: TrendingUp, color: '#1A1A1A' },
-  cvr:          { label: 'CVR Achievement',        icon: Target,     color: '#C0392B' },
-  taskComplete: { label: 'Task Completion',        icon: CheckSquare, color: '#3D7A5C' },
+  revenue:      { label: 'Revenue Achievement',   icon: TrendingUp, color: '#1a1a18' },
+  cvr:          { label: 'CVR Achievement',        icon: Target,     color: '#dc2626' },
+  taskComplete: { label: 'Task Completion',        icon: CheckSquare, color: '#16a34a' },
   projectAvg:   { label: 'Project Progress',       icon: Layers,     color: '#2D5B6B' },
   aov:          { label: 'AOV Achievement',         icon: DollarSign, color: '#7C5CFC' },
 }
@@ -30,10 +38,12 @@ export default function LevelSystem() {
 
   return (
     <div
-      className="rounded-lg overflow-hidden"
+      className="overflow-hidden"
       style={{
-        background: '#FFFFFF',
+        background: '#ffffff',
         border: '1px solid rgba(0,0,0,0.06)',
+        borderRadius: 12,
+        padding: '14px 16px',
       }}
     >
       <div className="p-6">
@@ -44,11 +54,11 @@ export default function LevelSystem() {
               className="w-8 h-8 rounded-lg flex items-center justify-center"
               style={{ background: 'rgba(0,0,0,0.04)' }}
             >
-              <Trophy size={15} style={{ color: '#666666' }} />
+              <Trophy size={15} style={{ color: '#6b6b66' }} />
             </div>
             <h3
               className="text-sm font-medium"
-              style={{ color: '#1A1A1A' }}
+              style={{ color: '#1a1a18' }}
             >
               HUS Level System
             </h3>
@@ -58,24 +68,25 @@ export default function LevelSystem() {
             style={{
               background: 'rgba(0,0,0,0.04)',
               border: '1px solid rgba(0,0,0,0.06)',
+              borderRadius: 20,
             }}
           >
-            <Zap size={11} style={{ color: '#1A1A1A' }} />
-            <span className="text-xs font-semibold" style={{ color: '#1A1A1A' }}>
+            <Zap size={11} style={{ color: '#1a1a18' }} />
+            <span className="text-xs font-semibold" style={{ color: '#1a1a18', fontFamily: "'DM Mono', monospace" }}>
               Score: {score}/100
             </span>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {/* Left — current level & progress */}
           <div>
             <div className="flex items-baseline gap-2.5 mb-1.5">
               <span
                 className="text-4xl font-bold"
                 style={{
-                  color: '#1A1A1A',
-                  fontFamily: 'Inter, system-ui, sans-serif',
+                  color: LEVEL_COLORS[level.level] || '#1a1a18',
+                  fontFamily: "'DM Mono', monospace",
                   lineHeight: 1,
                 }}
               >
@@ -83,25 +94,25 @@ export default function LevelSystem() {
               </span>
               <span
                 className="text-base font-medium"
-                style={{ color: '#1A1A1A' }}
+                style={{ color: '#1a1a18' }}
               >
                 {level.name}
               </span>
             </div>
 
-            <div className="text-xs mb-5" style={{ color: '#999999' }}>
+            <div className="text-xs mb-5" style={{ color: '#9b9b94' }}>
               Overall Score:{' '}
-              <span style={{ color: '#1A1A1A', fontWeight: 600 }}>
+              <span style={{ color: '#1a1a18', fontWeight: 600, fontFamily: "'DM Mono', monospace" }}>
                 {score}
               </span>
               /100
             </div>
 
             {/* Progress bar */}
-            <div className="flex justify-between text-xs mb-2" style={{ color: '#999999' }}>
+            <div className="flex justify-between text-xs mb-2" style={{ color: '#9b9b94' }}>
               <span>Lv.{level.level} {level.name}</span>
               {nextLevel && <span>Lv.{nextLevel.level} {nextLevel.name}</span>}
-              {isMaxLevel && <span style={{ color: '#1A1A1A' }}>MAX</span>}
+              {isMaxLevel && <span style={{ color: '#1a1a18' }}>MAX</span>}
             </div>
             <div
               className="w-full h-3 rounded-full overflow-hidden relative"
@@ -111,7 +122,7 @@ export default function LevelSystem() {
                 className="h-full rounded-full relative"
                 style={{
                   width: `${progressPct}%`,
-                  background: '#1A1A1A',
+                  background: LEVEL_COLORS[level.level] || '#1a1a18',
                   transition: 'width 0.7s ease',
                 }}
               >
@@ -126,9 +137,9 @@ export default function LevelSystem() {
 
             {nextLevel ? (
               <div className="flex items-center gap-1.5 mt-2.5">
-                <Target size={11} style={{ color: '#999999' }} />
-                <span className="text-xs" style={{ color: '#999999' }}>
-                  <span style={{ color: '#1A1A1A', fontWeight: 600 }}>
+                <Target size={11} style={{ color: '#9b9b94' }} />
+                <span className="text-xs" style={{ color: '#9b9b94' }}>
+                  <span style={{ color: '#1a1a18', fontWeight: 600, fontFamily: "'DM Mono', monospace" }}>
                     {pointsToNext} points
                   </span>{' '}
                   to next level
@@ -137,7 +148,7 @@ export default function LevelSystem() {
             ) : (
               <div
                 className="text-xs font-semibold uppercase tracking-widest mt-2.5 flex items-center gap-2"
-                style={{ color: '#1A1A1A', letterSpacing: '0.15em' }}
+                style={{ color: '#1a1a18', letterSpacing: '0.15em' }}
               >
                 MAXIMUM LEVEL ACHIEVED
               </div>
@@ -154,7 +165,7 @@ export default function LevelSystem() {
           >
             <div
               className="text-xs font-semibold uppercase tracking-wide mb-3"
-              style={{ color: '#1A1A1A', letterSpacing: '0.10em' }}
+              style={{ color: '#1a1a18', letterSpacing: '0.10em' }}
             >
               Score Breakdown
             </div>
@@ -173,17 +184,17 @@ export default function LevelSystem() {
                         >
                           <Icon size={11} style={{ color: config.color }} />
                         </div>
-                        <span className="text-xs truncate" style={{ color: '#666666' }}>
+                        <span className="text-xs truncate" style={{ color: '#6b6b66' }}>
                           {config.label}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-xs tabular-nums" style={{ color: '#999999' }}>
+                        <span className="text-xs tabular-nums" style={{ color: '#9b9b94', fontFamily: "'DM Mono', monospace" }}>
                           {ratePct}%
                         </span>
                         <span
                           className="text-xs font-bold tabular-nums px-1.5 py-0.5 rounded-full"
-                          style={{ background: 'rgba(0,0,0,0.04)', color: '#1A1A1A', minWidth: 28, textAlign: 'center' }}
+                          style={{ background: 'rgba(0,0,0,0.04)', color: '#1a1a18', minWidth: 28, textAlign: 'center', fontFamily: "'DM Mono', monospace" }}
                         >
                           +{data.weighted}
                         </span>
@@ -212,7 +223,7 @@ export default function LevelSystem() {
               className="mt-3 pt-3 flex items-center justify-between"
               style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}
             >
-              <span className="text-xs" style={{ color: '#999999' }}>
+              <span className="text-xs" style={{ color: '#9b9b94' }}>
                 Weights: Rev 30% / CVR 20% / Tasks 20% / Projects 20% / AOV 10%
               </span>
             </div>

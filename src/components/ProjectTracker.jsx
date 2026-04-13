@@ -5,12 +5,12 @@ import Modal from './Modal'
 import { useApp } from '../context/AppContext'
 
 const STATUS_CFG = {
-  'on-track':  { label: 'On Track',  bg: '#F5F5F5', color: '#999999' },
-  'active':    { label: 'Active',    bg: '#F5F5F5', color: '#999999' },
-  'planning':  { label: 'Planning',  bg: '#F5F5F5', color: '#999999' },
-  'behind':    { label: 'Behind',    bg: '#F5F5F5', color: '#C0392B' },
-  'stalled':   { label: 'Stalled',   bg: '#F5F5F5', color: '#C0392B' },
-  'completed': { label: 'Completed', bg: '#F5F5F5', color: '#999999' },
+  'on-track':  { label: 'On Track',  bg: '#dbeafe', color: '#1e40af' },
+  'active':    { label: 'Active',    bg: '#dbeafe', color: '#1e40af' },
+  'planning':  { label: 'Planning',  bg: '#f0efe9', color: '#6b6b66' },
+  'behind':    { label: 'Behind',    bg: '#fee2e2', color: '#b91c1c' },
+  'stalled':   { label: 'Stalled',   bg: '#fee2e2', color: '#b91c1c' },
+  'completed': { label: 'Completed', bg: '#dcfce7', color: '#15803d' },
 }
 
 const BLANK = {
@@ -74,20 +74,19 @@ function ProjectCard({ project, onEdit, onDelete }) {
 
   return (
     <div
-      className="rounded-lg p-5 flex flex-col gap-4 group transition-all cursor-default"
+      className="flex flex-col gap-3 group transition-all cursor-default"
       style={{
-        background: '#FFFFFF',
-        border: '1px solid #F0F0F0',
-        borderLeft: isCritical ? '3px solid #C0392B' : undefined,
-        boxShadow: '0 1px 3px 0 rgba(0,0,0,0.04)',
+        background: '#ffffff',
+        border: '1px solid rgba(0,0,0,0.08)',
+        borderLeft: isCritical ? '3px solid #dc2626' : undefined,
+        borderRadius: 12,
+        padding: '14px 16px',
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.borderColor = '#E0E0E0'
-        e.currentTarget.style.boxShadow = '0 3px 12px 0 rgba(0,0,0,0.06)'
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = '#F0F0F0'
-        e.currentTarget.style.boxShadow = '0 1px 3px 0 rgba(0,0,0,0.04)'
+        e.currentTarget.style.borderColor = 'rgba(0,0,0,0.08)'
       }}
     >
       {/* Header */}
@@ -95,28 +94,28 @@ function ProjectCard({ project, onEdit, onDelete }) {
         <div className="flex-1 min-w-0">
           <div
             className="font-medium text-sm leading-snug"
-            style={{ fontFamily: '"Inter", system-ui, sans-serif', color: '#1A1A1A' }}
+            style={{ color: '#1a1a18' }}
           >
             {project.name}
           </div>
-          <div className="text-xs mt-0.5" style={{ color: '#999999' }}>{project.owner}</div>
+          <div className="text-xs mt-0.5" style={{ color: '#9b9b94' }}>{project.owner}</div>
         </div>
         <span
-          className="shrink-0 px-2 py-0.5 rounded-full text-xs font-medium"
-          style={{ background: s.bg, color: s.color }}
+          className="shrink-0 px-2 py-0.5 text-xs font-medium"
+          style={{ background: s.bg, color: s.color, borderRadius: 20 }}
         >
           {s.label}
         </span>
       </div>
 
       {/* Description */}
-      <p className="text-xs leading-relaxed line-clamp-2" style={{ color: '#999999' }}>{project.description}</p>
+      <p className="text-xs leading-relaxed line-clamp-2" style={{ color: '#9b9b94' }}>{project.description}</p>
 
       {/* KPIs */}
       {project.kpis && (
         <div
           className="text-xs rounded-lg px-3 py-2 font-medium leading-relaxed"
-          style={{ background: '#F5F5F5', color: '#999999', border: '1px solid #F0F0F0' }}
+          style={{ background: '#f0efe9', color: '#9b9b94', border: '1px solid rgba(0,0,0,0.08)' }}
         >
           {project.kpis}
         </div>
@@ -124,9 +123,9 @@ function ProjectCard({ project, onEdit, onDelete }) {
 
       {/* Progress */}
       <div>
-        <div className="flex justify-between text-xs mb-1.5" style={{ color: '#999999' }}>
+        <div className="flex justify-between text-xs mb-1.5" style={{ color: '#9b9b94' }}>
           <span>Progress</span>
-          <span className="font-medium" style={{ color: '#999999' }}>{project.progress}%</span>
+          <span className="font-medium" style={{ color: '#9b9b94', fontFamily: "'DM Mono', monospace" }}>{project.progress}%</span>
         </div>
         <div className="progress-bar">
           <div className="progress-bar-fill" style={{ width: `${project.progress}%` }} />
@@ -135,25 +134,25 @@ function ProjectCard({ project, onEdit, onDelete }) {
 
       {/* Footer */}
       <div className="flex items-center justify-between">
-        <div className="text-xs" style={{ color: isOverdue ? '#C0392B' : '#999999', fontWeight: isOverdue ? 500 : 400 }}>
+        <div className="text-xs" style={{ color: isOverdue ? '#dc2626' : '#9b9b94', fontWeight: isOverdue ? 500 : 400 }}>
           {isOverdue ? '⚠ Overdue · ' : 'Due '}{dueFormatted}
         </div>
         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
             onClick={() => onEdit(project)}
             className="p-1.5 rounded-lg transition-colors"
-            style={{ color: '#C4BBB3' }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.05)'; e.currentTarget.style.color = '#1A1A1A' }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#C4BBB3' }}
+            style={{ color: '#9b9b94' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.05)'; e.currentTarget.style.color = '#1a1a18' }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#9b9b94' }}
           >
             <Edit2 size={13} />
           </button>
           <button
             onClick={() => onDelete(project.id)}
             className="p-1.5 rounded-lg transition-colors"
-            style={{ color: '#C4BBB3' }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(192,57,43,0.08)'; e.currentTarget.style.color = '#C0392B' }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#C4BBB3' }}
+            style={{ color: '#9b9b94' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(220,38,38,0.08)'; e.currentTarget.style.color = '#dc2626' }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#9b9b94' }}
           >
             <Trash2 size={13} />
           </button>
@@ -188,7 +187,7 @@ export default function ProjectTracker() {
   )
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-3">
       {/* Toolbar */}
       <div className="flex items-center justify-between">
         <div className="flex gap-2 flex-wrap">
@@ -198,8 +197,8 @@ export default function ProjectTracker() {
             return (
               <span
                 key={k}
-                className="px-2.5 py-1 rounded-full text-xs font-medium"
-                style={{ background: v.bg, color: v.color }}
+                className="px-2.5 py-1 text-xs font-medium"
+                style={{ background: v.bg, color: v.color, borderRadius: 20 }}
               >
                 {v.label} · {count}
               </span>
@@ -215,7 +214,7 @@ export default function ProjectTracker() {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3">
         {sorted.map((p) => (
           <ProjectCard key={p.id} project={p} onEdit={openEdit} onDelete={handleDelete} />
         ))}
@@ -231,7 +230,7 @@ export default function ProjectTracker() {
         {modal && (
           <>
             <ProjectForm value={modal.data} onChange={(data) => setModal((m) => ({ ...m, data }))} />
-            <div className="flex gap-2 justify-end mt-6 pt-4" style={{ borderTop: '1px solid #F0F0F0' }}>
+            <div className="flex gap-2 justify-end mt-6 pt-4" style={{ borderTop: '1px solid rgba(0,0,0,0.08)' }}>
               <button onClick={closeModal} className="btn-ghost">Cancel</button>
               <button onClick={handleSave} className="btn-primary">
                 {modal.mode === 'add' ? 'Add Project' : 'Save Changes'}

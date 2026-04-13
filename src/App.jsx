@@ -17,23 +17,24 @@ function ShopifyAlertBanner() {
     <div
       className="flex items-center gap-3 px-5 py-3 text-sm"
       style={{
-        background: '#FEF2F2',
-        borderBottom: '1px solid #FECACA',
-        color: '#991B1B',
+        background: '#fee2e2',
+        borderBottom: '1px solid rgba(0,0,0,0.08)',
+        color: '#b91c1c',
       }}
     >
-      <AlertTriangle size={16} className="shrink-0" style={{ color: '#DC2626' }} />
+      <AlertTriangle size={16} className="shrink-0" style={{ color: '#dc2626' }} />
       <span className="flex-1">
         <strong>Shopify Sync Failed</strong> — {shopifySync.error}
       </span>
       <button
         onClick={syncShopify}
         disabled={shopifySync.loading}
-        className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-lg transition-colors"
+        className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 transition-colors"
         style={{
-          background: '#FFFFFF',
-          border: '1px solid #FECACA',
-          color: '#DC2626',
+          borderRadius: 8,
+          background: '#ffffff',
+          border: '1px solid rgba(0,0,0,0.08)',
+          color: '#dc2626',
           cursor: shopifySync.loading ? 'not-allowed' : 'pointer',
           opacity: shopifySync.loading ? 0.6 : 1,
         }}
@@ -43,9 +44,9 @@ function ShopifyAlertBanner() {
       </button>
       <button
         onClick={dismissShopifyError}
-        className="p-1 rounded-lg transition-colors"
-        style={{ color: '#991B1B' }}
-        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(153,27,27,0.1)' }}
+        className="p-1 transition-colors"
+        style={{ color: '#b91c1c', borderRadius: 8 }}
+        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(185,28,28,0.1)' }}
         onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
       >
         <X size={14} />
@@ -57,10 +58,13 @@ function ShopifyAlertBanner() {
 function MainContent() {
   const { activeSection } = useApp()
   return (
-    <div className="flex-1 flex flex-col min-w-0 min-h-screen" style={{ background: '#EDECEA' }}>
+    <div className="flex-1 flex flex-col min-w-0" style={{ background: '#f5f4f0' }}>
       <ShopifyAlertBanner />
       <Header />
-      <main className="flex-1 p-7 overflow-auto">
+      <main
+        className="flex-1 py-6 px-4 sm:px-6 overflow-auto mx-auto w-full"
+        style={{ maxWidth: 1120 }}
+      >
         {activeSection === 'briefing'  && <MorningBriefing />}
         {activeSection === 'dashboard' && <KPIDashboard />}
         {activeSection === 'projects'  && <ProjectTracker />}
@@ -74,7 +78,7 @@ function MainContent() {
 
 export default function App() {
   return (
-    <div className="flex min-h-screen" style={{ background: '#EDECEA' }}>
+    <div className="flex flex-col min-h-screen" style={{ background: '#f5f4f0' }}>
       <Sidebar />
       <MainContent />
     </div>

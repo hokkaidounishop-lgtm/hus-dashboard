@@ -4,12 +4,12 @@
     "name": "CVR Recovery",
     "description": "Address Shopify conversion rate crisis. Optimize product pages, checkout flow, and launch DropShip Meta ads campaign to drive qualified traffic.",
     "status": "ACTIVE",
-    "owner": "飛べない豚",
+    "owner": "Tad",
     "kpis": "CVR目標3.0% | ATC率改善（現状5.3%） | チェックアウト完了率改善（現状28.9%） | ROAS ≥ 2.5x | CPM &lt; $18",
     "deliverables": "PDP redesign, checkout UX audit, Meta ads creative library, A/B test framework",
     "startDate": "2026-01-15",
     "dueDate": "2026-06-30",
-    "progress": 35,
+    "progress": 42,
     "blocks": [
       {
         "name": "Shopify Product & Collection Updates",
@@ -55,6 +55,75 @@
             "status": "pending"
           }
         ]
+      },
+      {
+        "name": "週次アップデート 2026-04-05",
+        "items": [
+          {
+            "id": "blk-1775426681433",
+            "text": "チェックアウト到達率 0.55% → 2.08% 改善確認済み",
+            "status": "done",
+            "completedAt": "2026-04-05"
+          },
+          {
+            "id": "blk-1775426682002",
+            "text": "チェックアウト完了率 41.9% → 28.9%（要改善）",
+            "status": "done",
+            "completedAt": "2026-04-05"
+          },
+          {
+            "id": "blk-1775426682861",
+            "text": "ATC率5.3%が根本問題と特定（MIDA実証済み・2,054セッション中108件のみカート追加）",
+            "status": "done",
+            "completedAt": "2026-04-05"
+          },
+          {
+            "id": "blk-1775426684207",
+            "text": "施策完了：PDP改善・カートクロスセル30商品・Goalify修正・送料表記統一・FAQ更新",
+            "status": "done",
+            "completedAt": "2026-04-05"
+          },
+          {
+            "id": "blk-1775426684915",
+            "text": "🔴 来週最優先：Gokujo PDP ATCコピー追加・MIDA Survey設置・Ora King URL修正",
+            "status": "pending",
+            "completedAt": null
+          }
+        ]
+      },
+      {
+        "name": "DropShip 4/10 MTG",
+        "items": [
+          {
+            "id": "blk-1775824248183",
+            "text": "4/10 MTG完了。25%OFFクーポン（$600→$400）テスト開始。4月結果で6ヶ月の最終判断。次回MTG 4/20。",
+            "status": "done",
+            "completedAt": "2026-04-10"
+          }
+        ]
+      },
+      {
+        "name": "週次アップデート 2026-04-11",
+        "items": [
+          {
+            "id": "blk-1775949790472",
+            "text": "Uni Grade Chart → 5 PDP全部完了 ✅",
+            "status": "done",
+            "completedAt": "2026-04-11"
+          },
+          {
+            "id": "blk-1775949794239",
+            "text": "PDP description 新フォーマット（4セクション）・Taste/Color/Shape修正・UX監査10箇所以上対応・typo修正・alt text全8商品完了 ✅",
+            "status": "done",
+            "completedAt": "2026-04-11"
+          },
+          {
+            "id": "blk-1775949797305",
+            "text": "ブログ2本（Grade Guide + Nemuro）・Hanko PNG作成・バッジ設計完了 ✅",
+            "status": "done",
+            "completedAt": "2026-04-11"
+          }
+        ]
       }
     ],
     "followups": [
@@ -71,7 +140,7 @@
     "name": "The Core Project",
     "description": "Japanese equity crowdfunding campaign on FUNDINNO platform. Target ¥30–50M to fund US expansion and new product lines.",
     "status": "on-track",
-    "owner": "Yuki Tanaka",
+    "owner": "Tad",
     "kpis": "¥30M minimum raise | 200+ investors | Campaign live by Q3",
     "deliverables": "Business plan (JP), financials deck, FUNDINNO listing, investor FAQ, video pitch",
     "startDate": "2026-02-01",
@@ -82,32 +151,66 @@
     "id": "proj-003",
     "name": "EU Hamachi Project",
     "description": "Source and list new Tsushima Island premium seafood: conger eel (anago), nodoguro (blackthroat seaperch), and tilefish (amadai). Coordinate with Tsushima Fisheries Co-op.",
-    "status": "planning",
-    "owner": "Hiroshi Fujita",
+    "status": "ACTIVE",
+    "owner": "Tad",
     "kpis": "3 new SKUs live | AOV uplift +$40 | 50 units/mo per SKU",
     "deliverables": "Supplier contracts, compliance docs, product photography, listing copy, cold-chain logistics",
     "startDate": "2026-03-01",
     "dueDate": "2026-07-15",
-    "progress": 15
+    "progress": 100,
+    "blocks": [
+      {
+        "name": "UK市場調査",
+        "items": [
+          {
+            "id": "blk-1775728278896",
+            "text": "4/8 担当者MTG実施。UK持ち込み可能性50/50。次のアクション待ち。",
+            "status": "done",
+            "completedAt": "2026-04-09"
+          }
+        ]
+      }
+    ],
+    "followups": [
+      {
+        "id": "fu-1775728282571",
+        "text": "UK Hamamchi案件：50/50。担当者からの次のアクション待ち。進展があり次第Tadに報告。",
+        "addedAt": "2026-04-09",
+        "status": "pending"
+      }
+    ]
   },
   {
     "id": "proj-004",
     "name": "Yumemakura Tea Recovery",
     "description": "Revive sales of Michino-ku Bussan herbal tea line. Identify root cause of drop (positioning, price, SEO) and execute recovery plan.",
     "status": "stalled",
-    "owner": "Aiko Sato",
+    "owner": "Tad",
     "kpis": "10 units/mo by Q3 | 3.5★ avg review | $1,200/mo revenue",
     "deliverables": "Root cause analysis, repricing strategy, new listing copy, influencer outreach, bundle offer",
     "startDate": "2026-01-20",
     "dueDate": "2026-08-31",
-    "progress": 10
+    "progress": 0,
+    "blocks": [
+      {
+        "name": "General",
+        "items": [
+          {
+            "id": "blk-1775470094818",
+            "text": "夢まくらプロジェクト規定書を設定する",
+            "status": "pending",
+            "completedAt": null
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "proj-005",
     "name": "The Tuna Show",
     "description": "Luxury tuna cutting (kaihatsu) event series for high-net-worth clients in NYC. Target $60K–100K revenue per event with premium experience packages.",
     "status": "active",
-    "owner": "Kenji Nakamura",
+    "owner": "Tad",
     "kpis": "$80K avg revenue/event | 40+ guests | 90% satisfaction score",
     "deliverables": "Event concept deck, venue shortlist, chef partnerships, ticket pricing, sponsorship deck, PR strategy",
     "startDate": "2026-02-15",
@@ -119,7 +222,7 @@
     "name": "EU Uni Project",
     "description": "Expand HUS premium seafood into UK and EU markets. Establish Hokkaido uni distribution into top European cities (Paris, London, Amsterdam) while coordinating CITES compliance, APHA import permits, EU food safety certification (HACCP/EC), and cold-chain logistics.",
     "status": "planning",
-    "owner": "Emma Clarke",
+    "owner": "Pino",
     "kpis": "15 SKUs cleared for UK/EU | 3 EU distributor agreements | 200kg/mo uni volume | Logistics cost < 22% of AOV | Q4 launch",
     "deliverables": "Compliance checklist, APHA documentation, EU food safety certification, UK/EU pricing model, distributor shortlist, pilot shipment plan, landing page",
     "startDate": "2026-03-10",
@@ -168,7 +271,7 @@
     "name": "Order Audit System",
     "description": "Build automated system to detect missed or recurring order anomalies. Flag customers with missed subscription orders, partial fulfillments, and loyalty drop patterns.",
     "status": "on-track",
-    "owner": "Dev Team",
+    "owner": "ナランチャ",
     "kpis": "100% order coverage | < 2hr alert latency | Zero missed repeat orders",
     "deliverables": "Shopify webhook integration, audit dashboard, Slack alert bot, weekly report email",
     "startDate": "2026-02-10",
@@ -185,7 +288,7 @@
     "deliverables": "Freshline SKU alignment, bulk price upload, new account outreach",
     "startDate": "2026-03-26",
     "dueDate": "2026-12-31",
-    "progress": 22,
+    "progress": 25,
     "blocks": [
       {
         "name": "General",
@@ -273,6 +376,12 @@
             "text": "Hotate spot offer sheet (EN + JP) — FOB Tokyo, ¥6,390/kg, 1MT, prepaid ✅",
             "status": "done",
             "completedAt": "2026-04-03"
+          },
+          {
+            "id": "blk-1775427699642",
+            "text": "Freshline返信送付完了",
+            "status": "done",
+            "completedAt": "2026-04-05"
           }
         ]
       },
@@ -296,6 +405,24 @@
             "text": "ホタテ規定書 → バイヤー3件にメール送付（今週中）→ 月曜電話クローズ",
             "status": "pending",
             "completedAt": null
+          },
+          {
+            "id": "blk-1775427386636",
+            "text": "ホタテ規定書3件メール送付 → 脳汁担当・今週中・月曜Tadがクローズ",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775484736976",
+            "text": "ホタテ規定書 → 鶴崎様へ送付完了・価格¥7,200/kg・1MT・FOB東京・期限4/13・サンプル提供可・返答待ち",
+            "status": "done",
+            "completedAt": "2026-04-06"
+          },
+          {
+            "id": "blk-1775484745464",
+            "text": "鶴崎様フォローアップ → 4/13期限・返答次第でTadがクローズ・サンプル要請あれば東京住所取得",
+            "status": "followup",
+            "completedAt": null
           }
         ]
       },
@@ -309,6 +436,31 @@
             "completedAt": "2026-04-05"
           }
         ]
+      },
+      {
+        "name": "今週のアクション",
+        "items": [
+          {
+            "id": "blk-1775487182618",
+            "text": "Yohei連絡",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775487185013",
+            "text": "Maguro Interに連絡",
+            "status": "pending",
+            "completedAt": null
+          }
+        ]
+      }
+    ],
+    "followups": [
+      {
+        "id": "fu-1775634155453",
+        "text": "B2B請求書送付の自動化を検討 — Freshline API or Shopify連携。ナランチャに実現可能性を調査させる。",
+        "addedAt": "2026-04-08",
+        "status": "pending"
       }
     ]
   },
@@ -322,7 +474,7 @@
     "deliverables": "NY customer acquisition campaigns, shipping cost optimization analysis, Shopify product improvements",
     "startDate": "2026-03-29",
     "dueDate": "2026-12-31",
-    "progress": 35,
+    "progress": 41,
     "blocks": [
       {
         "name": "Tasks",
@@ -463,6 +615,12 @@
             "text": "HUS Creative OS defined — Apple-like color system: #2D2D2D / #C9A96E / #EBEBEB ✅",
             "status": "done",
             "completedAt": "2026-04-03"
+          },
+          {
+            "id": "blk-1775470097926",
+            "text": "ダッシュボード続き → 時間があれば（GA4キー投入・次バッチ）",
+            "status": "pending",
+            "completedAt": null
           }
         ]
       },
@@ -711,6 +869,12 @@
             "text": "Mailchimp 4,000件リスト活用 → 脳汁担当・今週中・CVR改善直結・休眠顧客再活性化",
             "status": "pending",
             "completedAt": null
+          },
+          {
+            "id": "blk-1775427704600",
+            "text": "Mailchimp 4,000件リスト活用 → 脳汁担当・今週中・CVR改善直結・休眠顧客再活性化",
+            "status": "pending",
+            "completedAt": null
           }
         ]
       },
@@ -735,6 +899,115 @@
             "completedAt": null
           }
         ]
+      },
+      {
+        "name": "チーム体制",
+        "items": [
+          {
+            "id": "blk-1775427703063",
+            "text": "チームロール確定 — 脳汁（マーケ・メルマガ）・ナランチャ（開発・ダッシュボード）・飛べない豚（CVR・Shopify）・小池（クリエイティブ）・Tad（B2B・戦略）",
+            "status": "done",
+            "completedAt": "2026-04-05"
+          }
+        ]
+      },
+      {
+        "name": "セキュリティ運用ルール",
+        "items": [
+          {
+            "id": "blk-1775656661218",
+            "text": "【セキュリティルール】APIキー・shpat_トークン・Secretは絶対にチャットに貼らない。Vercelダッシュボードから直接入力すること",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775656664592",
+            "text": "【セキュリティルール】MCPサーバーのファイルシステムアクセス範囲をナランチャが定期確認する（月次）",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775656668095",
+            "text": "【セキュリティルール】GA4・Mailchimp・ShopifyのAPIキーはVercel環境変数にのみ保存。チームメンバー全員に周知済み",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775731087481",
+            "text": "MCPアクセス範囲確認済み：hus-dashboardサーバー1台・src/data/配下4ファイルのみ・外部ネットワーク/シークレット参照なし ✅",
+            "status": "done",
+            "completedAt": "2026-04-09"
+          },
+          {
+            "id": "blk-1775731090616",
+            "text": "月次監査ルーティン設定済み：毎月1日10:00自動実行（タスクID: mcp-fs-access-audit）次回5/1 ✅",
+            "status": "done",
+            "completedAt": "2026-04-09"
+          },
+          {
+            "id": "blk-1775739198256",
+            "text": "Claude Codeアップデート確認済み：MCP正常動作・フリーズ解消・Haiku3使用箇所ゼロ ✅ (2026-04-09)",
+            "status": "done",
+            "completedAt": "2026-04-09"
+          }
+        ]
+      },
+      {
+        "name": "CVR改善施策",
+        "items": [
+          {
+            "id": "blk-1775830243257",
+            "text": "Hamachi Loin URL修正（frozen-smoked-hamachi → hamachi-loin-sashimi-grade）+ 301リダイレクト設定完了",
+            "status": "done",
+            "completedAt": "2026-04-10"
+          },
+          {
+            "id": "blk-1775835676622",
+            "text": "Goalifyバー位置変更（Under cart items → Above checkout button）完了",
+            "status": "done",
+            "completedAt": "2026-04-10"
+          }
+        ]
+      },
+      {
+        "name": "信頼構築施策",
+        "items": [
+          {
+            "id": "blk-1775899094667",
+            "text": "Uni Grade Chart デザイン確定（PC/モバイル両対応・プレビュー承認済み）",
+            "status": "done",
+            "completedAt": "2026-04-11"
+          },
+          {
+            "id": "blk-1775918223724",
+            "text": "Uni Grade Chart（数字版）デザイン確定・PDP注入確認済み。Shopify AIでGokujo descriptionの\"You taste pure Uni, nothing else.\"直後にHTML挿入待ち",
+            "status": "pending",
+            "completedAt": null
+          }
+        ]
+      },
+      {
+        "name": "Vercel Pro",
+        "items": [
+          {
+            "id": "blk-1776094586556",
+            "text": "Vercel Pro 支払い完了 ✅ (2026-04-13)",
+            "status": "done",
+            "completedAt": "2026-04-13"
+          },
+          {
+            "id": "blk-1776094589416",
+            "text": "Web Analytics 有効化完了 ✅ (2026-04-13)",
+            "status": "done",
+            "completedAt": "2026-04-13"
+          },
+          {
+            "id": "blk-1776094592689",
+            "text": "Speed Insights → スキップ（$10/月追加課金、社内ツールには不要と判断） ✅",
+            "status": "done",
+            "completedAt": "2026-04-13"
+          }
+        ]
       }
     ],
     "followups": [
@@ -757,5 +1030,43 @@
         "status": "pending"
       }
     ]
+  },
+  {
+    "id": "proj-011",
+    "name": "Personal",
+    "description": "Personal tasks and administrative items.",
+    "status": "ACTIVE",
+    "owner": "Tad",
+    "kpis": "",
+    "deliverables": "",
+    "startDate": "2026-04-06",
+    "dueDate": "2026-12-31",
+    "progress": 0,
+    "blocks": [
+      {
+        "name": "General",
+        "items": [
+          {
+            "id": "blk-1775470090048",
+            "text": "マイレージ記録",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775470092166",
+            "text": "スイス会社の書類を集める",
+            "status": "pending",
+            "completedAt": null
+          },
+          {
+            "id": "blk-1775487180426",
+            "text": "みつきに連絡",
+            "status": "pending",
+            "completedAt": null
+          }
+        ]
+      }
+    ],
+    "followups": []
   }
 ]

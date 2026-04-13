@@ -15,23 +15,24 @@ const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 }
 function Section({ icon: Icon, title, accent = false, children }) {
   return (
     <div
-      className="rounded-lg p-5 space-y-4"
+      className="rounded-xl space-y-4"
       style={{
-        background: '#FFFFFF',
-        border: `1px solid ${accent ? 'rgba(192,57,43,0.15)' : 'rgba(0,0,0,0.06)'}`,
-        boxShadow: '0 1px 3px 0 rgba(0,0,0,0.03)',
+        borderRadius: 12,
+        padding: '14px 16px',
+        background: '#ffffff',
+        border: `1px solid ${accent ? 'rgba(220,38,38,0.15)' : 'rgba(0,0,0,0.06)'}`,
       }}
     >
       <div className="flex items-center gap-2.5">
         <div
           className="w-7 h-7 rounded-lg flex items-center justify-center"
-          style={{ background: 'rgba(0,0,0,0.04)', color: '#1A1A1A' }}
+          style={{ background: 'rgba(0,0,0,0.04)', color: '#1a1a18' }}
         >
           <Icon size={14} />
         </div>
         <h3
           className="text-sm font-medium"
-          style={{ fontFamily: '"Inter", system-ui, sans-serif', color: '#1A1A1A' }}
+          style={{ color: '#1a1a18' }}
         >
           {title}
         </h3>
@@ -60,31 +61,32 @@ function PriorityItem({ task, projects }) {
       <div
         className="mt-1.5 w-2 h-2 rounded-full shrink-0"
         style={{
-          background: task.priority === 'high' ? '#C0392B' :
-                      task.priority === 'medium' ? '#1A1A1A' : 'rgba(0,0,0,0.08)',
-          boxShadow: task.priority === 'high' ? '0 0 6px rgba(192,57,43,0.3)' : 'none',
+          background: task.priority === 'high' ? '#dc2626' :
+                      task.priority === 'medium' ? '#1a1a18' : 'rgba(0,0,0,0.08)',
+          boxShadow: task.priority === 'high' ? '0 0 6px rgba(220,38,38,0.3)' : 'none',
         }}
       />
       <div className="flex-1 min-w-0">
-        <div className="text-sm font-medium truncate" style={{ color: '#1A1A1A' }}>{task.task}</div>
-        <div className="text-xs mt-0.5" style={{ color: '#999999' }}>
+        <div className="text-sm font-medium truncate" style={{ color: '#1a1a18' }}>{task.task}</div>
+        <div className="text-xs mt-0.5" style={{ color: '#9b9b94' }}>
           {project?.name && <span>{project.name} · </span>}
           {task.owner && <span>{task.owner} · </span>}
           <span
             className="font-medium"
-            style={{ color: overdue ? '#C0392B' : dueToday ? '#1A1A1A' : '#999999' }}
+            style={{ color: overdue ? '#dc2626' : dueToday ? '#1a1a18' : '#9b9b94' }}
           >
             {dueLabel}
           </span>
         </div>
       </div>
       <span
-        className="shrink-0 text-xs px-2 py-0.5 rounded-full font-medium"
+        className="shrink-0 text-xs px-2 py-0.5 font-medium"
         style={{
+          borderRadius: 20,
           background: task.pdca === 'Do' ? 'rgba(0,0,0,0.04)' :
-                      task.pdca === 'Check' ? 'rgba(192,57,43,0.06)' : 'rgba(0,0,0,0.03)',
-          color: task.pdca === 'Do' ? '#1A1A1A' :
-                 task.pdca === 'Check' ? '#C0392B' : '#999999',
+                      task.pdca === 'Check' ? 'rgba(220,38,38,0.06)' : 'rgba(0,0,0,0.03)',
+          color: task.pdca === 'Do' ? '#1a1a18' :
+                 task.pdca === 'Check' ? '#dc2626' : '#9b9b94',
         }}
       >
         {task.pdca}
@@ -100,16 +102,17 @@ function KPIStatusRow({ label, value, target, unit, prefix = '', invert = false 
 
   return (
     <div className="flex items-center justify-between py-2.5 last:border-0" style={{ borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
-      <span className="text-sm" style={{ color: '#999999' }}>{label}</span>
+      <span className="text-sm" style={{ color: '#9b9b94' }}>{label}</span>
       <div className="flex items-center gap-2.5">
-        <span className="text-sm font-semibold tabular-nums" style={{ color: '#1A1A1A' }}>
+        <span className="text-sm font-semibold tabular-nums" style={{ color: '#1a1a18', fontFamily: "'DM Mono', monospace" }}>
           {prefix}{typeof value === 'number' ? value.toLocaleString() : value}{unit}
         </span>
         <span
-          className="text-xs px-2 py-0.5 rounded-full font-medium"
+          className="text-xs px-2 py-0.5 font-medium"
           style={{
-            background: isGood ? 'rgba(0,0,0,0.03)' : isWarn ? 'rgba(0,0,0,0.04)' : 'rgba(192,57,43,0.06)',
-            color: isGood ? '#999999' : isWarn ? '#1A1A1A' : '#C0392B',
+            borderRadius: 20,
+            background: isGood ? 'rgba(0,0,0,0.03)' : isWarn ? 'rgba(0,0,0,0.04)' : 'rgba(220,38,38,0.06)',
+            color: isGood ? '#9b9b94' : isWarn ? '#1a1a18' : '#dc2626',
           }}
         >
           {isGood ? '✓' : isWarn ? '~' : '✗'} {Math.round(pct)}%
@@ -154,15 +157,16 @@ export default function MorningBriefing() {
   }, [kpis, tasks, projects, events])
 
   return (
-    <div className="space-y-5 max-w-4xl">
+    <div className="space-y-3 max-w-4xl">
       {/* Level System — most prominent position */}
       <LevelSystem />
 
       {/* Hero greeting */}
       <div
-        className="rounded-lg p-7 text-white relative overflow-hidden"
+        className="rounded-xl p-7 text-white relative overflow-hidden"
         style={{
-          background: '#1A1A1A',
+          borderRadius: 12,
+          background: '#1a1a18',
         }}
       >
         {/* Subtle wave texture overlay */}
@@ -179,12 +183,12 @@ export default function MorningBriefing() {
               background: 'rgba(255,255,255,0.1)',
             }}
           >
-            <Sunrise size={20} style={{ color: '#FFFFFF' }} />
+            <Sunrise size={20} style={{ color: '#ffffff' }} />
           </div>
           <div>
             <div
               className="text-xl font-medium"
-              style={{ fontFamily: '"Inter", system-ui, sans-serif', letterSpacing: '-0.01em' }}
+              style={{ letterSpacing: '-0.01em' }}
             >
               Good morning — here's what's up.
             </div>
@@ -217,11 +221,11 @@ export default function MorningBriefing() {
         <div className="absolute bottom-0 left-0 right-0 h-0.5" style={{ background: 'rgba(255,255,255,0.1)' }} />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {/* Top Priorities */}
         <Section icon={CheckSquare} title="Today's Top Priorities">
           {briefing.topTasks.length === 0 ? (
-            <p className="text-sm" style={{ color: '#999999' }}>No open tasks. Clear!</p>
+            <p className="text-sm" style={{ color: '#9b9b94' }}>No open tasks. Clear!</p>
           ) : (
             <div>
               {briefing.topTasks.map((t) => (
@@ -232,9 +236,9 @@ export default function MorningBriefing() {
           <button
             onClick={() => setActiveSection('tasks')}
             className="flex items-center gap-1 text-xs font-medium mt-1 transition-colors"
-            style={{ color: '#1A1A1A' }}
+            style={{ color: '#1a1a18' }}
             onMouseEnter={(e) => { e.currentTarget.style.color = '#333333' }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = '#1A1A1A' }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = '#1a1a18' }}
           >
             View all tasks <ArrowRight size={11} />
           </button>
@@ -243,7 +247,7 @@ export default function MorningBriefing() {
         {/* Overdue items */}
         <Section icon={AlertTriangle} title="Overdue Items" accent={briefing.overdue.length > 0}>
           {briefing.overdue.length === 0 ? (
-            <p className="text-sm font-medium" style={{ color: '#999999' }}>No overdue tasks — well done!</p>
+            <p className="text-sm font-medium" style={{ color: '#9b9b94' }}>No overdue tasks — well done!</p>
           ) : (
             <div>
               {briefing.overdue.slice(0, 4).map((t) => {
@@ -251,16 +255,16 @@ export default function MorningBriefing() {
                 const project = projects.find((p) => p.id === t.project)
                 return (
                   <div key={t.id} className="flex items-start gap-2 py-2.5 last:border-0" style={{ borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
-                    <AlertTriangle size={13} className="shrink-0 mt-0.5" style={{ color: '#C0392B' }} />
+                    <AlertTriangle size={13} className="shrink-0 mt-0.5" style={{ color: '#dc2626' }} />
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium truncate" style={{ color: '#1A1A1A' }}>{t.task}</div>
-                      <div className="text-xs mt-0.5" style={{ color: '#C0392B' }}>{daysLate}d overdue · {project?.name}</div>
+                      <div className="text-sm font-medium truncate" style={{ color: '#1a1a18' }}>{t.task}</div>
+                      <div className="text-xs mt-0.5" style={{ color: '#dc2626' }}>{daysLate}d overdue · {project?.name}</div>
                     </div>
                   </div>
                 )
               })}
               {briefing.overdue.length > 4 && (
-                <div className="text-xs pt-2" style={{ color: '#999999' }}>+{briefing.overdue.length - 4} more overdue</div>
+                <div className="text-xs pt-2" style={{ color: '#9b9b94' }}>+{briefing.overdue.length - 4} more overdue</div>
               )}
             </div>
           )}
@@ -279,9 +283,9 @@ export default function MorningBriefing() {
           <button
             onClick={() => setActiveSection('dashboard')}
             className="flex items-center gap-1 text-xs font-medium mt-1 transition-colors"
-            style={{ color: '#1A1A1A' }}
+            style={{ color: '#1a1a18' }}
             onMouseEnter={(e) => { e.currentTarget.style.color = '#333333' }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = '#1A1A1A' }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = '#1a1a18' }}
           >
             Full KPI dashboard <ArrowRight size={11} />
           </button>
@@ -290,18 +294,18 @@ export default function MorningBriefing() {
         {/* Today's calendar */}
         <Section icon={Clock} title="Today's Meetings">
           {briefing.todayEvents.length === 0 ? (
-            <p className="text-sm" style={{ color: '#999999' }}>No meetings scheduled today.</p>
+            <p className="text-sm" style={{ color: '#9b9b94' }}>No meetings scheduled today.</p>
           ) : (
             <div>
               {briefing.todayEvents.map((e) => {
                 const project = projects.find((p) => p.id === e.project)
                 return (
                   <div key={e.id} className="flex items-start gap-2 py-2.5 last:border-0" style={{ borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
-                    <Clock size={13} className="shrink-0 mt-0.5" style={{ color: '#1A1A1A' }} />
+                    <Clock size={13} className="shrink-0 mt-0.5" style={{ color: '#1a1a18' }} />
                     <div>
-                      <div className="text-sm font-medium" style={{ color: '#1A1A1A' }}>{e.title}</div>
-                      {project && <div className="text-xs mt-0.5" style={{ color: '#999999' }}>{project.name}</div>}
-                      {e.notes && <div className="text-xs mt-0.5 italic" style={{ color: '#999999' }}>{e.notes}</div>}
+                      <div className="text-sm font-medium" style={{ color: '#1a1a18' }}>{e.title}</div>
+                      {project && <div className="text-xs mt-0.5" style={{ color: '#9b9b94' }}>{project.name}</div>}
+                      {e.notes && <div className="text-xs mt-0.5 italic" style={{ color: '#9b9b94' }}>{e.notes}</div>}
                     </div>
                   </div>
                 )
@@ -311,9 +315,9 @@ export default function MorningBriefing() {
           <button
             onClick={() => setActiveSection('calendar')}
             className="flex items-center gap-1 text-xs font-medium mt-1 transition-colors"
-            style={{ color: '#1A1A1A' }}
+            style={{ color: '#1a1a18' }}
             onMouseEnter={(e) => { e.currentTarget.style.color = '#333333' }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = '#1A1A1A' }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = '#1a1a18' }}
           >
             Open calendar <ArrowRight size={11} />
           </button>
@@ -327,26 +331,29 @@ export default function MorningBriefing() {
             {briefing.critProjects.map((p) => (
               <div
                 key={p.id}
-                className="rounded-lg p-3.5"
+                className="rounded-xl"
                 style={{
+                  borderRadius: 12,
+                  padding: '14px 16px',
                   border: '1px solid rgba(0,0,0,0.06)',
-                  borderLeft: `3px solid ${p.status === 'stalled' ? '#C0392B' : '#1A1A1A'}`,
-                  background: '#FFFFFF',
+                  borderLeft: `3px solid ${p.status === 'stalled' ? '#dc2626' : '#1a1a18'}`,
+                  background: p.status === 'stalled' ? '#fee2e2' : '#ffffff',
                 }}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium" style={{ color: '#1A1A1A' }}>{p.name}</span>
+                  <span className="text-sm font-medium" style={{ color: '#1a1a18' }}>{p.name}</span>
                   <span
-                    className="text-xs px-2 py-0.5 rounded-full font-medium"
+                    className="text-xs px-2 py-0.5 font-medium"
                     style={{
-                      background: p.status === 'stalled' ? 'rgba(192,57,43,0.06)' : 'rgba(0,0,0,0.04)',
-                      color: p.status === 'stalled' ? '#C0392B' : '#1A1A1A',
+                      borderRadius: 20,
+                      background: p.status === 'stalled' ? 'rgba(220,38,38,0.06)' : 'rgba(0,0,0,0.04)',
+                      color: p.status === 'stalled' ? '#dc2626' : '#1a1a18',
                     }}
                   >
                     {p.status}
                   </span>
                 </div>
-                <div className="text-xs mt-1" style={{ color: '#999999' }}>{p.owner} · {p.progress}% complete</div>
+                <div className="text-xs mt-1" style={{ color: '#9b9b94' }}>{p.owner} · {p.progress}% complete</div>
               </div>
             ))}
           </div>
@@ -355,9 +362,11 @@ export default function MorningBriefing() {
 
       {/* AI Suggestion */}
       <div
-        className="rounded-lg p-5 flex gap-4"
+        className="rounded-xl flex gap-4"
         style={{
-          background: '#FFFFFF',
+          borderRadius: 12,
+          padding: '14px 16px',
+          background: '#ffffff',
           border: '1px solid rgba(0,0,0,0.06)',
         }}
       >
@@ -365,16 +374,16 @@ export default function MorningBriefing() {
           className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
           style={{ background: 'rgba(0,0,0,0.04)' }}
         >
-          <Lightbulb size={15} style={{ color: '#1A1A1A' }} />
+          <Lightbulb size={15} style={{ color: '#1a1a18' }} />
         </div>
         <div>
           <div
             className="text-xs font-semibold uppercase tracking-wide mb-1.5"
-            style={{ color: '#1A1A1A', letterSpacing: '0.12em' }}
+            style={{ color: '#1a1a18', letterSpacing: '0.12em' }}
           >
             AI Suggestion for Today
           </div>
-          <p className="text-sm leading-relaxed" style={{ color: '#666666' }}>{briefing.suggestion}</p>
+          <p className="text-sm leading-relaxed" style={{ color: '#6b6b66' }}>{briefing.suggestion}</p>
         </div>
       </div>
     </div>

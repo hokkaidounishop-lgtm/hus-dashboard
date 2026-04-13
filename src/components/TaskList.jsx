@@ -11,25 +11,25 @@ const IN7   = addDays(new Date(), 7).toISOString().slice(0, 10)
 
 // ── Badge configs ─────────────────────────────────────────────────────────────
 const PRIORITY = {
-  high:   { label: 'High',   bg: '#F5F5F5', color: '#C0392B' },
-  medium: { label: 'Medium', bg: '#F5F5F5', color: '#1A1A1A' },
-  low:    { label: 'Low',    bg: '#F5F5F5', color: '#999999' },
+  high:   { label: 'High',   bg: '#fee2e2', color: '#b91c1c' },
+  medium: { label: 'Medium', bg: '#fef3c7', color: '#92400e' },
+  low:    { label: 'Low',    bg: '#f0efe9', color: '#6b6b66' },
 }
 
 const PDCA = {
-  Plan:  { bg: '#F5F5F5', color: '#999999' },
-  Do:    { bg: '#F5F5F5', color: '#1A1A1A' },
-  Check: { bg: '#F5F5F5', color: '#C0392B' },
-  Act:   { bg: '#F5F5F5', color: '#999999' },
+  Plan:  { bg: '#f0efe9', color: '#9b9b94' },
+  Do:    { bg: '#f0efe9', color: '#1a1a18' },
+  Check: { bg: '#f0efe9', color: '#dc2626' },
+  Act:   { bg: '#f0efe9', color: '#9b9b94' },
 }
 
 const STATUS = {
-  'not-started': { label: 'Not Started', bg: '#F5F5F5', color: '#999999' },
-  'in-progress': { label: 'In Progress', bg: '#F5F5F5', color: '#999999' },
-  'overdue':     { label: 'Overdue',     bg: '#F5F5F5', color: '#C0392B' },
-  'done':        { label: 'Done',        bg: '#F5F5F5', color: '#999999' },
-  'blocked':     { label: 'Blocked',     bg: '#F5F5F5', color: '#1A1A1A' },
-  'todo':        { label: 'To Do',       bg: '#F5F5F5', color: '#999999' },
+  'not-started': { label: 'Not Started', bg: '#f0efe9', color: '#6b6b66' },
+  'in-progress': { label: 'In Progress', bg: '#dbeafe', color: '#1e40af' },
+  'overdue':     { label: 'Overdue',     bg: '#fee2e2', color: '#b91c1c' },
+  'done':        { label: 'Done',        bg: '#dcfce7', color: '#15803d' },
+  'blocked':     { label: 'Blocked',     bg: '#fee2e2', color: '#b91c1c' },
+  'todo':        { label: 'To Do',       bg: '#f0efe9', color: '#6b6b66' },
 }
 
 const BLANK = {
@@ -48,10 +48,10 @@ function urgency(t) {
 }
 
 const URGENCY_STYLE = {
-  overdue: { leftBorder: '#C0392B', rowBg: 'transparent', hoverBg: '#F9F9F9' },
-  today:   { leftBorder: '#C0392B', rowBg: 'transparent', hoverBg: '#F9F9F9' },
-  soon:    { leftBorder: '#1A1A1A', rowBg: 'transparent', hoverBg: '#F9F9F9' },
-  none:    { leftBorder: 'transparent', rowBg: 'transparent', hoverBg: '#F9F9F9' },
+  overdue: { leftBorder: '#dc2626', rowBg: 'transparent', hoverBg: '#f0efe9' },
+  today:   { leftBorder: '#dc2626', rowBg: 'transparent', hoverBg: '#f0efe9' },
+  soon:    { leftBorder: '#1a1a18', rowBg: 'transparent', hoverBg: '#f0efe9' },
+  none:    { leftBorder: 'transparent', rowBg: 'transparent', hoverBg: '#f0efe9' },
 }
 
 // ── Group config ──────────────────────────────────────────────────────────────
@@ -59,41 +59,41 @@ const GROUPS = [
   {
     key: 'overdue',
     label: 'Overdue',
-    headerBg: '#F5F5F5',
-    headerColor: '#C0392B',
-    headerBorder: '#F0F0F0',
+    headerBg: '#f0efe9',
+    headerColor: '#dc2626',
+    headerBorder: 'rgba(0,0,0,0.08)',
     match: (t) => t.dueDate && t.dueDate < TODAY && t.status !== 'done' && t.status !== 'completed',
   },
   {
     key: 'today',
     label: 'Due Today',
-    headerBg: '#F5F5F5',
-    headerColor: '#C0392B',
-    headerBorder: '#F0F0F0',
+    headerBg: '#f0efe9',
+    headerColor: '#dc2626',
+    headerBorder: 'rgba(0,0,0,0.08)',
     match: (t) => t.dueDate === TODAY,
   },
   {
     key: 'week',
     label: 'Due This Week',
-    headerBg: '#F5F5F5',
-    headerColor: '#1A1A1A',
-    headerBorder: '#F0F0F0',
+    headerBg: '#f0efe9',
+    headerColor: '#1a1a18',
+    headerBorder: 'rgba(0,0,0,0.08)',
     match: (t) => t.dueDate && t.dueDate > TODAY && t.dueDate <= IN7,
   },
   {
     key: 'later',
     label: 'Due Later',
-    headerBg: '#F5F5F5',
-    headerColor: '#999999',
-    headerBorder: '#F0F0F0',
+    headerBg: '#f0efe9',
+    headerColor: '#9b9b94',
+    headerBorder: 'rgba(0,0,0,0.08)',
     match: (t) => t.dueDate && t.dueDate > IN7,
   },
   {
     key: 'none',
     label: 'No Due Date',
-    headerBg: '#F5F5F5',
-    headerColor: '#999999',
-    headerBorder: '#F0F0F0',
+    headerBg: '#f0efe9',
+    headerColor: '#9b9b94',
+    headerBorder: 'rgba(0,0,0,0.08)',
     match: (t) => !t.dueDate,
   },
 ]
@@ -143,24 +143,24 @@ const QUICK_FILTERS = [
   {
     key: 'overdue',
     label: 'Overdue',
-    activeBg: 'rgba(192,57,43,0.08)',
-    activeColor: '#C0392B',
-    activeBorder: 'rgba(192,57,43,0.25)',
+    activeBg: 'rgba(220,38,38,0.08)',
+    activeColor: '#dc2626',
+    activeBorder: 'rgba(220,38,38,0.25)',
     match: (t) => t.dueDate && t.dueDate < TODAY && t.status !== 'done' && t.status !== 'completed',
   },
   {
     key: 'today',
     label: 'Due Today',
-    activeBg: 'rgba(192,57,43,0.08)',
-    activeColor: '#C0392B',
-    activeBorder: 'rgba(192,57,43,0.25)',
+    activeBg: 'rgba(220,38,38,0.08)',
+    activeColor: '#dc2626',
+    activeBorder: 'rgba(220,38,38,0.25)',
     match: (t) => t.dueDate === TODAY,
   },
   {
     key: 'thisWeek',
     label: 'Due This Week',
     activeBg: 'rgba(0,0,0,0.04)',
-    activeColor: '#1A1A1A',
+    activeColor: '#1a1a18',
     activeBorder: 'rgba(0,0,0,0.10)',
     match: (t) => t.dueDate && t.dueDate >= TODAY && t.dueDate <= IN7,
   },
@@ -168,7 +168,7 @@ const QUICK_FILTERS = [
     key: 'mine',
     label: 'My Tasks (Tad)',
     activeBg: 'rgba(0,0,0,0.04)',
-    activeColor: '#1A1A1A',
+    activeColor: '#1a1a18',
     activeBorder: 'rgba(0,0,0,0.10)',
     match: (t) => t.owner?.toLowerCase() === 'tad',
   },
@@ -237,17 +237,17 @@ function FilterSelect({ label, value, onChange, options }) {
         onChange={(e) => onChange(e.target.value)}
         className="appearance-none text-xs font-medium pl-3 pr-7 py-2 rounded-lg focus:outline-none cursor-pointer transition-colors"
         style={{
-          background: '#FFFFFF',
-          border: '1px solid #F0F0F0',
-          color: value ? '#1A1A1A' : '#999999',
+          background: '#ffffff',
+          border: '1px solid rgba(0,0,0,0.08)',
+          color: value ? '#1a1a18' : '#9b9b94',
         }}
-        onFocus={(e) => { e.currentTarget.style.borderColor = '#1A1A1A'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(0,0,0,0.06)' }}
-        onBlur={(e) => { e.currentTarget.style.borderColor = '#F0F0F0'; e.currentTarget.style.boxShadow = 'none' }}
+        onFocus={(e) => { e.currentTarget.style.borderColor = '#1a1a18'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(0,0,0,0.06)' }}
+        onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(0,0,0,0.08)'; e.currentTarget.style.boxShadow = 'none' }}
       >
         <option value="">{label}: All</option>
         {options.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
       </select>
-      <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: '#999999' }} />
+      <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: '#9b9b94' }} />
     </div>
   )
 }
@@ -259,13 +259,13 @@ function SortSelect({ value, onChange }) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="appearance-none text-xs font-medium pl-3 pr-7 py-2 rounded-lg focus:outline-none cursor-pointer transition-colors"
-        style={{ background: '#FFFFFF', border: '1px solid #F0F0F0', color: '#1A1A1A' }}
-        onFocus={(e) => { e.currentTarget.style.borderColor = '#1A1A1A'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(0,0,0,0.06)' }}
-        onBlur={(e) => { e.currentTarget.style.borderColor = '#F0F0F0'; e.currentTarget.style.boxShadow = 'none' }}
+        style={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.08)', color: '#1a1a18' }}
+        onFocus={(e) => { e.currentTarget.style.borderColor = '#1a1a18'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(0,0,0,0.06)' }}
+        onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(0,0,0,0.08)'; e.currentTarget.style.boxShadow = 'none' }}
       >
         {SORT_OPTS.map((o) => <option key={o.key} value={o.key}>{o.label}</option>)}
       </select>
-      <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: '#999999' }} />
+      <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: '#9b9b94' }} />
     </div>
   )
 }
@@ -293,7 +293,7 @@ function GroupHeaderRow({ group, count, collapsed, onToggle }) {
           <span className="uppercase tracking-wide">{group.label}</span>
           <span
             className="ml-1 px-1.5 py-0.5 rounded-full text-xs font-bold"
-            style={{ background: group.headerColor, color: '#FFFFFF', opacity: 0.85 }}
+            style={{ background: group.headerColor, color: '#ffffff', opacity: 0.85 }}
           >
             {count}
           </span>
@@ -315,7 +315,7 @@ function TaskRow({ t, projectName, expandedId, setExpandedId, toggleDone, openEd
       key={t.id}
       className="cursor-pointer transition-colors"
       style={{
-        borderBottom: '1px solid #F0F0F0',
+        borderBottom: '1px solid rgba(0,0,0,0.08)',
         background: us.rowBg,
         opacity: isDone ? 0.45 : 1,
       }}
@@ -332,9 +332,9 @@ function TaskRow({ t, projectName, expandedId, setExpandedId, toggleDone, openEd
           onClick={(e) => { e.stopPropagation(); toggleDone(t) }}
           className="w-4 h-4 rounded flex items-center justify-center transition-colors"
           style={{
-            background: isDone ? '#1A1A1A' : 'transparent',
-            border: `1.5px solid ${isDone ? '#1A1A1A' : '#DDDDDD'}`,
-            color: '#FFFFFF',
+            background: isDone ? '#1a1a18' : 'transparent',
+            border: `1.5px solid ${isDone ? '#1a1a18' : '#DDDDDD'}`,
+            color: '#ffffff',
           }}
         >
           {isDone && <Check size={10} />}
@@ -344,25 +344,25 @@ function TaskRow({ t, projectName, expandedId, setExpandedId, toggleDone, openEd
       <td className="px-3 py-3">
         <span
           className="text-sm font-medium"
-          style={{ color: '#1A1A1A', textDecoration: isDone ? 'line-through' : 'none' }}
+          style={{ color: '#1a1a18', textDecoration: isDone ? 'line-through' : 'none' }}
         >
           {t.task}
         </span>
       </td>
 
       <td className="px-3 py-3 hidden md:table-cell">
-        <span className="text-xs" style={{ color: '#999999' }}>{projectName(t.project)}</span>
+        <span className="text-xs" style={{ color: '#9b9b94' }}>{projectName(t.project)}</span>
       </td>
 
       <td className="px-3 py-3 hidden lg:table-cell">
-        <span className="text-xs" style={{ color: '#999999' }}>{t.owner || '—'}</span>
+        <span className="text-xs" style={{ color: '#9b9b94' }}>{t.owner || '—'}</span>
       </td>
 
       <td className="px-3 py-3">
         {t.priority && (
           <span
             className="px-2 py-0.5 rounded-full text-xs font-medium"
-            style={{ background: PRIORITY[t.priority]?.bg, color: PRIORITY[t.priority]?.color }}
+            style={{ background: PRIORITY[t.priority]?.bg, color: PRIORITY[t.priority]?.color, borderRadius: 20 }}
           >
             {PRIORITY[t.priority]?.label}
           </span>
@@ -373,7 +373,7 @@ function TaskRow({ t, projectName, expandedId, setExpandedId, toggleDone, openEd
         <span
           className="text-xs"
           style={{
-            color: u === 'overdue' ? '#C0392B' : u === 'today' ? '#C0392B' : u === 'soon' ? '#1A1A1A' : '#999999',
+            color: u === 'overdue' ? '#dc2626' : u === 'today' ? '#dc2626' : u === 'soon' ? '#1a1a18' : '#9b9b94',
             fontWeight: u !== 'none' ? 500 : 400,
           }}
         >
@@ -387,7 +387,7 @@ function TaskRow({ t, projectName, expandedId, setExpandedId, toggleDone, openEd
         {t.pdca && (
           <span
             className="px-2 py-0.5 rounded-full text-xs font-medium"
-            style={{ background: PDCA[t.pdca]?.bg, color: PDCA[t.pdca]?.color }}
+            style={{ background: PDCA[t.pdca]?.bg, color: PDCA[t.pdca]?.color, borderRadius: 20 }}
           >
             {t.pdca}
           </span>
@@ -398,7 +398,7 @@ function TaskRow({ t, projectName, expandedId, setExpandedId, toggleDone, openEd
         {t.status && (
           <span
             className="px-2 py-0.5 rounded-full text-xs font-medium"
-            style={{ background: STATUS[t.status]?.bg, color: STATUS[t.status]?.color }}
+            style={{ background: STATUS[t.status]?.bg, color: STATUS[t.status]?.color, borderRadius: 20 }}
           >
             {STATUS[t.status]?.label}
           </span>
@@ -411,7 +411,7 @@ function TaskRow({ t, projectName, expandedId, setExpandedId, toggleDone, openEd
             onClick={(e) => { e.stopPropagation(); openEdit(t) }}
             className="p-1 rounded transition-colors"
             style={{ color: '#DDDDDD' }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.05)'; e.currentTarget.style.color = '#1A1A1A' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.05)'; e.currentTarget.style.color = '#1a1a18' }}
             onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#DDDDDD' }}
           >
             <Edit2 size={13} />
@@ -420,7 +420,7 @@ function TaskRow({ t, projectName, expandedId, setExpandedId, toggleDone, openEd
             onClick={(e) => { e.stopPropagation(); handleDelete(t.id) }}
             className="p-1 rounded transition-colors"
             style={{ color: '#DDDDDD' }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(192,57,43,0.08)'; e.currentTarget.style.color = '#C0392B' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(220,38,38,0.08)'; e.currentTarget.style.color = '#dc2626' }}
             onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#DDDDDD' }}
           >
             <Trash2 size={13} />
@@ -430,10 +430,10 @@ function TaskRow({ t, projectName, expandedId, setExpandedId, toggleDone, openEd
     </tr>,
 
     expanded && t.notes && (
-      <tr key={`${t.id}-exp`} style={{ borderBottom: '1px solid #F0F0F0', background: '#FFFFFF' }}>
+      <tr key={`${t.id}-exp`} style={{ borderBottom: '1px solid rgba(0,0,0,0.08)', background: '#ffffff' }}>
         <td style={{ borderLeft: `3px solid ${URGENCY_STYLE[u].leftBorder}` }} />
         <td colSpan={8} className="px-3 pb-3 pt-1">
-          <div className="text-xs italic" style={{ color: '#999999' }}>{t.notes}</div>
+          <div className="text-xs italic" style={{ color: '#9b9b94' }}>{t.notes}</div>
         </td>
       </tr>
     ),
@@ -542,15 +542,15 @@ export default function TaskList() {
 
   const TABLE_HEADER = (
     <thead>
-      <tr style={{ borderBottom: '1px solid #F0F0F0', background: '#FFFFFF' }}>
-        <th className="text-left text-xs font-medium px-4 py-3 w-8"  style={{ color: '#999999' }}></th>
-        <th className="text-left text-xs font-medium px-3 py-3"       style={{ color: '#999999' }}>Task</th>
-        <th className="text-left text-xs font-medium px-3 py-3 hidden md:table-cell" style={{ color: '#999999' }}>Project</th>
-        <th className="text-left text-xs font-medium px-3 py-3 hidden lg:table-cell" style={{ color: '#999999' }}>Owner</th>
-        <th className="text-left text-xs font-medium px-3 py-3"       style={{ color: '#999999' }}>Priority</th>
-        <th className="text-left text-xs font-medium px-3 py-3 hidden sm:table-cell" style={{ color: '#999999' }}>Due</th>
-        <th className="text-left text-xs font-medium px-3 py-3 hidden md:table-cell" style={{ color: '#999999' }}>PDCA</th>
-        <th className="text-left text-xs font-medium px-3 py-3"       style={{ color: '#999999' }}>Status</th>
+      <tr style={{ borderBottom: '1px solid rgba(0,0,0,0.08)', background: '#f0efe9' }}>
+        <th className="text-left text-xs font-medium px-4 py-3 w-8"  style={{ color: '#9b9b94' }}></th>
+        <th className="text-left text-xs font-medium px-3 py-3"       style={{ color: '#9b9b94' }}>Task</th>
+        <th className="text-left text-xs font-medium px-3 py-3 hidden md:table-cell" style={{ color: '#9b9b94' }}>Project</th>
+        <th className="text-left text-xs font-medium px-3 py-3 hidden lg:table-cell" style={{ color: '#9b9b94' }}>Owner</th>
+        <th className="text-left text-xs font-medium px-3 py-3"       style={{ color: '#9b9b94' }}>Priority</th>
+        <th className="text-left text-xs font-medium px-3 py-3 hidden sm:table-cell" style={{ color: '#9b9b94' }}>Due</th>
+        <th className="text-left text-xs font-medium px-3 py-3 hidden md:table-cell" style={{ color: '#9b9b94' }}>PDCA</th>
+        <th className="text-left text-xs font-medium px-3 py-3"       style={{ color: '#9b9b94' }}>Status</th>
         <th className="px-3 py-3 w-16"></th>
       </tr>
     </thead>
@@ -563,10 +563,10 @@ export default function TaskList() {
 
       {/* ── Stats strip ── */}
       <div className="flex gap-4 text-xs">
-        <span style={{ color: '#999999' }}>{counts.total} tasks total</span>
-        <span style={{ color: '#999999' }}>{counts.done} done</span>
+        <span style={{ color: '#9b9b94' }}>{counts.total} tasks total</span>
+        <span style={{ color: '#9b9b94' }}>{counts.done} done</span>
         {counts.overdue > 0 && (
-          <span style={{ color: '#C0392B', fontWeight: 500 }}>{counts.overdue} overdue</span>
+          <span style={{ color: '#dc2626', fontWeight: 500 }}>{counts.overdue} overdue</span>
         )}
       </div>
 
@@ -581,9 +581,9 @@ export default function TaskList() {
               onClick={() => toggleQuick(qf.key)}
               className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full transition-all"
               style={{
-                background: active ? qf.activeBg : '#F5F5F5',
-                color:      active ? qf.activeColor : '#999999',
-                border:     `1px solid ${active ? qf.activeBorder : '#F0F0F0'}`,
+                background: active ? qf.activeBg : '#f0efe9',
+                color:      active ? qf.activeColor : '#9b9b94',
+                border:     `1px solid ${active ? qf.activeBorder : 'rgba(0,0,0,0.08)'}`,
                 boxShadow:  active ? `0 0 0 2px ${qf.activeBg}` : 'none',
               }}
             >
@@ -592,9 +592,10 @@ export default function TaskList() {
                 className="rounded-full px-1.5 py-0.5 text-xs font-bold leading-none"
                 style={{
                   background: active ? qf.activeColor : '#DDDDDD',
-                  color: '#FFFFFF',
+                  color: '#ffffff',
                   minWidth: 18,
                   textAlign: 'center',
+                  fontFamily: "'DM Mono', monospace",
                 }}
               >
                 {matchCount}
@@ -614,7 +615,7 @@ export default function TaskList() {
           <FilterSelect label="Status"   value={filters.status}   onChange={(v) => setFilter('status', v)}   options={Object.entries(STATUS).map(([k, v]) => [k, v.label])} />
 
           {/* Divider */}
-          <div className="w-px h-5 mx-1" style={{ background: '#F0F0F0' }} />
+          <div className="w-px h-5 mx-1" style={{ background: 'rgba(0,0,0,0.08)' }} />
 
           {/* Sort */}
           <SortSelect value={sortKey} onChange={setSortKey} />
@@ -624,9 +625,9 @@ export default function TaskList() {
             onClick={() => setGroupByDate((v) => !v)}
             className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-lg transition-all"
             style={{
-              background: groupByDate ? 'rgba(0,0,0,0.04)' : '#FFFFFF',
-              border: `1px solid ${groupByDate ? 'rgba(0,0,0,0.10)' : '#F0F0F0'}`,
-              color: groupByDate ? '#1A1A1A' : '#999999',
+              background: groupByDate ? 'rgba(0,0,0,0.04)' : '#ffffff',
+              border: `1px solid ${groupByDate ? 'rgba(0,0,0,0.10)' : 'rgba(0,0,0,0.08)'}`,
+              color: groupByDate ? '#1a1a18' : '#9b9b94',
             }}
           >
             <Layers size={13} />
@@ -637,7 +638,7 @@ export default function TaskList() {
             <button
               onClick={() => { setFilters({ project: '', priority: '', pdca: '', status: '' }); setActiveQuick(new Set()) }}
               className="text-xs px-2 font-medium"
-              style={{ color: '#1A1A1A' }}
+              style={{ color: '#1a1a18' }}
             >
               Clear all
             </button>
@@ -651,8 +652,8 @@ export default function TaskList() {
 
       {/* ── Table ── */}
       <div
-        className="rounded-lg overflow-hidden"
-        style={{ background: '#FFFFFF', border: '1px solid #F0F0F0', boxShadow: '0 1px 3px 0 rgba(0,0,0,0.04)' }}
+        className="overflow-hidden"
+        style={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12, padding: '14px 16px' }}
       >
         {groupByDate ? (
           /* ── Grouped view ── */
@@ -661,7 +662,7 @@ export default function TaskList() {
               {TABLE_HEADER}
               <tbody>
                 <tr>
-                  <td colSpan={9} className="text-center text-sm py-12" style={{ color: '#999999' }}>
+                  <td colSpan={9} className="text-center text-sm py-12" style={{ color: '#9b9b94' }}>
                     No tasks match the current filters.
                   </td>
                 </tr>
@@ -696,7 +697,7 @@ export default function TaskList() {
             <tbody>
               {sorted.length === 0 && (
                 <tr>
-                  <td colSpan={9} className="text-center text-sm py-12" style={{ color: '#999999' }}>
+                  <td colSpan={9} className="text-center text-sm py-12" style={{ color: '#9b9b94' }}>
                     No tasks match the current filters.
                   </td>
                 </tr>
@@ -709,7 +710,7 @@ export default function TaskList() {
         )}
       </div>
 
-      <div className="text-xs text-right" style={{ color: '#999999' }}>
+      <div className="text-xs text-right" style={{ color: '#9b9b94' }}>
         Showing {filtered.length} of {tasks.length} tasks · Click row to expand notes
       </div>
 
@@ -723,7 +724,7 @@ export default function TaskList() {
         {modal && (
           <>
             <TaskForm value={modal.data} onChange={(data) => setModal((m) => ({ ...m, data }))} projects={projects} />
-            <div className="flex gap-2 justify-end mt-6 pt-4" style={{ borderTop: '1px solid #F0F0F0' }}>
+            <div className="flex gap-2 justify-end mt-6 pt-4" style={{ borderTop: '1px solid rgba(0,0,0,0.08)' }}>
               <button onClick={closeModal} className="btn-ghost">Cancel</button>
               <button onClick={handleSave} className="btn-primary">
                 {modal.mode === 'add' ? 'Add Task' : 'Save Changes'}
