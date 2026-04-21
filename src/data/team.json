@@ -1,0 +1,62 @@
+[
+  {
+    "id": "mem-tad",
+    "name": "Tad",
+    "role": "CEO",
+    "scope": "最終判断・対外交渉・クローズ"
+  },
+  {
+    "id": "mem-koike",
+    "name": "小池",
+    "role": "HQ司令塔",
+    "scope": "記録・進捗・優先順位・経営判断"
+  },
+  {
+    "id": "mem-noujiru",
+    "name": "脳汁",
+    "role": "Marketing",
+    "scope": "規定書・営業メール・Mailchimp配信"
+  },
+  {
+    "id": "mem-narancia",
+    "name": "ナランチャ",
+    "role": "Implementation",
+    "scope": "コード・ダッシュボード・MCP・Vercel"
+  },
+  {
+    "id": "mem-tobebuta",
+    "name": "とべぶた",
+    "role": "B2C CVR",
+    "scope": "Shopify CVR改善・ファネル最適化"
+  },
+  {
+    "id": "mem-jus",
+    "name": "Jus",
+    "role": "Product / SKU",
+    "scope": "商品管理・コスト計算・市場調査"
+  },
+  {
+    "id": "mem-lesyeux",
+    "name": "Les yeux",
+    "role": "R&D（小池直属）",
+    "scope": "市場調査・新商品リサーチ"
+  },
+  {
+    "id": "mem-hayate",
+    "name": "疾風",
+    "role": "Operations",
+    "scope": "送料・ShipFare・UPS・集荷"
+  },
+  {
+    "id": "mem-pino",
+    "name": "Pino",
+    "role": "EU / Swiss",
+    "scope": "スイス会社設立・EU書類"
+  },
+  {
+    "id": "mem-lamain",
+    "name": "La Main",
+    "role": "Design",
+    "scope": "UI/UX・ビジュアル制作"
+  }
+]

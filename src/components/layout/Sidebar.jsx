@@ -5,6 +5,7 @@ import {
   Bell,
   Calendar,
   Sunrise,
+  Users,
 } from 'lucide-react'
 import { useApp } from '../../context/AppContext'
 
@@ -13,6 +14,7 @@ const NAV = [
   { id: 'dashboard', label: 'KPI Dashboard', icon: LayoutDashboard },
   { id: 'projects',  label: 'Projects',      icon: FolderKanban },
   { id: 'tasks',     label: 'Task List',     icon: CheckSquare },
+  { id: 'team',      label: 'Team',          icon: Users },
   { id: 'alerts',    label: 'Alerts',        icon: Bell },
   { id: 'calendar',  label: 'Calendar',      icon: Calendar },
 ]

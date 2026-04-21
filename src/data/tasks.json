@@ -473,5 +473,41 @@
     "pdcaUpdatedAt": "2026-04-21",
     "status": "not-started",
     "notes": "What's upページ再設計。①今日のTOP優先タスク②プロジェクト別進捗バー③Overdue赤ハイライト④担当者別タスク。MCP経由でリアルタイム更新。完成条件：開いた瞬間に全員の進捗が一目でわかること。"
+  },
+  {
+    "id": "task-1776764882975",
+    "task": "ダッシュボード「Team」ページ新規作成（手動編集機能付き）",
+    "project": "proj-010",
+    "priority": "high",
+    "owner": "ナランチャ",
+    "dueDate": "2026-04-22",
+    "pdca": "Do",
+    "pdcaUpdatedAt": "2026-04-21",
+    "status": "not-started",
+    "notes": "全メンバーカード表示・Edit/Add機能・team.json保存・DM Sansデザイン統一・モバイル対応。完了条件：Tadが実際に編集できることを確認。"
+  },
+  {
+    "id": "task-1776766881658",
+    "task": "朝ダッシュボード v2.2 ワイヤーフレーム作成",
+    "project": "proj-010",
+    "priority": "high",
+    "owner": "La Main",
+    "dueDate": "2026-04-25",
+    "pdca": "Plan",
+    "pdcaUpdatedAt": "2026-04-21",
+    "status": "not-started",
+    "notes": "v2.2仕様。5ブロック：Strategic Priorities/Revenue Command/Cash+Alerts/Today Focus/Team Pulse。静かで高級感のある操作盤。提出はスクリーンショットで小池へ。TadのGO後ナランチャへ渡す。"
+  },
+  {
+    "id": "task-1776766886879",
+    "task": "v2.2データソース調査（Shopify/Freshline/Cash）",
+    "project": "proj-010",
+    "priority": "high",
+    "owner": "ナランチャ",
+    "dueDate": "2026-04-23",
+    "pdca": "Plan",
+    "pdcaUpdatedAt": "2026-04-21",
+    "status": "not-started",
+    "notes": "Shopify→B2C売上自動取得可否、Freshline→B2B売上自動取得可否、Export/Broker→手動か自動か、Cash Status→QuickBooksか手動か。結果を小池に報告。"
   }
 ]

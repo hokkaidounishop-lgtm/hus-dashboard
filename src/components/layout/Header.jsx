@@ -6,6 +6,7 @@ const TITLES = {
   dashboard: { label: 'KPI Dashboard', sub: 'Business performance at a glance' },
   projects:  { label: 'Project Tracker', sub: 'All active initiatives' },
   tasks:     { label: 'Task List',     sub: 'Track, assign, and close work' },
+  team:      { label: 'Team',          sub: 'Members, roles, and scope' },
   alerts:    { label: 'Alerts',        sub: 'Issues that need your attention' },
   calendar:  { label: 'Calendar',      sub: 'Meetings and milestones' },
 }
