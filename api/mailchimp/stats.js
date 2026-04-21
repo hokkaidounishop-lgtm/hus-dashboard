@@ -72,10 +72,10 @@ export default async function handler(req, res) {
       subscribers: stats.member_count || 0,
       unsubscribed: stats.unsubscribe_count || 0,
       avgOpenRate: stats.open_rate != null
-        ? parseFloat((stats.open_rate * 100).toFixed(1))
+        ? parseFloat(stats.open_rate.toFixed(1))
         : null,
       avgClickRate: stats.click_rate != null
-        ? parseFloat((stats.click_rate * 100).toFixed(1))
+        ? parseFloat(stats.click_rate.toFixed(1))
         : null,
       recentCampaigns: campaigns,
       fetchedAt: new Date().toISOString(),

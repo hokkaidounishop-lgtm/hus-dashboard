@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { format, parseISO, differenceInDays, isToday, isTomorrow } from 'date-fns'
 import {
   Sunrise, AlertTriangle, CheckSquare, TrendingUp,
-  Lightbulb, Clock, FolderKanban, ArrowRight,
+  Lightbulb, Clock, FolderKanban, ArrowRight, Users, Flame,
 } from 'lucide-react'
 import { useApp } from '../context/AppContext'
 import LevelSystem from './LevelSystem'
@@ -10,12 +10,15 @@ import LevelSystem from './LevelSystem'
 const TODAY_STR = new Date().toISOString().slice(0, 10)
 const TODAY     = new Date()
 
-const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 }
+const PRIORITY_ORDER  = { high: 0, medium: 1, low: 2 }
+const OWNER_PRIORITY  = ['Tad', '小池', 'ナランチャ', '脳汁', 'とべぶた', '疾風', 'Les yeux', 'Jus', 'Pino']
 
-function Section({ icon: Icon, title, accent = false, children }) {
+const isOpen = (t) => t.status !== 'done' && t.status !== 'completed'
+
+function Section({ icon: Icon, title, accent = false, right, children }) {
   return (
     <div
-      className="rounded-xl space-y-4"
+      className="rounded-xl"
       style={{
         borderRadius: 12,
         padding: '14px 16px',
@@ -23,153 +26,350 @@ function Section({ icon: Icon, title, accent = false, children }) {
         border: `1px solid ${accent ? 'rgba(220,38,38,0.15)' : 'rgba(0,0,0,0.06)'}`,
       }}
     >
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-2.5 mb-3">
         <div
           className="w-7 h-7 rounded-lg flex items-center justify-center"
-          style={{ background: 'rgba(0,0,0,0.04)', color: '#1a1a18' }}
+          style={{
+            background: accent ? 'rgba(220,38,38,0.08)' : 'rgba(0,0,0,0.04)',
+            color: accent ? '#dc2626' : '#1a1a18',
+          }}
         >
           <Icon size={14} />
         </div>
-        <h3
-          className="text-sm font-medium"
-          style={{ color: '#1a1a18' }}
-        >
-          {title}
-        </h3>
+        <h3 className="text-sm font-medium" style={{ color: '#1a1a18' }}>{title}</h3>
+        <div className="ml-auto">{right}</div>
       </div>
       {children}
     </div>
   )
 }
 
-function PriorityItem({ task, projects }) {
-  const project = projects.find((p) => p.id === task.project)
-  const due = task.dueDate ? parseISO(task.dueDate) : null
-  const overdue = due && task.dueDate < TODAY_STR
-  const dueToday = due && isToday(due)
-  const dueTomorrow = due && isTomorrow(due)
-  const daysUntil = due ? differenceInDays(due, TODAY) : null
+function dueLabel(task) {
+  if (!task.dueDate) return { label: 'No due date', tone: 'muted' }
+  const due  = parseISO(task.dueDate)
+  const diff = differenceInDays(due, TODAY)
+  if (task.dueDate < TODAY_STR) return { label: `${Math.abs(diff)}d overdue`, tone: 'danger' }
+  if (isToday(due))             return { label: 'Due today',    tone: 'urgent' }
+  if (isTomorrow(due))          return { label: 'Due tomorrow', tone: 'urgent' }
+  return { label: `${diff}d left`, tone: 'muted' }
+}
 
-  let dueLabel = ''
-  if (overdue) dueLabel = `${Math.abs(daysUntil)}d overdue`
-  else if (dueToday) dueLabel = 'Due today'
-  else if (dueTomorrow) dueLabel = 'Due tomorrow'
-  else if (daysUntil !== null) dueLabel = `${daysUntil}d left`
+const toneColor = { danger: '#dc2626', urgent: '#1a1a18', muted: '#9b9b94' }
 
+function PriorityBadge({ priority }) {
+  const label = priority === 'high' ? 'High' : priority === 'medium' ? 'Med' : 'Low'
+  const bg = priority === 'high' ? 'rgba(220,38,38,0.08)' : priority === 'medium' ? 'rgba(0,0,0,0.05)' : 'rgba(0,0,0,0.03)'
+  const fg = priority === 'high' ? '#dc2626' : priority === 'medium' ? '#1a1a18' : '#9b9b94'
   return (
-    <div className="flex items-start gap-3 py-2.5 last:border-0" style={{ borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
+    <span className="text-[10px] font-semibold px-1.5 py-0.5 uppercase tracking-wide"
+      style={{ borderRadius: 20, background: bg, color: fg, letterSpacing: '0.08em' }}>
+      {label}
+    </span>
+  )
+}
+
+function StatusPill({ status }) {
+  const map = {
+    'in-progress': { label: 'In Progress', bg: 'rgba(0,0,0,0.04)',       fg: '#1a1a18' },
+    'not-started': { label: 'Not started', bg: 'rgba(0,0,0,0.03)',       fg: '#9b9b94' },
+    'blocked':     { label: 'Blocked',     bg: 'rgba(220,38,38,0.08)',   fg: '#dc2626' },
+    'done':        { label: 'Done',        bg: 'rgba(0,0,0,0.04)',       fg: '#9b9b94' },
+  }
+  const s = map[status] || map['not-started']
+  return (
+    <span className="text-[10px] font-medium px-2 py-0.5"
+      style={{ borderRadius: 20, background: s.bg, color: s.fg }}>
+      {s.label}
+    </span>
+  )
+}
+
+function PriorityCard({ task, projects }) {
+  const project = projects.find((p) => p.id === task.project)
+  const { label, tone } = dueLabel(task)
+  return (
+    <div
+      className="flex items-start gap-3 px-3 py-3 rounded-lg"
+      style={{
+        borderRadius: 10,
+        border: '1px solid rgba(0,0,0,0.06)',
+        background: tone === 'danger' ? 'rgba(220,38,38,0.02)' : '#ffffff',
+        borderLeft: `3px solid ${task.priority === 'high' ? '#dc2626' : task.priority === 'medium' ? '#1a1a18' : 'rgba(0,0,0,0.15)'}`,
+      }}
+    >
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 flex-wrap mb-1">
+          <PriorityBadge priority={task.priority} />
+          <StatusPill status={task.status} />
+          <span className="text-[11px] font-medium tabular-nums"
+            style={{ color: toneColor[tone], fontFamily: "'DM Mono', monospace" }}>
+            {label}
+          </span>
+        </div>
+        <div className="text-sm font-medium leading-snug" style={{ color: '#1a1a18' }}>
+          {task.task}
+        </div>
+        <div className="text-xs mt-1 flex items-center gap-2" style={{ color: '#9b9b94' }}>
+          {project?.name && <span>{project.name}</span>}
+          {project?.name && task.owner && <span>·</span>}
+          {task.owner && (
+            <span className="font-medium" style={{ color: '#1a1a18' }}>@{task.owner}</span>
+          )}
+          {task.pdca && (
+            <>
+              <span>·</span>
+              <span>{task.pdca}</span>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ProgressBar({ value, status }) {
+  const stalled = status === 'stalled' || status === 'behind'
+  const color   = stalled ? '#dc2626' : value >= 80 ? '#1a1a18' : value >= 40 ? '#1a1a18' : '#9b9b94'
+  return (
+    <div className="w-full rounded-full overflow-hidden" style={{ height: 6, background: 'rgba(0,0,0,0.05)' }}>
       <div
-        className="mt-1.5 w-2 h-2 rounded-full shrink-0"
         style={{
-          background: task.priority === 'high' ? '#dc2626' :
-                      task.priority === 'medium' ? '#1a1a18' : 'rgba(0,0,0,0.08)',
-          boxShadow: task.priority === 'high' ? '0 0 6px rgba(220,38,38,0.3)' : 'none',
+          height: '100%',
+          width: `${Math.max(2, value)}%`,
+          background: color,
+          transition: 'width 300ms ease',
         }}
       />
-      <div className="flex-1 min-w-0">
-        <div className="text-sm font-medium truncate" style={{ color: '#1a1a18' }}>{task.task}</div>
-        <div className="text-xs mt-0.5" style={{ color: '#9b9b94' }}>
-          {project?.name && <span>{project.name} · </span>}
-          {task.owner && <span>{task.owner} · </span>}
-          <span
-            className="font-medium"
-            style={{ color: overdue ? '#dc2626' : dueToday ? '#1a1a18' : '#9b9b94' }}
-          >
-            {dueLabel}
+    </div>
+  )
+}
+
+function ProjectProgressRow({ project, openTaskCount }) {
+  const stalled = project.status === 'stalled' || project.status === 'behind'
+  return (
+    <div className="py-2.5 last:border-0" style={{ borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
+      <div className="flex items-center justify-between gap-3 mb-1.5">
+        <div className="min-w-0 flex items-center gap-2">
+          <span className="text-sm font-medium truncate" style={{ color: '#1a1a18' }}>{project.name}</span>
+          {stalled && (
+            <span className="text-[10px] font-semibold px-1.5 py-0.5 uppercase"
+              style={{ borderRadius: 20, background: 'rgba(220,38,38,0.08)', color: '#dc2626', letterSpacing: '0.08em' }}>
+              {project.status}
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          {openTaskCount > 0 && (
+            <span className="text-[11px]" style={{ color: '#9b9b94' }}>
+              {openTaskCount} open
+            </span>
+          )}
+          <span className="text-sm font-semibold tabular-nums"
+            style={{ color: '#1a1a18', fontFamily: "'DM Mono', monospace" }}>
+            {project.progress}%
           </span>
         </div>
       </div>
-      <span
-        className="shrink-0 text-xs px-2 py-0.5 font-medium"
-        style={{
-          borderRadius: 20,
-          background: task.pdca === 'Do' ? 'rgba(0,0,0,0.04)' :
-                      task.pdca === 'Check' ? 'rgba(220,38,38,0.06)' : 'rgba(0,0,0,0.03)',
-          color: task.pdca === 'Do' ? '#1a1a18' :
-                 task.pdca === 'Check' ? '#dc2626' : '#9b9b94',
-        }}
-      >
-        {task.pdca}
-      </span>
-    </div>
-  )
-}
-
-function KPIStatusRow({ label, value, target, unit, prefix = '', invert = false }) {
-  const pct = (value / target) * 100
-  const isGood = invert ? pct <= 100 : pct >= 100
-  const isWarn = invert ? (pct > 100 && pct <= 150) : (pct >= 80 && pct < 100)
-
-  return (
-    <div className="flex items-center justify-between py-2.5 last:border-0" style={{ borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
-      <span className="text-sm" style={{ color: '#9b9b94' }}>{label}</span>
-      <div className="flex items-center gap-2.5">
-        <span className="text-sm font-semibold tabular-nums" style={{ color: '#1a1a18', fontFamily: "'DM Mono', monospace" }}>
-          {prefix}{typeof value === 'number' ? value.toLocaleString() : value}{unit}
-        </span>
-        <span
-          className="text-xs px-2 py-0.5 font-medium"
-          style={{
-            borderRadius: 20,
-            background: isGood ? 'rgba(0,0,0,0.03)' : isWarn ? 'rgba(0,0,0,0.04)' : 'rgba(220,38,38,0.06)',
-            color: isGood ? '#9b9b94' : isWarn ? '#1a1a18' : '#dc2626',
-          }}
-        >
-          {isGood ? '✓' : isWarn ? '~' : '✗'} {Math.round(pct)}%
-        </span>
+      <ProgressBar value={project.progress} status={project.status} />
+      <div className="text-[11px] mt-1" style={{ color: '#9b9b94' }}>
+        Owner: {project.owner || '—'}
       </div>
     </div>
   )
 }
 
-const AI_SUGGESTIONS = [
-  "CVR is critically low at 0.3%. The highest-ROI single action today: book a 30-min Hotjar session review to find the #1 checkout drop-off point, then write one targeted fix brief for Dev Team.",
-  "With 5 overdue tasks across CVR Recovery and Yumemakura, consider a 15-min 'unblock' standup with Kenji and Aiko to move the top 2 items from Plan to Do today.",
-  "The Tuna Show is 55% done and has strong revenue potential ($80K/event). Prioritize securing the NYC venue this week — venue availability is the critical path constraint.",
-  "New York accounts for 62% of revenue. A targeted NY loyalty campaign (email + SMS) to existing customers could lift AOV before the CVR fix is complete.",
-]
+function OverdueRow({ task, projects }) {
+  const daysLate = differenceInDays(TODAY, parseISO(task.dueDate))
+  const project  = projects.find((p) => p.id === task.project)
+  return (
+    <div
+      className="flex items-start gap-2 px-3 py-2.5 rounded-lg"
+      style={{
+        borderRadius: 10,
+        background: 'rgba(220,38,38,0.04)',
+        border: '1px solid rgba(220,38,38,0.12)',
+      }}
+    >
+      <AlertTriangle size={13} className="shrink-0 mt-0.5" style={{ color: '#dc2626' }} />
+      <div className="flex-1 min-w-0">
+        <div className="text-sm font-medium truncate" style={{ color: '#1a1a18' }}>{task.task}</div>
+        <div className="text-xs mt-0.5 flex items-center gap-2">
+          <span className="font-semibold" style={{ color: '#dc2626' }}>{daysLate}d overdue</span>
+          {project?.name && <span style={{ color: '#9b9b94' }}>· {project.name}</span>}
+          {task.owner && (
+            <span className="font-medium" style={{ color: '#1a1a18' }}>· @{task.owner}</span>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function OwnerColumn({ owner, tasks, projects, isSelf }) {
+  const overdue    = tasks.filter((t) => t.dueDate && t.dueDate < TODAY_STR).length
+  const dueToday   = tasks.filter((t) => t.dueDate === TODAY_STR).length
+  const inProgress = tasks.filter((t) => t.status === 'in-progress').length
+
+  return (
+    <div
+      className="rounded-lg p-3 flex flex-col gap-2"
+      style={{
+        borderRadius: 10,
+        border: '1px solid rgba(0,0,0,0.06)',
+        background: isSelf ? '#1a1a18' : '#ffffff',
+        color:      isSelf ? '#ffffff' : '#1a1a18',
+      }}
+    >
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-semibold">@{owner || 'Unassigned'}</span>
+        <span className="text-xs tabular-nums"
+          style={{
+            color: isSelf ? 'rgba(255,255,255,0.6)' : '#9b9b94',
+            fontFamily: "'DM Mono', monospace",
+          }}
+        >
+          {tasks.length}
+        </span>
+      </div>
+      <div className="flex items-center gap-1.5 flex-wrap">
+        {overdue > 0 && (
+          <span className="text-[10px] font-semibold px-1.5 py-0.5"
+            style={{ borderRadius: 20, background: 'rgba(220,38,38,0.15)', color: '#FF8A8A' }}>
+            {overdue} overdue
+          </span>
+        )}
+        {dueToday > 0 && (
+          <span className="text-[10px] font-semibold px-1.5 py-0.5"
+            style={{
+              borderRadius: 20,
+              background: isSelf ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.06)',
+              color:      isSelf ? '#ffffff' : '#1a1a18',
+            }}>
+            {dueToday} today
+          </span>
+        )}
+        {inProgress > 0 && (
+          <span className="text-[10px] font-medium px-1.5 py-0.5"
+            style={{
+              borderRadius: 20,
+              background: isSelf ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
+              color:      isSelf ? 'rgba(255,255,255,0.7)' : '#6b6b66',
+            }}>
+            {inProgress} active
+          </span>
+        )}
+      </div>
+      <div className="flex flex-col gap-1.5 mt-1">
+        {tasks.slice(0, 3).map((t) => {
+          const project = projects.find((p) => p.id === t.project)
+          const { label, tone } = dueLabel(t)
+          return (
+            <div key={t.id} className="text-xs leading-snug">
+              <div className="truncate" style={{ color: isSelf ? 'rgba(255,255,255,0.9)' : '#1a1a18' }}>
+                • {t.task}
+              </div>
+              <div className="text-[10px] flex items-center gap-1.5 ml-2"
+                style={{ color: isSelf ? 'rgba(255,255,255,0.5)' : '#9b9b94' }}>
+                <span style={{
+                  color: tone === 'danger' ? (isSelf ? '#FF9E9E' : '#dc2626')
+                       : tone === 'urgent' ? (isSelf ? '#ffffff' : '#1a1a18')
+                       : (isSelf ? 'rgba(255,255,255,0.5)' : '#9b9b94'),
+                  fontFamily: "'DM Mono', monospace",
+                  fontWeight: tone === 'danger' ? 600 : 400,
+                }}>
+                  {label}
+                </span>
+                {project?.name && <span>· {project.name}</span>}
+              </div>
+            </div>
+          )
+        })}
+        {tasks.length > 3 && (
+          <div className="text-[10px]" style={{ color: isSelf ? 'rgba(255,255,255,0.5)' : '#9b9b94' }}>
+            +{tasks.length - 3} more
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
 
 export default function MorningBriefing() {
-  const { kpis, tasks, projects, events, setActiveSection } = useApp()
+  const { tasks, projects, setActiveSection } = useApp()
 
   const briefing = useMemo(() => {
-    const topTasks = [...tasks]
-      .filter((t) => t.status !== 'done' && t.status !== 'completed')
+    const openTasks = tasks.filter(isOpen)
+
+    const topTasks = [...openTasks]
       .sort((a, b) => {
+        const prio = (PRIORITY_ORDER[a.priority] ?? 2) - (PRIORITY_ORDER[b.priority] ?? 2)
+        if (prio !== 0) return prio
+        const aOver = a.dueDate && a.dueDate < TODAY_STR ? 0 : 1
+        const bOver = b.dueDate && b.dueDate < TODAY_STR ? 0 : 1
+        if (aOver !== bOver) return aOver - bOver
+        if (!a.dueDate) return 1
+        if (!b.dueDate) return -1
+        return a.dueDate.localeCompare(b.dueDate)
+      })
+      .slice(0, 5)
+
+    const overdue = openTasks
+      .filter((t) => t.dueDate && t.dueDate < TODAY_STR)
+      .sort((a, b) => a.dueDate.localeCompare(b.dueDate))
+
+    const dueToday = openTasks.filter((t) => t.dueDate === TODAY_STR)
+
+    // Project progress — sort stalled first, then by progress ascending (surface stuck ones)
+    const activeProjects = [...projects].sort((a, b) => {
+      const aStuck = (a.status === 'stalled' || a.status === 'behind') ? 0 : 1
+      const bStuck = (b.status === 'stalled' || b.status === 'behind') ? 0 : 1
+      if (aStuck !== bStuck) return aStuck - bStuck
+      return a.progress - b.progress
+    })
+
+    const openCountByProject = openTasks.reduce((acc, t) => {
+      if (!t.project) return acc
+      acc[t.project] = (acc[t.project] || 0) + 1
+      return acc
+    }, {})
+
+    // Group by owner
+    const byOwner = new Map()
+    openTasks.forEach((t) => {
+      const key = t.owner || 'Unassigned'
+      if (!byOwner.has(key)) byOwner.set(key, [])
+      byOwner.get(key).push(t)
+    })
+    // Sort each owner's tasks by priority → dueDate
+    byOwner.forEach((list) => {
+      list.sort((a, b) => {
         const prio = (PRIORITY_ORDER[a.priority] ?? 2) - (PRIORITY_ORDER[b.priority] ?? 2)
         if (prio !== 0) return prio
         if (!a.dueDate) return 1
         if (!b.dueDate) return -1
         return a.dueDate.localeCompare(b.dueDate)
       })
-      .slice(0, 3)
+    })
+    // Order owners: preferred list first, then by task count desc
+    const orderedOwners = Array.from(byOwner.entries()).sort((a, b) => {
+      const ai = OWNER_PRIORITY.indexOf(a[0])
+      const bi = OWNER_PRIORITY.indexOf(b[0])
+      if (ai !== -1 && bi !== -1) return ai - bi
+      if (ai !== -1) return -1
+      if (bi !== -1) return 1
+      return b[1].length - a[1].length
+    })
 
-    const overdue = tasks.filter(
-      (t) => t.dueDate && t.dueDate < TODAY_STR && t.status !== 'done' && t.status !== 'completed'
-    )
-    const todayEvents = events.filter((e) => e.date === TODAY_STR)
-    const cvrAlert = kpis.current.cvr < kpis.targets.cvr
-    const aovAlert = kpis.current.aov < kpis.targets.aov
-    const critProjects = projects.filter((p) => p.status === 'stalled' || p.status === 'behind')
-    const suggestion = AI_SUGGESTIONS[TODAY.getDate() % AI_SUGGESTIONS.length]
-
-    return { topTasks, overdue, todayEvents, cvrAlert, aovAlert, critProjects, suggestion }
-  }, [kpis, tasks, projects, events])
+    return { topTasks, overdue, dueToday, activeProjects, openCountByProject, orderedOwners, openCount: openTasks.length }
+  }, [tasks, projects])
 
   return (
-    <div className="space-y-3 max-w-4xl">
-      {/* Level System — most prominent position */}
-      <LevelSystem />
-
-      {/* Hero greeting */}
+    <div className="space-y-3">
+      {/* Hero greeting — at-a-glance summary */}
       <div
-        className="rounded-xl p-7 text-white relative overflow-hidden"
-        style={{
-          borderRadius: 12,
-          background: '#1a1a18',
-        }}
+        className="rounded-xl p-6 text-white relative overflow-hidden"
+        style={{ borderRadius: 12, background: '#1a1a18' }}
       >
-        {/* Subtle wave texture overlay */}
         <div
           className="absolute inset-0 opacity-[0.03] pointer-events-none"
           style={{
@@ -177,215 +377,139 @@ export default function MorningBriefing() {
           }}
         />
         <div className="relative flex items-start gap-4">
-          <div
-            className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-            style={{
-              background: 'rgba(255,255,255,0.1)',
-            }}
-          >
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+            style={{ background: 'rgba(255,255,255,0.1)' }}>
             <Sunrise size={20} style={{ color: '#ffffff' }} />
           </div>
-          <div>
-            <div
-              className="text-xl font-medium"
-              style={{ letterSpacing: '-0.01em' }}
-            >
-              Good morning — here's what's up.
+          <div className="flex-1">
+            <div className="text-xl font-medium" style={{ letterSpacing: '-0.01em' }}>
+              What's up — here's where everyone is.
             </div>
             <div className="text-sm mt-1.5" style={{ color: 'rgba(255,255,255,0.6)' }}>
               {format(TODAY, 'EEEE, MMMM d, yyyy')} · HUS Management Dashboard
             </div>
-            <div className="flex flex-wrap gap-5 mt-5">
+            <div className="flex flex-wrap gap-5 mt-4">
               <div className="flex items-center gap-2">
                 <AlertTriangle size={14} style={{ color: briefing.overdue.length > 0 ? '#FF8A8A' : 'rgba(255,255,255,0.4)' }} />
-                <span className="text-sm" style={{ color: briefing.overdue.length > 0 ? '#FF9E9E' : 'rgba(255,255,255,0.6)', fontWeight: briefing.overdue.length > 0 ? 600 : 400 }}>
-                  {briefing.overdue.length} overdue task{briefing.overdue.length !== 1 ? 's' : ''}
+                <span className="text-sm"
+                  style={{
+                    color: briefing.overdue.length > 0 ? '#FF9E9E' : 'rgba(255,255,255,0.6)',
+                    fontWeight: briefing.overdue.length > 0 ? 600 : 400,
+                  }}>
+                  {briefing.overdue.length} overdue
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Flame size={14} style={{ color: briefing.dueToday.length > 0 ? '#ffffff' : 'rgba(255,255,255,0.4)' }} />
+                <span className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                  {briefing.dueToday.length} due today
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckSquare size={14} style={{ color: 'rgba(255,255,255,0.4)' }} />
                 <span className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
-                  {briefing.todayEvents.length} meeting{briefing.todayEvents.length !== 1 ? 's' : ''} today
+                  {briefing.openCount} open tasks
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <FolderKanban size={14} style={{ color: 'rgba(255,255,255,0.4)' }} />
                 <span className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
-                  {briefing.critProjects.length} project{briefing.critProjects.length !== 1 ? 's' : ''} need attention
+                  {briefing.activeProjects.length} projects
                 </span>
               </div>
             </div>
           </div>
         </div>
-        {/* Accent bar at bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-0.5" style={{ background: 'rgba(255,255,255,0.1)' }} />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {/* Top Priorities */}
-        <Section icon={CheckSquare} title="Today's Top Priorities">
-          {briefing.topTasks.length === 0 ? (
-            <p className="text-sm" style={{ color: '#9b9b94' }}>No open tasks. Clear!</p>
-          ) : (
-            <div>
-              {briefing.topTasks.map((t) => (
-                <PriorityItem key={t.id} task={t} projects={projects} />
-              ))}
-            </div>
-          )}
+      {/* Section 1 — Today's TOP priorities (cards) */}
+      <Section
+        icon={Flame}
+        title="Today's TOP priorities"
+        right={
           <button
             onClick={() => setActiveSection('tasks')}
-            className="flex items-center gap-1 text-xs font-medium mt-1 transition-colors"
+            className="flex items-center gap-1 text-xs font-medium transition-colors"
             style={{ color: '#1a1a18' }}
             onMouseEnter={(e) => { e.currentTarget.style.color = '#333333' }}
             onMouseLeave={(e) => { e.currentTarget.style.color = '#1a1a18' }}
           >
-            View all tasks <ArrowRight size={11} />
+            All tasks <ArrowRight size={11} />
           </button>
-        </Section>
-
-        {/* Overdue items */}
-        <Section icon={AlertTriangle} title="Overdue Items" accent={briefing.overdue.length > 0}>
-          {briefing.overdue.length === 0 ? (
-            <p className="text-sm font-medium" style={{ color: '#9b9b94' }}>No overdue tasks — well done!</p>
-          ) : (
-            <div>
-              {briefing.overdue.slice(0, 4).map((t) => {
-                const daysLate = differenceInDays(TODAY, parseISO(t.dueDate))
-                const project = projects.find((p) => p.id === t.project)
-                return (
-                  <div key={t.id} className="flex items-start gap-2 py-2.5 last:border-0" style={{ borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
-                    <AlertTriangle size={13} className="shrink-0 mt-0.5" style={{ color: '#dc2626' }} />
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium truncate" style={{ color: '#1a1a18' }}>{t.task}</div>
-                      <div className="text-xs mt-0.5" style={{ color: '#dc2626' }}>{daysLate}d overdue · {project?.name}</div>
-                    </div>
-                  </div>
-                )
-              })}
-              {briefing.overdue.length > 4 && (
-                <div className="text-xs pt-2" style={{ color: '#9b9b94' }}>+{briefing.overdue.length - 4} more overdue</div>
-              )}
-            </div>
-          )}
-        </Section>
-
-        {/* KPI Status */}
-        <Section icon={TrendingUp} title="KPI Status">
-          <KPIStatusRow label="Conversion Rate" value={kpis.current.cvr} target={kpis.targets.cvr} unit="%" />
-          <KPIStatusRow label="Avg Order Value" value={kpis.current.aov} target={kpis.targets.aov} prefix="$" />
-          <KPIStatusRow
-            label="Mar Revenue"
-            value={kpis.monthlyRevenue[kpis.monthlyRevenue.length - 1].revenue}
-            target={kpis.targets.monthlyRevenue}
-            prefix="$"
-          />
-          <button
-            onClick={() => setActiveSection('dashboard')}
-            className="flex items-center gap-1 text-xs font-medium mt-1 transition-colors"
-            style={{ color: '#1a1a18' }}
-            onMouseEnter={(e) => { e.currentTarget.style.color = '#333333' }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = '#1a1a18' }}
-          >
-            Full KPI dashboard <ArrowRight size={11} />
-          </button>
-        </Section>
-
-        {/* Today's calendar */}
-        <Section icon={Clock} title="Today's Meetings">
-          {briefing.todayEvents.length === 0 ? (
-            <p className="text-sm" style={{ color: '#9b9b94' }}>No meetings scheduled today.</p>
-          ) : (
-            <div>
-              {briefing.todayEvents.map((e) => {
-                const project = projects.find((p) => p.id === e.project)
-                return (
-                  <div key={e.id} className="flex items-start gap-2 py-2.5 last:border-0" style={{ borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
-                    <Clock size={13} className="shrink-0 mt-0.5" style={{ color: '#1a1a18' }} />
-                    <div>
-                      <div className="text-sm font-medium" style={{ color: '#1a1a18' }}>{e.title}</div>
-                      {project && <div className="text-xs mt-0.5" style={{ color: '#9b9b94' }}>{project.name}</div>}
-                      {e.notes && <div className="text-xs mt-0.5 italic" style={{ color: '#9b9b94' }}>{e.notes}</div>}
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          )}
-          <button
-            onClick={() => setActiveSection('calendar')}
-            className="flex items-center gap-1 text-xs font-medium mt-1 transition-colors"
-            style={{ color: '#1a1a18' }}
-            onMouseEnter={(e) => { e.currentTarget.style.color = '#333333' }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = '#1a1a18' }}
-          >
-            Open calendar <ArrowRight size={11} />
-          </button>
-        </Section>
-      </div>
-
-      {/* Projects needing attention */}
-      {briefing.critProjects.length > 0 && (
-        <Section icon={FolderKanban} title="Projects Needing Attention">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {briefing.critProjects.map((p) => (
-              <div
-                key={p.id}
-                className="rounded-xl"
-                style={{
-                  borderRadius: 12,
-                  padding: '14px 16px',
-                  border: '1px solid rgba(0,0,0,0.06)',
-                  borderLeft: `3px solid ${p.status === 'stalled' ? '#dc2626' : '#1a1a18'}`,
-                  background: p.status === 'stalled' ? '#fee2e2' : '#ffffff',
-                }}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium" style={{ color: '#1a1a18' }}>{p.name}</span>
-                  <span
-                    className="text-xs px-2 py-0.5 font-medium"
-                    style={{
-                      borderRadius: 20,
-                      background: p.status === 'stalled' ? 'rgba(220,38,38,0.06)' : 'rgba(0,0,0,0.04)',
-                      color: p.status === 'stalled' ? '#dc2626' : '#1a1a18',
-                    }}
-                  >
-                    {p.status}
-                  </span>
-                </div>
-                <div className="text-xs mt-1" style={{ color: '#9b9b94' }}>{p.owner} · {p.progress}% complete</div>
-              </div>
+        }
+      >
+        {briefing.topTasks.length === 0 ? (
+          <p className="text-sm" style={{ color: '#9b9b94' }}>No open tasks. Clear!</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {briefing.topTasks.map((t) => (
+              <PriorityCard key={t.id} task={t} projects={projects} />
             ))}
           </div>
-        </Section>
-      )}
+        )}
+      </Section>
 
-      {/* AI Suggestion */}
-      <div
-        className="rounded-xl flex gap-4"
-        style={{
-          borderRadius: 12,
-          padding: '14px 16px',
-          background: '#ffffff',
-          border: '1px solid rgba(0,0,0,0.06)',
-        }}
-      >
-        <div
-          className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-          style={{ background: 'rgba(0,0,0,0.04)' }}
-        >
-          <Lightbulb size={15} style={{ color: '#1a1a18' }} />
-        </div>
-        <div>
-          <div
-            className="text-xs font-semibold uppercase tracking-wide mb-1.5"
-            style={{ color: '#1a1a18', letterSpacing: '0.12em' }}
+      {/* Section 2 — Project progress */}
+      <Section
+        icon={FolderKanban}
+        title="Project progress"
+        right={
+          <button
+            onClick={() => setActiveSection('projects')}
+            className="flex items-center gap-1 text-xs font-medium transition-colors"
+            style={{ color: '#1a1a18' }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = '#333333' }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = '#1a1a18' }}
           >
-            AI Suggestion for Today
-          </div>
-          <p className="text-sm leading-relaxed" style={{ color: '#6b6b66' }}>{briefing.suggestion}</p>
+            Open projects <ArrowRight size={11} />
+          </button>
+        }
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5">
+          {briefing.activeProjects.map((p) => (
+            <ProjectProgressRow
+              key={p.id}
+              project={p}
+              openTaskCount={briefing.openCountByProject[p.id] || 0}
+            />
+          ))}
         </div>
-      </div>
+      </Section>
+
+      {/* Section 3 — Overdue (red) */}
+      <Section
+        icon={AlertTriangle}
+        title={`Overdue · ${briefing.overdue.length}`}
+        accent={briefing.overdue.length > 0}
+      >
+        {briefing.overdue.length === 0 ? (
+          <p className="text-sm font-medium" style={{ color: '#9b9b94' }}>No overdue tasks — well done.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {briefing.overdue.map((t) => (
+              <OverdueRow key={t.id} task={t} projects={projects} />
+            ))}
+          </div>
+        )}
+      </Section>
+
+      {/* Section 4 — By assignee */}
+      <Section icon={Users} title="By assignee">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+          {briefing.orderedOwners.map(([owner, list]) => (
+            <OwnerColumn
+              key={owner}
+              owner={owner}
+              tasks={list}
+              projects={projects}
+              isSelf={owner === 'Tad'}
+            />
+          ))}
+        </div>
+      </Section>
+
+      {/* Level system — secondary */}
+      <LevelSystem />
     </div>
   )
 }
