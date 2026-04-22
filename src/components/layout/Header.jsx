@@ -2,6 +2,7 @@ import { format } from 'date-fns'
 import { useApp } from '../../context/AppContext'
 
 const TITLES = {
+  cockpit:   { label: 'Founder Cockpit', sub: 'v2.2 · 3 seconds to understand · 30 minutes to decide' },
   morning:   { label: 'Morning',       sub: 'Strategic priorities · cash · today · team pulse' },
   briefing:  { label: "What's Up?",    sub: 'Your morning briefing' },
   revenue:   { label: 'Revenue Command', sub: 'MTD revenue across all channels' },

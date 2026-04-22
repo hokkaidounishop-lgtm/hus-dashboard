@@ -11,6 +11,7 @@ import MorningBriefing from './components/MorningBriefing'
 import TeamPage from './components/TeamPage'
 import RevenueCommand from './components/RevenueCommand'
 import MorningDashboard from './components/MorningDashboard'
+import CockpitDashboard from './components/CockpitDashboard'
 
 function ShopifyAlertBanner() {
   const { shopifySync, syncShopify, dismissShopifyError } = useApp()
@@ -70,6 +71,7 @@ function MainContent() {
       >
         {activeSection === 'briefing'  && <MorningBriefing />}
         {activeSection === 'morning'   && <MorningDashboard />}
+        {activeSection === 'cockpit'   && <CockpitDashboard />}
         {activeSection === 'revenue'   && <RevenueCommand />}
         {activeSection === 'dashboard' && <KPIDashboard />}
         {activeSection === 'projects'  && <ProjectTracker />}
