@@ -11,6 +11,16 @@
     "totalOrders": 847,
     "totalRevenue": 792400
   },
+  "currentMonth": {
+    "mtd": 48600,
+    "forecast": 69400,
+    "lastMonthTotal": 54200,
+    "lastMonthToSameDay": 38700,
+    "lastYearSameMonth": 51800,
+    "asOfDay": 21,
+    "daysInMonth": 30,
+    "periodKey": "2026-04"
+  },
   "monthlyRevenue": [
     { "month": "Apr '24", "revenue": 45200,  "orders": 117 },
     { "month": "May '24", "revenue": 38900,  "orders": 101 },

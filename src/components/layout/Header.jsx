@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext'
 
 const TITLES = {
   briefing:  { label: "What's Up?",    sub: 'Your morning briefing' },
+  revenue:   { label: 'Revenue Command', sub: 'MTD revenue across all channels' },
   dashboard: { label: 'KPI Dashboard', sub: 'Business performance at a glance' },
   projects:  { label: 'Project Tracker', sub: 'All active initiatives' },
   tasks:     { label: 'Task List',     sub: 'Track, assign, and close work' },

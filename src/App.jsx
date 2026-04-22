@@ -9,6 +9,7 @@ import AlertsPanel from './components/AlertsPanel'
 import CalendarView from './components/CalendarView'
 import MorningBriefing from './components/MorningBriefing'
 import TeamPage from './components/TeamPage'
+import RevenueCommand from './components/RevenueCommand'
 
 function ShopifyAlertBanner() {
   const { shopifySync, syncShopify, dismissShopifyError } = useApp()
@@ -67,6 +68,7 @@ function MainContent() {
         style={{ maxWidth: 1120 }}
       >
         {activeSection === 'briefing'  && <MorningBriefing />}
+        {activeSection === 'revenue'   && <RevenueCommand />}
         {activeSection === 'dashboard' && <KPIDashboard />}
         {activeSection === 'projects'  && <ProjectTracker />}
         {activeSection === 'tasks'     && <TaskList />}

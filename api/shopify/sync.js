@@ -248,6 +248,55 @@ function buildTotals(orders) {
   }
 }
 
+/**
+ * Revenue Command metrics — derived straight from raw orders so we can
+ * compare like-for-like points that the aggregated monthlyRevenue array
+ * doesn't expose (same-day-last-month, same-month-last-year).
+ */
+function buildCurrentMonth(orders, now = new Date()) {
+  const year  = now.getUTCFullYear()
+  const month = now.getUTCMonth()
+  const day   = now.getUTCDate()
+
+  const lastMonthYear = month === 0 ? year - 1 : year
+  const lastMonth     = month === 0 ? 11       : month - 1
+  const lastYearYear  = year - 1
+
+  let mtd = 0
+  let lastMonthTotal = 0
+  let lastMonthToSameDay = 0
+  let lastYearSameMonth = 0
+
+  for (const o of orders) {
+    const d = new Date(o.created_at)
+    const y  = d.getUTCFullYear()
+    const m  = d.getUTCMonth()
+    const dd = d.getUTCDate()
+    const rev = parseFloat(o.subtotal_price) || 0
+
+    if (y === year && m === month) mtd += rev
+    if (y === lastMonthYear && m === lastMonth) {
+      lastMonthTotal += rev
+      if (dd <= day) lastMonthToSameDay += rev
+    }
+    if (y === lastYearYear && m === month) lastYearSameMonth += rev
+  }
+
+  const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate()
+  const forecast    = day > 0 ? Math.round((mtd / day) * daysInMonth) : 0
+
+  return {
+    mtd:                Math.round(mtd),
+    forecast,
+    lastMonthTotal:     Math.round(lastMonthTotal),
+    lastMonthToSameDay: Math.round(lastMonthToSameDay),
+    lastYearSameMonth:  Math.round(lastYearSameMonth),
+    asOfDay:            day,
+    daysInMonth,
+    periodKey:          `${year}-${String(month + 1).padStart(2, '0')}`,
+  }
+}
+
 /** Build NY-specific customer acquisition and shipping cost KPIs */
 function buildNYMetrics(orders) {
   const nyOrders = orders.filter((o) => {
@@ -347,12 +396,14 @@ export default async function handler(req, res) {
     const topProducts = buildProducts(orders, products)
     const totals     = buildTotals(orders)
     const nyMetrics  = buildNYMetrics(orders)
+    const currentMonth = buildCurrentMonth(orders)
 
     return res.status(200).json({
       current: {
         ...totals,
         cvr: null, // CVR requires Shopify Analytics API — kept from dashboard manual entry
       },
+      currentMonth,
       monthlyRevenue:  monthly,
       regionBreakdown: breakdown,
       regionTrend:     trend,

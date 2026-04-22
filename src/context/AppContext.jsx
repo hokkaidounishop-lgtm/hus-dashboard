@@ -144,6 +144,7 @@ export function AppProvider({ children }) {
       ...(shopifyData.regionTrend     ? { regionTrend:     shopifyData.regionTrend     } : {}),
       ...(shopifyData.topProducts     ? { topProducts:     shopifyData.topProducts     } : {}),
       ...(shopifyData.nyMetrics       ? { nyMetrics:       shopifyData.nyMetrics       } : {}),
+      ...(shopifyData.currentMonth    ? { currentMonth:    shopifyData.currentMonth    } : {}),
       current: {
         ...prev.current,
         ...shopifyData.current,
