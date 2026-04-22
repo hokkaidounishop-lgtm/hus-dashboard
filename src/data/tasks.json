@@ -180,10 +180,11 @@
     "priority": "high",
     "owner": "とべぶた",
     "dueDate": "2026-04-08",
-    "pdca": "Check",
-    "pdcaUpdatedAt": "2026-04-07",
-    "status": "not-started",
-    "notes": ""
+    "pdca": "Act",
+    "pdcaUpdatedAt": "2026-04-22",
+    "status": "done",
+    "notes": "",
+    "completedAt": "2026-04-22"
   },
   {
     "id": "task-1775524762400",
@@ -192,10 +193,11 @@
     "priority": "high",
     "owner": "とべぶた",
     "dueDate": "2026-04-08",
-    "pdca": "Do",
-    "pdcaUpdatedAt": "2026-04-07",
-    "status": "not-started",
-    "notes": ""
+    "pdca": "Act",
+    "pdcaUpdatedAt": "2026-04-22",
+    "status": "done",
+    "notes": "",
+    "completedAt": "2026-04-22"
   },
   {
     "id": "task-1775524768830",
@@ -300,10 +302,11 @@
     "priority": "high",
     "owner": "Tad",
     "dueDate": "2026-04-09",
-    "pdca": "Do",
-    "pdcaUpdatedAt": "2026-04-08",
-    "status": "not-started",
-    "notes": "トライアル残り3日（4/11期限）。支払い設定 + Analytics・Speed Insights有効化・カスタムドメイン設定まで一気にやる。"
+    "pdca": "Act",
+    "pdcaUpdatedAt": "2026-04-22",
+    "status": "done",
+    "notes": "トライアル残り3日（4/11期限）。支払い設定 + Analytics・Speed Insights有効化・カスタムドメイン設定まで一気にやる。",
+    "completedAt": "2026-04-22"
   },
   {
     "id": "task-1775644021450",
@@ -312,10 +315,11 @@
     "priority": "high",
     "owner": "Tad",
     "dueDate": "2026-04-10",
-    "pdca": "Check",
-    "pdcaUpdatedAt": "2026-04-08",
-    "status": "not-started",
-    "notes": ""
+    "pdca": "Act",
+    "pdcaUpdatedAt": "2026-04-22",
+    "status": "done",
+    "notes": "",
+    "completedAt": "2026-04-22"
   },
   {
     "id": "task-1775728282572",
@@ -348,10 +352,11 @@
     "priority": "high",
     "owner": "ナランチャ",
     "dueDate": "2026-04-14",
-    "pdca": "Do",
-    "pdcaUpdatedAt": "2026-04-13",
-    "status": "not-started",
-    "notes": "DM Sans + DM Mono、#f5f4f0背景、カード12px角丸、4列メトリクス、sticky topbar。完了条件はVercelデプロイ後の画面キャプチャ報告。"
+    "pdca": "Act",
+    "pdcaUpdatedAt": "2026-04-22",
+    "status": "done",
+    "notes": "DM Sans + DM Mono、#f5f4f0背景、カード12px角丸、4列メトリクス、sticky topbar。完了条件はVercelデプロイ後の画面キャプチャ報告。",
+    "completedAt": "2026-04-22"
   },
   {
     "id": "task-1776096139040",
@@ -509,5 +514,17 @@
     "pdcaUpdatedAt": "2026-04-21",
     "status": "not-started",
     "notes": "Shopify→B2C売上自動取得可否、Freshline→B2B売上自動取得可否、Export/Broker→手動か自動か、Cash Status→QuickBooksか手動か。結果を小池に報告。"
+  },
+  {
+    "id": "task-1776898281387",
+    "task": "Vercel Analytics・Speed Insights 有効化",
+    "project": "proj-010",
+    "priority": "medium",
+    "owner": "Tad",
+    "dueDate": "2026-04-25",
+    "pdca": "Do",
+    "pdcaUpdatedAt": "2026-04-22",
+    "status": "not-started",
+    "notes": "旧タスク「Vercel Pro 支払い設定（期限4/11）+ Analytics・Speed Insights有効化」から分離。支払いはPro plan稼働により完了確認済。残務はVercel画面でAnalytics＋Speed Insightsのスイッチ有効化のみ（5分作業）。"
   }
 ]
