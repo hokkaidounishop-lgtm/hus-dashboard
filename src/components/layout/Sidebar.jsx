@@ -7,10 +7,12 @@ import {
   Sunrise,
   Users,
   DollarSign,
+  Compass,
 } from 'lucide-react'
 import { useApp } from '../../context/AppContext'
 
 const NAV = [
+  { id: 'morning',   label: 'Morning',       icon: Compass },
   { id: 'briefing',  label: "What's up?",   icon: Sunrise },
   { id: 'revenue',   label: 'Revenue',       icon: DollarSign },
   { id: 'dashboard', label: 'KPI Dashboard', icon: LayoutDashboard },
