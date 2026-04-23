@@ -44,8 +44,13 @@ export default function Sidebar() {
         className="flex items-center gap-6 px-6 py-2.5 mx-auto"
         style={{ maxWidth: 1120 }}
       >
-        {/* Brand */}
-        <div className="flex items-center gap-2 shrink-0 mr-2">
+        {/* Brand — click returns to What's up? home */}
+        <button
+          type="button"
+          onClick={() => setActiveSection('briefing')}
+          aria-label="Go to What's up? home"
+          className="flex items-center gap-2 shrink-0 mr-2 rounded-md px-1 py-0.5 transition-opacity hover:opacity-70 focus:outline-none focus-visible:ring-2 focus-visible:ring-black/20"
+        >
           <img
             src="/hus-logo.png"
             alt="HUS"
@@ -58,7 +63,7 @@ export default function Sidebar() {
           >
             HUS
           </span>
-        </div>
+        </button>
 
         {/* Nav items */}
         <div className="flex items-center gap-1 flex-1">
