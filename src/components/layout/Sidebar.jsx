@@ -11,6 +11,7 @@ import {
   Crosshair,
 } from 'lucide-react'
 import { useApp } from '../../context/AppContext'
+import { navActivePill } from '../../config/theme'
 
 const NAV = [
   { id: 'cockpit',   label: 'Cockpit (v2)',  icon: Crosshair },
@@ -75,8 +76,8 @@ export default function Sidebar() {
                 onClick={() => setActiveSection(id)}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium transition-all relative"
                 style={{
-                  color: isActive ? '#ffffff' : '#6b6b66',
-                  background: isActive ? '#1a1a18' : 'transparent',
+                  color: isActive ? navActivePill.fg : '#6b6b66',
+                  background: isActive ? navActivePill.bg : 'transparent',
                   borderRadius: 20,
                 }}
                 onMouseEnter={(e) => {

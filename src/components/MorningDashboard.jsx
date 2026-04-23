@@ -10,6 +10,7 @@ import {
   loadFocusItems, upsertFocusItem, deleteFocusItem,
   loadTeamPulse, saveTeamPulse,
 } from '../api/morningManual'
+import { priority as PRIORITY_TOKENS } from '../config/theme'
 
 // ── Style primitives ────────────────────────────────────────────────────────
 
@@ -73,12 +74,9 @@ export const STRATEGIC_PRIORITIES = [
   { id: 'P4', title: 'KPI-first Execution',    hint: 'Measure → adjust weekly' },
 ]
 
-const PRIORITY_COLORS = {
-  P1: { bg: '#1a1a18',          fg: '#ffffff',   badgeBg: 'rgba(255,255,255,0.15)' },
-  P2: { bg: '#27272a',          fg: '#ffffff',   badgeBg: 'rgba(255,255,255,0.12)' },
-  P3: { bg: 'rgba(0,0,0,0.04)', fg: C.text,     badgeBg: 'rgba(0,0,0,0.06)' },
-  P4: { bg: 'rgba(0,0,0,0.04)', fg: C.text,     badgeBg: 'rgba(0,0,0,0.06)' },
-}
+// Priorities pull from src/config/theme.js — the same token powers
+// StrategicPrioritiesSection / TeamPulseSection / TodayFocusSection.
+const PRIORITY_COLORS = PRIORITY_TOKENS
 
 function StrategicPriorities() {
   return (

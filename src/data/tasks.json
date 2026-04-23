@@ -526,5 +526,17 @@
     "pdcaUpdatedAt": "2026-04-22",
     "status": "not-started",
     "notes": "旧タスク「Vercel Pro 支払い設定（期限4/11）+ Analytics・Speed Insights有効化」から分離。支払いはPro plan稼働により完了確認済。残務はVercel画面でAnalytics＋Speed Insightsのスイッチ有効化のみ（5分作業）。"
+  },
+  {
+    "id": "task-1776978408338",
+    "task": "Dashboard Step 6 — Data Wiring Sprint (seed脱却 + 黒要素根絶)",
+    "project": "proj-010",
+    "priority": "high",
+    "owner": "ナランチャ",
+    "dueDate": "2026-04-30",
+    "pdca": "Plan",
+    "pdcaUpdatedAt": "2026-04-23",
+    "status": "not-started",
+    "notes": "PR #2マージ後の次フェーズ。全データソースはseed/mock確認済（ナランチャレポート2026-04-23）。優先順：①C1 Revenue summary → Shopify sync JSON wiring、②C4 Team Pulse % → projects.json集計、③C3 Today Focus → tasks.json reader、④C2 Cash riskNote → Supabase。追加：黒要素根絶（ナビpill・戦略pill・What's up?banner）。Step 6設計書をナランチャが起草→小池確認→Tad承認→着手の順。"
   }
 ]

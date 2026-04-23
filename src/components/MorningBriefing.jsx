@@ -6,6 +6,7 @@ import {
 } from 'lucide-react'
 import { useApp } from '../context/AppContext'
 import LevelSystem from './LevelSystem'
+import { heroBanner } from '../config/theme'
 
 const TODAY_STR = new Date().toISOString().slice(0, 10)
 const TODAY     = new Date()
@@ -365,10 +366,11 @@ export default function MorningBriefing() {
 
   return (
     <div className="space-y-3">
-      {/* Hero greeting — at-a-glance summary */}
+      {/* Hero greeting — at-a-glance summary.
+          Step 6: HUS terracotta accent sourced from src/config/theme.js (規定書 v1.0). */}
       <div
-        className="rounded-xl p-6 text-white relative overflow-hidden"
-        style={{ borderRadius: 12, background: '#1a1a18' }}
+        className="rounded-xl p-6 relative overflow-hidden"
+        style={{ borderRadius: 12, background: heroBanner.bg, color: heroBanner.fg }}
       >
         <div
           className="absolute inset-0 opacity-[0.03] pointer-events-none"

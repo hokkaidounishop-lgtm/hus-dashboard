@@ -474,13 +474,13 @@
     "id": "proj-010",
     "name": "B2C Online Growth",
     "description": "Drive B2C growth by acquiring NY customers, optimizing shipping costs, and improving Shopify product offerings.",
-    "status": "active",
+    "status": "ACTIVE",
     "owner": "Tad",
     "kpis": "NY customer acquisition growth | Shipping cost reduction | Shopify product conversion improvement",
     "deliverables": "NY customer acquisition campaigns, shipping cost optimization analysis, Shopify product improvements",
     "startDate": "2026-03-29",
     "dueDate": "2026-12-31",
-    "progress": 43,
+    "progress": 45,
     "blocks": [
       {
         "name": "Tasks",
@@ -1029,6 +1029,46 @@
             "text": "競合5社価格比較マトリクス作成・アナゴコスト計算（$23.69/lb）・Temaki Party Set($599)実装完了・Yamayuki Tuna Set($299)Shopifyアップ済み（未完成タスク残り） ✅ (2026-04-14)",
             "status": "done",
             "completedAt": "2026-04-13"
+          }
+        ]
+      },
+      {
+        "name": "ダッシュボードv2.2 Sprint",
+        "items": [
+          {
+            "id": "blk-1776939777767",
+            "text": "Block 4 — Team Pulse 実装完了（6チーム表示・blocker赤縁取り・KPI Link・Strategic Tag・blocked counter全部動作）小池10/10承認 2026-04-23",
+            "status": "done",
+            "completedAt": "2026-04-23"
+          },
+          {
+            "id": "blk-1776978400922",
+            "text": "Block 0〜3 実装完了・データソース検証済（全seed/mock・本番運用には Step 6 data-wiring 必要）・Tad \"Mock版完成優先\" 判定でマージGO 2026-04-23",
+            "status": "done",
+            "completedAt": "2026-04-23"
+          },
+          {
+            "id": "blk-1776980756700",
+            "text": "PR #2 squash-merged to main (commit 6235549)・本番hus-dashboard.vercel.app反映完了・10ページ巡回全OK（赤バナー無し・ビルドエラー無し・Cockpit Revenue Command summary正常動作）2026-04-23 23:35",
+            "status": "done",
+            "completedAt": "2026-04-23"
+          },
+          {
+            "id": "blk-1776980936143",
+            "text": "Tad最終判定 A1/B1/C1/D1全GO：Step 5完了10/10・Teamマッピング小池案採用・pdca小池修正案（Act→Wrapping）・アクセント色#B15A3C terracotta HUS規定書v1.0流用。Step 6 \"Mock→Live\" Sprint発射準備完了 2026-04-23",
+            "status": "done",
+            "completedAt": "2026-04-23"
+          }
+        ]
+      },
+      {
+        "name": "Morning page 修復",
+        "items": [
+          {
+            "id": "blk-1776980761340",
+            "text": "Morning (legacy)ページ Cash Status \"——\" 表示・Today Focus \"No focus items\"表示 = Supabase morning_pulse/morning_focus/morning_cash テーブル未作成が原因。Step 6 C2/C3着手前にmigration必要。オーナー未定（Q6）",
+            "status": "pending",
+            "completedAt": null
           }
         ]
       }

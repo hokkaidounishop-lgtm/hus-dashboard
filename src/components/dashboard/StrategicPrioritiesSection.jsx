@@ -1,13 +1,9 @@
 import { strategicPriorities } from '../../data/dashboardMockData'
+import { priority as TONE } from '../../config/theme'
 
-// Visual treatment: P1/P2 dark (primary anchors), P3/P4 light (supporting).
-// Distinct but calm — per v2.2 spec.
-const TONE = {
-  P1: { bg: '#1a1a18',          fg: '#ffffff', badgeBg: 'rgba(255,255,255,0.15)' },
-  P2: { bg: '#27272a',          fg: '#ffffff', badgeBg: 'rgba(255,255,255,0.12)' },
-  P3: { bg: '#ffffff',          fg: '#1a1a18', badgeBg: 'rgba(0,0,0,0.06)', border: true },
-  P4: { bg: '#ffffff',          fg: '#1a1a18', badgeBg: 'rgba(0,0,0,0.06)', border: true },
-}
+// Visual treatment per Step 6: P1/P2 terracotta (HUS accent #B15A3C, 規定書 v1.0),
+// P3/P4 light. P1 at full strength, P2 at 70 % tint. Shared tokens live in
+// src/config/theme.js so every P1/P2 surface across the app matches.
 
 export default function StrategicPrioritiesSection() {
   return (

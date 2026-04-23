@@ -4,6 +4,7 @@ import {
   Sparkles, Eye, Clock, MessageCircle,
 } from 'lucide-react'
 import { todayFocus as seed, strategicPriorities } from '../../data/dashboardMockData'
+import { priority as PRIORITY_TOKENS, colors as THEME } from '../../config/theme'
 
 const C = {
   text:   '#1a1a18',
@@ -30,11 +31,12 @@ const TYPE_META = {
   Deadline:   { icon: Clock,            bg: 'rgba(220,38,38,0.10)', fg: C.danger, max: 2 },
 }
 
+// P1/P2 pick up the HUS terracotta accent sourced from src/config/theme.js.
 const TAG_STYLE = {
-  P1: { bg: '#1a1a18',          fg: '#ffffff' },
-  P2: { bg: 'rgba(0,0,0,0.65)', fg: '#ffffff' },
-  P3: { bg: 'rgba(0,0,0,0.05)', fg: C.text },
-  P4: { bg: 'rgba(0,0,0,0.05)', fg: C.text },
+  P1: { bg: PRIORITY_TOKENS.P1.bg, fg: PRIORITY_TOKENS.P1.fg },
+  P2: { bg: PRIORITY_TOKENS.P2.bg, fg: PRIORITY_TOKENS.P2.fg },
+  P3: { bg: 'rgba(0,0,0,0.05)',    fg: THEME.text },
+  P4: { bg: 'rgba(0,0,0,0.05)',    fg: THEME.text },
 }
 
 const STATUS_STYLE = {
