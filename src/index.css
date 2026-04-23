@@ -4,7 +4,7 @@
 
 /* ── HUS Design Tokens ─────────────────────────────────────── */
 :root {
-  --bg-primary: #f5f4f0;
+  --bg-primary: #EDECEA;
   --bg-secondary: #f0efe9;
   --card-bg: #ffffff;
   --border: rgba(0,0,0,0.08);

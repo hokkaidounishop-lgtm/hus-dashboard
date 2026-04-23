@@ -5,7 +5,7 @@ export default {
     extend: {
       colors: {
         hus: {
-          bg:      '#f5f4f0',
+          bg:      '#EDECEA',
           sub:     '#f0efe9',
           paper:   '#ffffff',
           text:    '#1a1a18',
