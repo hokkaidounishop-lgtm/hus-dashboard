@@ -14,12 +14,40 @@ import {
   ErrorCode,
   McpError,
 } from '@modelcontextprotocol/sdk/types.js'
+import { createClient } from '@supabase/supabase-js'
 import { readFileSync, writeFileSync } from 'fs'
 import { resolve, dirname }    from 'path'
 import { fileURLToPath }       from 'url'
 
 const __dir = dirname(fileURLToPath(import.meta.url))
 const DATA  = resolve(__dir, '../src/data')
+
+// ── Supabase (production overlay) ─────────────────────────────────────────────
+// When SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY (or ANON_KEY) are provided via
+// the MCP server's env, writes flow through to the `task_status` table so the
+// deployed dashboard sees them on the next page load. No-op if unset.
+
+const SB_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL
+const SB_KEY =
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  process.env.SUPABASE_ANON_KEY ||
+  process.env.VITE_SUPABASE_ANON_KEY
+const supabase = SB_URL && SB_KEY ? createClient(SB_URL, SB_KEY) : null
+
+async function persistTaskStatus(id, status, extras = {}) {
+  if (!supabase) return { ok: false, reason: 'supabase_not_configured' }
+  const row = { id, status, updated_at: new Date().toISOString(), ...extras }
+  if (status === 'done' && !row.completed_at) {
+    row.completed_at = new Date().toISOString().slice(0, 10)
+  } else if (status !== 'done') {
+    row.completed_at = null
+  }
+  const { error } = await supabase
+    .from('task_status')
+    .upsert(row, { onConflict: 'id' })
+  if (error) return { ok: false, reason: error.message }
+  return { ok: true }
+}
 
 // ── I/O helpers ───────────────────────────────────────────────────────────────
 
@@ -190,6 +218,19 @@ async function handleCompleteTask({ project_name, task_name }) {
   save('tasks',    tasks)
   save('projects', projects)
 
+  // Mirror to Supabase task_status so the deployed dashboard reflects this
+  // completion on the next page load. No-op if Supabase env vars are unset.
+  const sb = await persistTaskStatus(task.id, 'done', {
+    completed_at: task.completedAt,
+    pdca: task.pdca,
+    pdca_updated_at: task.pdcaUpdatedAt,
+  })
+  const sbNote = sb.ok
+    ? '\nSupabase: overlay upserted (visible on prod after reload)'
+    : sb.reason === 'supabase_not_configured'
+      ? ''
+      : `\nSupabase: upsert failed — ${sb.reason}`
+
   return {
     content: [{
       type: 'text',
@@ -199,6 +240,7 @@ async function handleCompleteTask({ project_name, task_name }) {
         `   Completed: ${task.completedAt}`,
         `   PDCA stage: Act`,
         progressNote,
+        sbNote,
       ].filter(Boolean).join('\n'),
     }],
   }

@@ -83,11 +83,22 @@ Or manually add to `~/hus-dashboard/.claude.json`:
   "mcpServers": {
     "hus-dashboard": {
       "command": "node",
-      "args": ["/Users/tadahisakumagai/hus-dashboard/mcp/hus-server.js"]
+      "args": ["/Users/tadahisakumagai/hus-dashboard/mcp/hus-server.js"],
+      "env": {
+        "SUPABASE_URL": "https://xxxxxxxxxxxx.supabase.co",
+        "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOi..."
+      }
     }
   }
 }
 ```
+
+> **Prod overlay (required for `complete_task` to stick on prod):**
+> If `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` are set in `env`, the MCP
+> server upserts the completion into the `task_status` table in addition to
+> `tasks.json`. Without them, MCP completions only reach the deployed
+> dashboard after the next `main` rebuild. The service role key is required
+> because the MCP server bypasses RLS; keep it out of git.
 
 **Global** (available in every Claude Code session):
 
