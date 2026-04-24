@@ -7,6 +7,7 @@ import {
 import { ChevronLeft, ChevronRight, Plus, Trash2, Edit2 } from 'lucide-react'
 import Modal from './Modal'
 import { useApp } from '../context/AppContext'
+import { calendarTodayDot } from '../config/theme'
 
 // Warm-toned event color palette
 const EVENT_COLORS = {
@@ -239,8 +240,9 @@ export default function CalendarView() {
                 <div
                   className="text-xs font-medium w-6 h-6 flex items-center justify-center rounded-full mb-1"
                   style={{
-                    background: isTodayDate ? '#1a1a18' : 'transparent',
-                    color: isTodayDate ? '#ffffff' : '#9b9b94',
+                    // Step 6: today's date dot adopts HUS terracotta accent (see src/config/theme.js).
+                    background: isTodayDate ? calendarTodayDot.bg : 'transparent',
+                    color: isTodayDate ? calendarTodayDot.fg : '#9b9b94',
                     fontFamily: "'DM Mono', monospace",
                   }}
                 >

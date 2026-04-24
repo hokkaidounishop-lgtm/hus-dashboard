@@ -10,6 +10,7 @@ import {
   loadFocusItems, upsertFocusItem, deleteFocusItem,
   loadTeamPulse, saveTeamPulse,
 } from '../api/morningManual'
+import { priority as PRIORITY_TOKENS } from '../config/theme'
 
 // ── Style primitives ────────────────────────────────────────────────────────
 
@@ -73,12 +74,10 @@ export const STRATEGIC_PRIORITIES = [
   { id: 'P4', title: 'KPI-first Execution',    hint: 'Measure → adjust weekly' },
 ]
 
-const PRIORITY_COLORS = {
-  P1: { bg: '#1a1a18',          fg: '#ffffff',   badgeBg: 'rgba(255,255,255,0.15)' },
-  P2: { bg: '#27272a',          fg: '#ffffff',   badgeBg: 'rgba(255,255,255,0.12)' },
-  P3: { bg: 'rgba(0,0,0,0.04)', fg: C.text,     badgeBg: 'rgba(0,0,0,0.06)' },
-  P4: { bg: 'rgba(0,0,0,0.04)', fg: C.text,     badgeBg: 'rgba(0,0,0,0.06)' },
-}
+// La Main 再設計：priority token は `.pill`（Strategic priority row 用）と
+// `.tag`（Team Pulse / Today Focus の inline chip 用）に分離。
+// ここでは Strategic Priority ブロックで `.pill` 形状を採用。
+const PRIORITY_PILLS = PRIORITY_TOKENS
 
 function StrategicPriorities() {
   return (
@@ -89,16 +88,17 @@ function StrategicPriorities() {
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
         {STRATEGIC_PRIORITIES.map((p) => {
-          const c = PRIORITY_COLORS[p.id]
+          const t = PRIORITY_PILLS[p.id].pill
           return (
             <div
               key={p.id}
               className="rounded-lg p-3 flex flex-col gap-1.5"
               style={{
                 borderRadius: 10,
-                background: c.bg,
-                color: c.fg,
-                border: `1px solid ${c.bg === C.bg ? C.border : 'transparent'}`,
+                background: t.bg,
+                color: t.fg,
+                border: t.border,
+                borderLeft: t.borderLeft,
               }}
             >
               <div className="flex items-center gap-2">
@@ -107,7 +107,8 @@ function StrategicPriorities() {
                   style={{
                     ...MONO,
                     borderRadius: 20,
-                    background: c.badgeBg,
+                    background: t.badgeBg,
+                    color: t.badgeFg,
                     letterSpacing: '0.06em',
                   }}
                 >
@@ -115,10 +116,7 @@ function StrategicPriorities() {
                 </span>
                 <span className="text-sm font-semibold leading-tight">{p.title}</span>
               </div>
-              <div
-                className="text-[11px] leading-snug"
-                style={{ color: c.fg === '#ffffff' ? 'rgba(255,255,255,0.6)' : C.faint }}
-              >
+              <div className="text-[11px] leading-snug" style={{ color: C.faint }}>
                 {p.hint}
               </div>
             </div>

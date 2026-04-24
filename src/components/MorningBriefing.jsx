@@ -6,6 +6,7 @@ import {
 } from 'lucide-react'
 import { useApp } from '../context/AppContext'
 import LevelSystem from './LevelSystem'
+import { heroBanner, tokens } from '../config/theme'
 
 const TODAY_STR = new Date().toISOString().slice(0, 10)
 const TODAY     = new Date()
@@ -23,18 +24,22 @@ function Section({ icon: Icon, title, accent = false, right, children }) {
         borderRadius: 12,
         padding: '14px 16px',
         background: '#ffffff',
-        border: `1px solid ${accent ? 'rgba(220,38,38,0.15)' : 'rgba(0,0,0,0.06)'}`,
+        // La Main 再設計：accent 状態でも pink border は使わない。
+        // 「accent = 注目セクション」だけ左 3px の accent bar で示す。
+        border: `1px solid ${tokens.hairline}`,
+        borderLeft: accent ? `3px solid ${tokens.accent}` : `1px solid ${tokens.hairline}`,
       }}
     >
       <div className="flex items-center gap-2.5 mb-3">
         <div
           className="w-7 h-7 rounded-lg flex items-center justify-center"
           style={{
-            background: accent ? 'rgba(220,38,38,0.08)' : 'rgba(0,0,0,0.04)',
-            color: accent ? '#dc2626' : '#1a1a18',
+            background: 'transparent',
+            border: `1px solid ${tokens.hairline}`,
+            color: accent ? tokens.accent : tokens.ink,
           }}
         >
-          <Icon size={14} />
+          <Icon size={14} strokeWidth={1.75} />
         </div>
         <h3 className="text-sm font-medium" style={{ color: '#1a1a18' }}>{title}</h3>
         <div className="ml-auto">{right}</div>
@@ -45,25 +50,85 @@ function Section({ icon: Icon, title, accent = false, right, children }) {
 }
 
 function dueLabel(task) {
-  if (!task.dueDate) return { label: 'No due date', tone: 'muted' }
+  if (!task.dueDate) return { label: 'No due date', tone: 'muted', days: 0 }
   const due  = parseISO(task.dueDate)
   const diff = differenceInDays(due, TODAY)
-  if (task.dueDate < TODAY_STR) return { label: `${Math.abs(diff)}d overdue`, tone: 'danger' }
-  if (isToday(due))             return { label: 'Due today',    tone: 'urgent' }
-  if (isTomorrow(due))          return { label: 'Due tomorrow', tone: 'urgent' }
-  return { label: `${diff}d left`, tone: 'muted' }
+  if (task.dueDate < TODAY_STR) return { label: `${Math.abs(diff)}d overdue`, tone: 'overdue', days: Math.abs(diff) }
+  if (isToday(due))             return { label: 'Due today',    tone: 'urgent', days: 0 }
+  if (isTomorrow(due))          return { label: 'Due tomorrow', tone: 'urgent', days: 1 }
+  return { label: `${diff}d left`, tone: 'muted', days: diff }
 }
 
-const toneColor = { danger: '#dc2626', urgent: '#1a1a18', muted: '#9b9b94' }
-
-function PriorityBadge({ priority }) {
-  const label = priority === 'high' ? 'High' : priority === 'medium' ? 'Med' : 'Low'
-  const bg = priority === 'high' ? 'rgba(220,38,38,0.08)' : priority === 'medium' ? 'rgba(0,0,0,0.05)' : 'rgba(0,0,0,0.03)'
-  const fg = priority === 'high' ? '#dc2626' : priority === 'medium' ? '#1a1a18' : '#9b9b94'
+// La Main 再設計：overdue 表記は「accent dot + neutral 文字（日数で重みを階層化）」。
+// danger red は排除し、dot で urgency を、濃淡で深刻度を伝える。
+function OverdueMeta({ days }) {
+  const weight =
+    days >= 21 ? { color: tokens.ink,       fontWeight: 600 }
+  : days >=  8 ? { color: tokens.inkMuted,  fontWeight: 500 }
+  :              { color: tokens.inkSubtle, fontWeight: 400 }
   return (
-    <span className="text-[10px] font-semibold px-1.5 py-0.5 uppercase tracking-wide"
-      style={{ borderRadius: 20, background: bg, color: fg, letterSpacing: '0.08em' }}>
-      {label}
+    <span
+      className="inline-flex items-center text-[11px] tabular-nums"
+      style={{ ...weight, fontFamily: "'DM Mono', monospace", gap: 6 }}
+    >
+      <span
+        aria-hidden="true"
+        style={{
+          width: 5, height: 5, borderRadius: '50%', background: tokens.accent,
+          display: 'inline-block', flexShrink: 0,
+        }}
+      />
+      {days}d overdue
+    </span>
+  )
+}
+
+// La Main 再設計：HIGH は accent outline、Med/Low は neutral outline / muted text。
+// 塗り → 線で視覚重量は 1/4。tag が 5 個並んでも "叫ばない"。
+function PriorityBadge({ priority }) {
+  if (priority === 'high') {
+    return (
+      <span
+        className="text-[9px] font-semibold px-2 py-[2px] uppercase"
+        style={{
+          background: 'transparent',
+          border: `1px solid ${tokens.accent}`,
+          color:  tokens.accent,
+          borderRadius: 4,
+          letterSpacing: '0.2em',
+        }}
+      >
+        High
+      </span>
+    )
+  }
+  if (priority === 'medium') {
+    return (
+      <span
+        className="text-[9px] font-semibold px-2 py-[2px] uppercase"
+        style={{
+          background: 'transparent',
+          border: `1px solid ${tokens.inkSubtle}`,
+          color:  tokens.inkSubtle,
+          borderRadius: 4,
+          letterSpacing: '0.2em',
+        }}
+      >
+        Med
+      </span>
+    )
+  }
+  return (
+    <span
+      className="text-[9px] font-semibold px-2 py-[2px] uppercase"
+      style={{
+        background: 'transparent',
+        color: tokens.inkSubtle,
+        borderRadius: 4,
+        letterSpacing: '0.2em',
+      }}
+    >
+      Low
     </span>
   )
 }
@@ -86,25 +151,38 @@ function StatusPill({ status }) {
 
 function PriorityCard({ task, projects }) {
   const project = projects.find((p) => p.id === task.project)
-  const { label, tone } = dueLabel(task)
+  const { label, tone, days } = dueLabel(task)
+  // La Main 再設計：card bg は白のみ。左 border は "high = accent 2px、それ以外 = hairline"
+  // に統一し、overdue 状態の pink bg は排除。urgency は OverdueMeta で伝える。
+  const leftBorder =
+    task.priority === 'high' ? `2px solid ${tokens.accent}` : `1px solid ${tokens.hairline}`
   return (
     <div
       className="flex items-start gap-3 px-3 py-3 rounded-lg"
       style={{
         borderRadius: 10,
-        border: '1px solid rgba(0,0,0,0.06)',
-        background: tone === 'danger' ? 'rgba(220,38,38,0.02)' : '#ffffff',
-        borderLeft: `3px solid ${task.priority === 'high' ? '#dc2626' : task.priority === 'medium' ? '#1a1a18' : 'rgba(0,0,0,0.15)'}`,
+        border: `1px solid ${tokens.hairline}`,
+        borderLeft: leftBorder,
+        background: '#ffffff',
       }}
     >
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap mb-1">
           <PriorityBadge priority={task.priority} />
           <StatusPill status={task.status} />
-          <span className="text-[11px] font-medium tabular-nums"
-            style={{ color: toneColor[tone], fontFamily: "'DM Mono', monospace" }}>
-            {label}
-          </span>
+          {tone === 'overdue' ? (
+            <OverdueMeta days={days} />
+          ) : (
+            <span
+              className="text-[11px] font-medium tabular-nums"
+              style={{
+                color: tone === 'urgent' ? tokens.ink : tokens.inkSubtle,
+                fontFamily: "'DM Mono', monospace",
+              }}
+            >
+              {label}
+            </span>
+          )}
         </div>
         <div className="text-sm font-medium leading-snug" style={{ color: '#1a1a18' }}>
           {task.task}
@@ -152,8 +230,16 @@ function ProjectProgressRow({ project, openTaskCount }) {
         <div className="min-w-0 flex items-center gap-2">
           <span className="text-sm font-medium truncate" style={{ color: '#1a1a18' }}>{project.name}</span>
           {stalled && (
-            <span className="text-[10px] font-semibold px-1.5 py-0.5 uppercase"
-              style={{ borderRadius: 20, background: 'rgba(220,38,38,0.08)', color: '#dc2626', letterSpacing: '0.08em' }}>
+            <span className="text-[10px] font-semibold px-1.5 py-0.5 uppercase inline-flex items-center"
+              style={{
+                borderRadius: 4,
+                background: 'transparent',
+                border: `1px solid ${tokens.inkSubtle}`,
+                color: tokens.inkMuted,
+                letterSpacing: '0.2em',
+                gap: 6,
+              }}>
+              <span aria-hidden="true" style={{ width: 5, height: 5, borderRadius: '50%', background: tokens.accent, display: 'inline-block' }} />
               {project.status}
             </span>
           )}
@@ -181,23 +267,24 @@ function ProjectProgressRow({ project, openTaskCount }) {
 function OverdueRow({ task, projects }) {
   const daysLate = differenceInDays(TODAY, parseISO(task.dueDate))
   const project  = projects.find((p) => p.id === task.project)
+  // La Main 再設計：pink bg + 赤 AlertTriangle を全廃。white card + hairline border +
+  // OverdueMeta（neutral 文字 + accent dot）で urgency を伝える。
   return (
     <div
       className="flex items-start gap-2 px-3 py-2.5 rounded-lg"
       style={{
         borderRadius: 10,
-        background: 'rgba(220,38,38,0.04)',
-        border: '1px solid rgba(220,38,38,0.12)',
+        background: '#ffffff',
+        border: `1px solid ${tokens.hairline}`,
       }}
     >
-      <AlertTriangle size={13} className="shrink-0 mt-0.5" style={{ color: '#dc2626' }} />
       <div className="flex-1 min-w-0">
-        <div className="text-sm font-medium truncate" style={{ color: '#1a1a18' }}>{task.task}</div>
+        <div className="text-sm font-medium truncate" style={{ color: tokens.ink }}>{task.task}</div>
         <div className="text-xs mt-0.5 flex items-center gap-2">
-          <span className="font-semibold" style={{ color: '#dc2626' }}>{daysLate}d overdue</span>
-          {project?.name && <span style={{ color: '#9b9b94' }}>· {project.name}</span>}
+          <OverdueMeta days={daysLate} />
+          {project?.name && <span style={{ color: tokens.inkSubtle }}>· {project.name}</span>}
           {task.owner && (
-            <span className="font-medium" style={{ color: '#1a1a18' }}>· @{task.owner}</span>
+            <span className="font-medium" style={{ color: tokens.ink }}>· @{task.owner}</span>
           )}
         </div>
       </div>
@@ -215,46 +302,44 @@ function OwnerColumn({ owner, tasks, projects, isSelf }) {
       className="rounded-lg p-3 flex flex-col gap-2"
       style={{
         borderRadius: 10,
-        border: '1px solid rgba(0,0,0,0.06)',
-        background: isSelf ? '#1a1a18' : '#ffffff',
-        color:      isSelf ? '#ffffff' : '#1a1a18',
+        // La Main 再設計：isSelf（@Tad）列の solid black を廃し、白 card + 左 2px accent bar で
+        // 「あなた」マーカーに置換。画面内の黒ブロック面積を削減。
+        border: `1px solid ${tokens.hairline}`,
+        borderLeft: isSelf ? `2px solid ${tokens.accent}` : `1px solid ${tokens.hairline}`,
+        background: '#ffffff',
+        color: tokens.ink,
       }}
     >
       <div className="flex items-center justify-between">
-        <span className="text-sm font-semibold">@{owner || 'Unassigned'}</span>
+        <span className="text-sm font-semibold" style={{ color: tokens.ink }}>@{owner || 'Unassigned'}</span>
         <span className="text-xs tabular-nums"
-          style={{
-            color: isSelf ? 'rgba(255,255,255,0.6)' : '#9b9b94',
-            fontFamily: "'DM Mono', monospace",
-          }}
+          style={{ color: tokens.inkSubtle, fontFamily: "'DM Mono', monospace" }}
         >
           {tasks.length}
         </span>
       </div>
       <div className="flex items-center gap-1.5 flex-wrap">
         {overdue > 0 && (
-          <span className="text-[10px] font-semibold px-1.5 py-0.5"
-            style={{ borderRadius: 20, background: 'rgba(220,38,38,0.15)', color: '#FF8A8A' }}>
+          <span className="text-[10px] font-semibold px-1.5 py-0.5 inline-flex items-center"
+            style={{
+              borderRadius: 20,
+              background: 'rgba(0,0,0,0.04)',
+              color:      tokens.ink,
+              gap: 5,
+            }}>
+            <span aria-hidden="true" style={{ width: 5, height: 5, borderRadius: '50%', background: tokens.accent, display: 'inline-block' }} />
             {overdue} overdue
           </span>
         )}
         {dueToday > 0 && (
           <span className="text-[10px] font-semibold px-1.5 py-0.5"
-            style={{
-              borderRadius: 20,
-              background: isSelf ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.06)',
-              color:      isSelf ? '#ffffff' : '#1a1a18',
-            }}>
+            style={{ borderRadius: 20, background: 'rgba(0,0,0,0.06)', color: tokens.ink }}>
             {dueToday} today
           </span>
         )}
         {inProgress > 0 && (
           <span className="text-[10px] font-medium px-1.5 py-0.5"
-            style={{
-              borderRadius: 20,
-              background: isSelf ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
-              color:      isSelf ? 'rgba(255,255,255,0.7)' : '#6b6b66',
-            }}>
+            style={{ borderRadius: 20, background: 'rgba(0,0,0,0.04)', color: tokens.inkMuted }}>
             {inProgress} active
           </span>
         )}
@@ -265,18 +350,23 @@ function OwnerColumn({ owner, tasks, projects, isSelf }) {
           const { label, tone } = dueLabel(t)
           return (
             <div key={t.id} className="text-xs leading-snug">
-              <div className="truncate" style={{ color: isSelf ? 'rgba(255,255,255,0.9)' : '#1a1a18' }}>
+              <div className="truncate" style={{ color: tokens.ink }}>
                 • {t.task}
               </div>
-              <div className="text-[10px] flex items-center gap-1.5 ml-2"
-                style={{ color: isSelf ? 'rgba(255,255,255,0.5)' : '#9b9b94' }}>
-                <span style={{
-                  color: tone === 'danger' ? (isSelf ? '#FF9E9E' : '#dc2626')
-                       : tone === 'urgent' ? (isSelf ? '#ffffff' : '#1a1a18')
-                       : (isSelf ? 'rgba(255,255,255,0.5)' : '#9b9b94'),
-                  fontFamily: "'DM Mono', monospace",
-                  fontWeight: tone === 'danger' ? 600 : 400,
-                }}>
+              <div className="text-[10px] flex items-center gap-1.5 ml-2" style={{ color: tokens.inkSubtle }}>
+                <span
+                  className="inline-flex items-center"
+                  style={{
+                    color: tone === 'overdue' ? tokens.ink
+                         : tone === 'urgent'  ? tokens.ink
+                         : tokens.inkSubtle,
+                    fontFamily: "'DM Mono', monospace",
+                    fontWeight: tone === 'overdue' ? 600 : 400,
+                    gap: 5,
+                  }}>
+                  {tone === 'overdue' && (
+                    <span aria-hidden="true" style={{ width: 4, height: 4, borderRadius: '50%', background: tokens.accent, display: 'inline-block' }} />
+                  )}
                   {label}
                 </span>
                 {project?.name && <span>· {project.name}</span>}
@@ -285,7 +375,7 @@ function OwnerColumn({ owner, tasks, projects, isSelf }) {
           )
         })}
         {tasks.length > 3 && (
-          <div className="text-[10px]" style={{ color: isSelf ? 'rgba(255,255,255,0.5)' : '#9b9b94' }}>
+          <div className="text-[10px]" style={{ color: tokens.inkSubtle }}>
             +{tasks.length - 3} more
           </div>
         )}
@@ -365,55 +455,73 @@ export default function MorningBriefing() {
 
   return (
     <div className="space-y-3">
-      {/* Hero greeting — at-a-glance summary */}
+      {/* Hero greeting — La Main 再設計（2026-04-24）。
+          solid terracotta 塗りつぶしから 白 card + 左 3px accent bar + accent eyebrow
+          の「ラインアクセント」方式へ。accent は eyebrow と縦 bar のみ。 */}
       <div
-        className="rounded-xl p-6 text-white relative overflow-hidden"
-        style={{ borderRadius: 12, background: '#1a1a18' }}
+        className="rounded-xl p-6 relative"
+        style={{
+          borderRadius: 12,
+          background: heroBanner.bg,
+          color: heroBanner.fg,
+          border: heroBanner.border,
+          borderLeft: `3px solid ${heroBanner.leftBar}`,
+        }}
       >
-        <div
-          className="absolute inset-0 opacity-[0.03] pointer-events-none"
-          style={{
-            backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.5) 10px, rgba(255,255,255,0.5) 11px)',
-          }}
-        />
-        <div className="relative flex items-start gap-4">
-          <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-            style={{ background: 'rgba(255,255,255,0.1)' }}>
-            <Sunrise size={20} style={{ color: '#ffffff' }} />
+        <div className="flex items-start gap-4">
+          <div
+            className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+            style={{ background: 'transparent', border: `1px solid ${tokens.hairline}` }}
+          >
+            <Sunrise size={20} style={{ color: tokens.accent }} strokeWidth={1.75} />
           </div>
           <div className="flex-1">
-            <div className="text-xl font-medium" style={{ letterSpacing: '-0.01em' }}>
+            <div
+              className="text-[10px] font-semibold uppercase tracking-wider"
+              style={{ color: heroBanner.eyebrow, letterSpacing: '0.12em' }}
+            >
+              Morning Briefing
+            </div>
+            <div className="text-xl font-medium mt-1" style={{ letterSpacing: '-0.01em', color: tokens.ink }}>
               What's up — here's where everyone is.
             </div>
-            <div className="text-sm mt-1.5" style={{ color: 'rgba(255,255,255,0.6)' }}>
+            <div className="text-sm mt-1.5" style={{ color: tokens.inkSubtle }}>
               {format(TODAY, 'EEEE, MMMM d, yyyy')} · HUS Management Dashboard
             </div>
             <div className="flex flex-wrap gap-5 mt-4">
               <div className="flex items-center gap-2">
-                <AlertTriangle size={14} style={{ color: briefing.overdue.length > 0 ? '#FF8A8A' : 'rgba(255,255,255,0.4)' }} />
-                <span className="text-sm"
+                {briefing.overdue.length > 0 && (
+                  <span
+                    aria-hidden="true"
+                    style={{ width: 6, height: 6, borderRadius: '50%', background: tokens.accent, display: 'inline-block', flexShrink: 0 }}
+                  />
+                )}
+                <AlertTriangle size={14} style={{ color: tokens.inkSubtle }} strokeWidth={1.75} />
+                <span
+                  className="text-sm"
                   style={{
-                    color: briefing.overdue.length > 0 ? '#FF9E9E' : 'rgba(255,255,255,0.6)',
+                    color: briefing.overdue.length > 0 ? tokens.ink : tokens.inkMuted,
                     fontWeight: briefing.overdue.length > 0 ? 600 : 400,
-                  }}>
+                  }}
+                >
                   {briefing.overdue.length} overdue
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <Flame size={14} style={{ color: briefing.dueToday.length > 0 ? '#ffffff' : 'rgba(255,255,255,0.4)' }} />
-                <span className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                <Flame size={14} style={{ color: briefing.dueToday.length > 0 ? tokens.ink : tokens.inkSubtle }} />
+                <span className="text-sm" style={{ color: tokens.inkMuted }}>
                   {briefing.dueToday.length} due today
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckSquare size={14} style={{ color: 'rgba(255,255,255,0.4)' }} />
-                <span className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                <CheckSquare size={14} style={{ color: tokens.inkSubtle }} />
+                <span className="text-sm" style={{ color: tokens.inkMuted }}>
                   {briefing.openCount} open tasks
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <FolderKanban size={14} style={{ color: 'rgba(255,255,255,0.4)' }} />
-                <span className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                <FolderKanban size={14} style={{ color: tokens.inkSubtle }} />
+                <span className="text-sm" style={{ color: tokens.inkMuted }}>
                   {briefing.activeProjects.length} projects
                 </span>
               </div>
