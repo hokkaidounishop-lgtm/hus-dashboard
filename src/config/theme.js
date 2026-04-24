@@ -1,67 +1,137 @@
 /**
- * HUS design tokens — single source of truth for color.
+ * HUS design tokens — single source of truth.
  *
- * Step 6 introduces the HUS accent color (terracotta #B15A3C, per HUS規定書 v1.0)
- * to replace pure black (#1a1a18) on interactive / priority / hero surfaces.
- * Black is retained purely as body text color because it is the most legible
- * on the #EDECEA warm-gray page background — only the "active pill / P1 pill /
- * hero banner / today dot" surfaces switch to terracotta.
- *
- * Import from anywhere:
- *   import { colors, priority } from '../config/theme'
+ * La Main 診断（2026-04-24）後の再設計。
+ * - accent は構造化された「3%以下・7箇所以下」の焦点として使い、
+ *   solid の塗りつぶしは Calendar の today dot 1箇所のみ。
+ * - Hero banner / Nav active / P1P2 pill は「tint bg + accent line」の
+ *   ラインアクセント方式に切替え、残り 97% を neutral ink/paper で構成。
+ * - HUS 規定書 v1.0 の accent 出現頻度・階層をそのまま再現。
  */
 
-// ── Canonical palette ─────────────────────────────────────────────────────
+// ── Canonical tokens ──────────────────────────────────────────────────────
+export const tokens = {
+  accent:       '#B15A3C',
+  accentTint4:  'rgba(177, 90, 60, 0.04)',
+  accentTint6:  'rgba(177, 90, 60, 0.06)',
+
+  ink:          '#1A1A1A',
+  inkMuted:     '#4A4A4A',
+  inkSubtle:    '#8A8A86',
+
+  paper:        '#EDECEA',
+  paperWarm:    '#FAFAF7',
+  hairline:     '#EDECE8',
+}
+
+// ── Legacy `colors` shim ──────────────────────────────────────────────────
+// Older modules import `{ colors }` — keep the shape so they keep rendering
+// while slowly migrating to `tokens`.
 export const colors = {
-  // Neutrals (unchanged)
-  text:    '#1a1a18',  // body text / dense numbers (kept black for legibility)
-  muted:   '#6b6b66',
-  faint:   '#9b9b94',
-  bgPage:  '#EDECEA',  // warm gray page background
+  text:    tokens.ink,
+  muted:   tokens.inkMuted,
+  faint:   tokens.inkSubtle,
+  bgPage:  tokens.paper,
   bgCard:  '#ffffff',
   border:  'rgba(0,0,0,0.06)',
   hair:    'rgba(0,0,0,0.04)',
 
-  // Semantic
   ok:      '#15803d',
   warn:    '#b45309',
   danger:  '#dc2626',
 
-  // HUS accent — terracotta (規定書 v1.0)
-  accent:      '#B15A3C',                 // full strength — active pill, hero, P1
-  accentSoft:  '#C38570',                 // 70 % mix w/ warm bg — P2
-  accentTint:  'rgba(177, 90, 60, 0.08)', // hover / selected chip wash
-  accentInk:   '#ffffff',                 // text on accent surfaces
+  accent:      tokens.accent,
+  accentSoft:  tokens.accent,   // P2 は tint 方式に移行したので softの概念は消滅
+  accentTint:  tokens.accentTint6,
+  accentInk:   '#ffffff',
 }
 
-// ── Priority pill tokens ──────────────────────────────────────────────────
-// Used by StrategicPrioritiesSection, MorningDashboard P1/P2 pills,
-// TeamPulseSection priority badges, TodayFocusSection priority badges.
+// ── Priority tokens ───────────────────────────────────────────────────────
+// `pill` = Strategic Priority row（フル幅・左ライン入り）
+// `tag`  = Team Pulse / Today Focus の小さい inline chip（tint bg + text）
+// P1 のみ accent の色、P2 は accent を細いライン1本に限定、P3/P4 は完全 neutral。
 export const priority = {
-  P1: { bg: colors.accent,     fg: colors.accentInk, badgeBg: 'rgba(255,255,255,0.18)' },
-  P2: { bg: colors.accentSoft, fg: colors.accentInk, badgeBg: 'rgba(255,255,255,0.20)' },
-  P3: { bg: colors.bgCard,     fg: colors.text,      badgeBg: 'rgba(0,0,0,0.06)', border: true },
-  P4: { bg: colors.bgCard,     fg: colors.text,      badgeBg: 'rgba(0,0,0,0.06)', border: true },
+  P1: {
+    pill: {
+      bg:         '#ffffff',
+      fg:         tokens.ink,
+      border:     `1px solid ${tokens.hairline}`,
+      borderLeft: `3px solid ${tokens.accent}`,
+      badgeBg:    tokens.accentTint6,
+      badgeFg:    tokens.accent,
+    },
+    tag: {
+      bg: tokens.accentTint6,
+      fg: tokens.accent,
+    },
+  },
+  P2: {
+    pill: {
+      bg:         '#ffffff',
+      fg:         tokens.ink,
+      border:     `1px solid ${tokens.hairline}`,
+      borderLeft: `2px solid ${tokens.accent}`,
+      badgeBg:    'rgba(0,0,0,0.04)',
+      badgeFg:    tokens.inkMuted,
+    },
+    tag: {
+      bg: 'rgba(0,0,0,0.04)',
+      fg: tokens.inkMuted,
+    },
+  },
+  P3: {
+    pill: {
+      bg:         tokens.paperWarm,
+      fg:         tokens.inkMuted,
+      border:     `1px solid ${tokens.hairline}`,
+      borderLeft: 'none',
+      badgeBg:    'rgba(0,0,0,0.04)',
+      badgeFg:    tokens.inkSubtle,
+    },
+    tag: {
+      bg: 'rgba(0,0,0,0.04)',
+      fg: tokens.inkSubtle,
+    },
+  },
+  P4: {
+    pill: {
+      bg:         tokens.paperWarm,
+      fg:         tokens.inkMuted,
+      border:     `1px solid ${tokens.hairline}`,
+      borderLeft: 'none',
+      badgeBg:    'rgba(0,0,0,0.04)',
+      badgeFg:    tokens.inkSubtle,
+    },
+    tag: {
+      bg: 'rgba(0,0,0,0.04)',
+      fg: tokens.inkSubtle,
+    },
+  },
 }
 
 // ── Nav active pill ───────────────────────────────────────────────────────
+// tint bg + 下 2px の accent bar。solid 塗りつぶしは廃止。
 export const navActivePill = {
-  bg: colors.accent,
-  fg: colors.accentInk,
+  bg:        tokens.accentTint6,
+  fg:        tokens.ink,
+  bottomBar: tokens.accent,
 }
 
-// ── Calendar today-dot ────────────────────────────────────────────────────
+// ── Calendar today dot ────────────────────────────────────────────────────
+// La Main 診断：画面で唯一残す solid accent の焦点。触らない。
 export const calendarTodayDot = {
-  bg: colors.accent,
-  fg: colors.accentInk,
+  bg: tokens.accent,
+  fg: '#ffffff',
 }
 
-// ── Hero banner (What's up?) ──────────────────────────────────────────────
+// ── Hero banner（What's up?）────────────────────────────────────────────────
+// 白 card + 左 3px accent bar + accent eyebrow。solid 塗りつぶしは廃止。
 export const heroBanner = {
-  bg: colors.accent,
-  fg: colors.accentInk,
-  pattern: 'rgba(255,255,255,0.45)', // for the subtle diagonal over-pattern
+  bg:      '#ffffff',
+  fg:      tokens.ink,
+  eyebrow: tokens.accent,
+  leftBar: tokens.accent,
+  border:  `1px solid ${tokens.hairline}`,
 }
 
-// Default export for ergonomic `import theme from '../config/theme'`
-export default { colors, priority, navActivePill, calendarTodayDot, heroBanner }
+export default { tokens, colors, priority, navActivePill, calendarTodayDot, heroBanner }

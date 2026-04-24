@@ -1071,6 +1071,23 @@
             "completedAt": null
           }
         ]
+      },
+      {
+        "name": "Step 6 Mock→Live Sprint",
+        "items": [
+          {
+            "id": "blk-1776988955057",
+            "text": "C1 Revenue Command live wiring + theme.js集約 + 黒要素terracotta置換 実装完了。commit 08e8f18 / PR #3 / Preview検証全6項目合格・小池10/10判定。Shopify live data接続確認(MTD $48,600, delta +25.6%/+17.3%, synced timestamp表示)。Tadハンドオフ→main merge待ち 2026-04-24",
+            "status": "done",
+            "completedAt": "2026-04-24"
+          },
+          {
+            "id": "blk-1776989271253",
+            "text": "C1修正トラック発動(2026-04-24): Tad指摘「terracotta大面積solid=きもい」→La Main色彩診断完了・CSS設計書提出・小池10/10判定合格。ナランチャへ修正リレー。核心:accentは画面3%以下・1画面2-3箇所・階層は濃度ではなくborder幅+ウェイト。実装後3テスト(面積/数え上げ/消去)通過必須。La Main再判定→小池→Tad承認ルート。",
+            "status": "pending",
+            "completedAt": null
+          }
+        ]
       }
     ],
     "followups": [

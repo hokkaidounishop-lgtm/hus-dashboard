@@ -4,7 +4,7 @@ import {
   Sparkles, Eye, Clock, MessageCircle,
 } from 'lucide-react'
 import { todayFocus as seed, strategicPriorities } from '../../data/dashboardMockData'
-import { priority as PRIORITY_TOKENS, colors as THEME } from '../../config/theme'
+import { priority as PRIORITY } from '../../config/theme'
 
 const C = {
   text:   '#1a1a18',
@@ -31,12 +31,13 @@ const TYPE_META = {
   Deadline:   { icon: Clock,            bg: 'rgba(220,38,38,0.10)', fg: C.danger, max: 2 },
 }
 
-// P1/P2 pick up the HUS terracotta accent sourced from src/config/theme.js.
+// La Main 再設計：Today Focus の P1/P2 tag は inline chip なので `.tag` を採用。
+// accent は P1 chip の text と薄 tint bg だけに限定。P2-P4 は完全 neutral。
 const TAG_STYLE = {
-  P1: { bg: PRIORITY_TOKENS.P1.bg, fg: PRIORITY_TOKENS.P1.fg },
-  P2: { bg: PRIORITY_TOKENS.P2.bg, fg: PRIORITY_TOKENS.P2.fg },
-  P3: { bg: 'rgba(0,0,0,0.05)',    fg: THEME.text },
-  P4: { bg: 'rgba(0,0,0,0.05)',    fg: THEME.text },
+  P1: PRIORITY.P1.tag,
+  P2: PRIORITY.P2.tag,
+  P3: PRIORITY.P3.tag,
+  P4: PRIORITY.P4.tag,
 }
 
 const STATUS_STYLE = {

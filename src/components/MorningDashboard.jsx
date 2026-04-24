@@ -74,9 +74,10 @@ export const STRATEGIC_PRIORITIES = [
   { id: 'P4', title: 'KPI-first Execution',    hint: 'Measure → adjust weekly' },
 ]
 
-// Priorities pull from src/config/theme.js — the same token powers
-// StrategicPrioritiesSection / TeamPulseSection / TodayFocusSection.
-const PRIORITY_COLORS = PRIORITY_TOKENS
+// La Main 再設計：priority token は `.pill`（Strategic priority row 用）と
+// `.tag`（Team Pulse / Today Focus の inline chip 用）に分離。
+// ここでは Strategic Priority ブロックで `.pill` 形状を採用。
+const PRIORITY_PILLS = PRIORITY_TOKENS
 
 function StrategicPriorities() {
   return (
@@ -87,16 +88,17 @@ function StrategicPriorities() {
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
         {STRATEGIC_PRIORITIES.map((p) => {
-          const c = PRIORITY_COLORS[p.id]
+          const t = PRIORITY_PILLS[p.id].pill
           return (
             <div
               key={p.id}
               className="rounded-lg p-3 flex flex-col gap-1.5"
               style={{
                 borderRadius: 10,
-                background: c.bg,
-                color: c.fg,
-                border: `1px solid ${c.bg === C.bg ? C.border : 'transparent'}`,
+                background: t.bg,
+                color: t.fg,
+                border: t.border,
+                borderLeft: t.borderLeft,
               }}
             >
               <div className="flex items-center gap-2">
@@ -105,7 +107,8 @@ function StrategicPriorities() {
                   style={{
                     ...MONO,
                     borderRadius: 20,
-                    background: c.badgeBg,
+                    background: t.badgeBg,
+                    color: t.badgeFg,
                     letterSpacing: '0.06em',
                   }}
                 >
@@ -113,10 +116,7 @@ function StrategicPriorities() {
                 </span>
                 <span className="text-sm font-semibold leading-tight">{p.title}</span>
               </div>
-              <div
-                className="text-[11px] leading-snug"
-                style={{ color: c.fg === '#ffffff' ? 'rgba(255,255,255,0.6)' : C.faint }}
-              >
+              <div className="text-[11px] leading-snug" style={{ color: C.faint }}>
                 {p.hint}
               </div>
             </div>

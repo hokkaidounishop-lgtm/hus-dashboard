@@ -6,7 +6,7 @@ import {
 } from 'lucide-react'
 import { useApp } from '../context/AppContext'
 import LevelSystem from './LevelSystem'
-import { heroBanner } from '../config/theme'
+import { heroBanner, tokens } from '../config/theme'
 
 const TODAY_STR = new Date().toISOString().slice(0, 10)
 const TODAY     = new Date()
@@ -366,56 +366,67 @@ export default function MorningBriefing() {
 
   return (
     <div className="space-y-3">
-      {/* Hero greeting — at-a-glance summary.
-          Step 6: HUS terracotta accent sourced from src/config/theme.js (規定書 v1.0). */}
+      {/* Hero greeting — La Main 再設計（2026-04-24）。
+          solid terracotta 塗りつぶしから 白 card + 左 3px accent bar + accent eyebrow
+          の「ラインアクセント」方式へ。accent は eyebrow と縦 bar のみ。 */}
       <div
-        className="rounded-xl p-6 relative overflow-hidden"
-        style={{ borderRadius: 12, background: heroBanner.bg, color: heroBanner.fg }}
+        className="rounded-xl p-6 relative"
+        style={{
+          borderRadius: 12,
+          background: heroBanner.bg,
+          color: heroBanner.fg,
+          border: heroBanner.border,
+          borderLeft: `3px solid ${heroBanner.leftBar}`,
+        }}
       >
-        <div
-          className="absolute inset-0 opacity-[0.03] pointer-events-none"
-          style={{
-            backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.5) 10px, rgba(255,255,255,0.5) 11px)',
-          }}
-        />
-        <div className="relative flex items-start gap-4">
-          <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-            style={{ background: 'rgba(255,255,255,0.1)' }}>
-            <Sunrise size={20} style={{ color: '#ffffff' }} />
+        <div className="flex items-start gap-4">
+          <div
+            className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+            style={{ background: 'transparent', border: `1px solid ${tokens.hairline}` }}
+          >
+            <Sunrise size={20} style={{ color: tokens.accent }} strokeWidth={1.75} />
           </div>
           <div className="flex-1">
-            <div className="text-xl font-medium" style={{ letterSpacing: '-0.01em' }}>
+            <div
+              className="text-[10px] font-semibold uppercase tracking-wider"
+              style={{ color: heroBanner.eyebrow, letterSpacing: '0.12em' }}
+            >
+              Morning Briefing
+            </div>
+            <div className="text-xl font-medium mt-1" style={{ letterSpacing: '-0.01em', color: tokens.ink }}>
               What's up — here's where everyone is.
             </div>
-            <div className="text-sm mt-1.5" style={{ color: 'rgba(255,255,255,0.6)' }}>
+            <div className="text-sm mt-1.5" style={{ color: tokens.inkSubtle }}>
               {format(TODAY, 'EEEE, MMMM d, yyyy')} · HUS Management Dashboard
             </div>
             <div className="flex flex-wrap gap-5 mt-4">
               <div className="flex items-center gap-2">
-                <AlertTriangle size={14} style={{ color: briefing.overdue.length > 0 ? '#FF8A8A' : 'rgba(255,255,255,0.4)' }} />
-                <span className="text-sm"
+                <AlertTriangle size={14} style={{ color: briefing.overdue.length > 0 ? '#dc2626' : tokens.inkSubtle }} />
+                <span
+                  className="text-sm"
                   style={{
-                    color: briefing.overdue.length > 0 ? '#FF9E9E' : 'rgba(255,255,255,0.6)',
+                    color: briefing.overdue.length > 0 ? '#dc2626' : tokens.inkMuted,
                     fontWeight: briefing.overdue.length > 0 ? 600 : 400,
-                  }}>
+                  }}
+                >
                   {briefing.overdue.length} overdue
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <Flame size={14} style={{ color: briefing.dueToday.length > 0 ? '#ffffff' : 'rgba(255,255,255,0.4)' }} />
-                <span className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                <Flame size={14} style={{ color: briefing.dueToday.length > 0 ? tokens.ink : tokens.inkSubtle }} />
+                <span className="text-sm" style={{ color: tokens.inkMuted }}>
                   {briefing.dueToday.length} due today
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckSquare size={14} style={{ color: 'rgba(255,255,255,0.4)' }} />
-                <span className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                <CheckSquare size={14} style={{ color: tokens.inkSubtle }} />
+                <span className="text-sm" style={{ color: tokens.inkMuted }}>
                   {briefing.openCount} open tasks
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <FolderKanban size={14} style={{ color: 'rgba(255,255,255,0.4)' }} />
-                <span className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                <FolderKanban size={14} style={{ color: tokens.inkSubtle }} />
+                <span className="text-sm" style={{ color: tokens.inkMuted }}>
                   {briefing.activeProjects.length} projects
                 </span>
               </div>

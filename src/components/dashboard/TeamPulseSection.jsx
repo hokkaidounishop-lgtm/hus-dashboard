@@ -1,6 +1,6 @@
 import { Users, AlertTriangle, Target as TargetIcon } from 'lucide-react'
 import { teamPulse } from '../../data/dashboardMockData'
-import { priority as PRIORITY_TOKENS, colors as THEME } from '../../config/theme'
+import { priority as PRIORITY } from '../../config/theme'
 
 const C = {
   text:   '#1a1a18',
@@ -14,13 +14,14 @@ const C = {
 }
 const MONO = { fontFamily: "'DM Mono', monospace" }
 
-// P1/P2 share the HUS-accent treatment sourced from src/config/theme.js.
-// P3/P4 stay neutral so the eye lands on the real priorities.
+// La Main 再設計：team pulse の「戦略 tag」は inline chip なので `.tag` 形状を採用。
+// P1 だけが accent-tint bg + accent text、P2-P4 は完全 neutral。
+// 1 viewport に P1 が多数出ても「焦点は P1」と読めるように、P2 以下は色を外す。
 const TAG_STYLE = {
-  P1: { bg: PRIORITY_TOKENS.P1.bg, fg: PRIORITY_TOKENS.P1.fg },
-  P2: { bg: PRIORITY_TOKENS.P2.bg, fg: PRIORITY_TOKENS.P2.fg },
-  P3: { bg: 'rgba(0,0,0,0.05)',    fg: THEME.text },
-  P4: { bg: 'rgba(0,0,0,0.05)',    fg: THEME.text },
+  P1: PRIORITY.P1.tag,
+  P2: PRIORITY.P2.tag,
+  P3: PRIORITY.P3.tag,
+  P4: PRIORITY.P4.tag,
 }
 
 function hasBlocker(t) {

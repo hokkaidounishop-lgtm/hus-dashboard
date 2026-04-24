@@ -1,9 +1,11 @@
 import { strategicPriorities } from '../../data/dashboardMockData'
-import { priority as TONE } from '../../config/theme'
+import { priority as PRIORITY } from '../../config/theme'
 
-// Visual treatment per Step 6: P1/P2 terracotta (HUS accent #B15A3C, 規定書 v1.0),
-// P3/P4 light. P1 at full strength, P2 at 70 % tint. Shared tokens live in
-// src/config/theme.js so every P1/P2 surface across the app matches.
+// La Main 再設計（2026-04-24）：
+// P1 = 白 bg + 左 3px accent bar + accent-tint badge
+// P2 = 白 bg + 左 2px accent bar + neutral badge（accent は細い縦 bar 1本のみ）
+// P3/P4 = paperWarm + neutral（accent ゼロ）
+// solid 塗りつぶしは廃止。accent は P1 の 3px + P2 の 2px の計 2 本のみ。
 
 export default function StrategicPrioritiesSection() {
   return (
@@ -12,7 +14,7 @@ export default function StrategicPrioritiesSection() {
       className="grid grid-cols-2 lg:grid-cols-4 gap-2"
     >
       {strategicPriorities.map((p) => {
-        const t = TONE[p.id]
+        const t = PRIORITY[p.id].pill
         return (
           <div
             key={p.id}
@@ -21,16 +23,18 @@ export default function StrategicPrioritiesSection() {
             style={{
               background:   t.bg,
               color:        t.fg,
-              border:       t.border ? '1px solid rgba(0,0,0,0.06)' : '1px solid transparent',
+              border:       t.border,
+              borderLeft:   t.borderLeft,
               borderRadius: 10,
             }}
           >
             <span
               className="text-[10px] font-bold px-1.5 py-0.5 tabular-nums shrink-0"
               style={{
-                fontFamily:   "'DM Mono', monospace",
-                borderRadius: 20,
-                background:   t.badgeBg,
+                fontFamily:    "'DM Mono', monospace",
+                borderRadius:  20,
+                background:    t.badgeBg,
+                color:         t.badgeFg,
                 letterSpacing: '0.06em',
               }}
             >

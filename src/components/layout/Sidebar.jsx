@@ -78,7 +78,9 @@ export default function Sidebar() {
                 style={{
                   color: isActive ? navActivePill.fg : '#6b6b66',
                   background: isActive ? navActivePill.bg : 'transparent',
-                  borderRadius: 20,
+                  borderRadius: 8,
+                  // La Main 再設計: solid pill → tint bg + 下 2px accent bar（tab ライン方式）
+                  boxShadow: isActive ? `inset 0 -2px 0 0 ${navActivePill.bottomBar}` : 'none',
                 }}
                 onMouseEnter={(e) => {
                   if (!isActive) {
