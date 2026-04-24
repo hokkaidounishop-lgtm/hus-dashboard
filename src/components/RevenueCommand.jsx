@@ -7,6 +7,7 @@ import { useApp } from '../context/AppContext'
 import {
   currentPeriodKey, loadRevenueManual, saveRevenueManual,
 } from '../api/revenueManual'
+import { tokens } from '../config/theme'
 
 // ── Formatting helpers ──────────────────────────────────────────────────────
 
@@ -75,7 +76,9 @@ function ForecastProgress({ forecast, target }) {
   const pct = target > 0 ? (forecast / target) * 100 : 0
   const capped = Math.min(pct, 120)
   const onPace = pct >= 100
-  const fillColor = onPace ? '#16a34a' : pct >= 80 ? '#d97706' : '#dc2626'
+  // La Main 判定：on pace=green、off pace=terracotta で統一。
+  // Cockpit 側 Forecast bar と同 accent を共有し、赤/amber/red の3色混在を排除。
+  const fillColor = onPace ? '#15803d' : tokens.accent
 
   return (
     <div className="mt-3">
