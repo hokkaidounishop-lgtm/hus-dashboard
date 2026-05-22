@@ -59,6 +59,27 @@ const save = (name, data) =>
 
 const today = () => new Date().toISOString().slice(0, 10)
 
+// ── Frontend reflection status ────────────────────────────────────────────────
+// The deployed dashboard reads from Supabase, but most MCP write handlers only
+// persist to src/data/*.json. Until Step 6 Phase C lands (MCP→Supabase direct
+// write for every write handler), an "✅ success" ack must NEVER be mistaken
+// for a guarantee that the change is visible on hus-dashboard.vercel.app.
+//
+// Pass the persistTaskStatus() return value when a handler attempted a mirror,
+// or `null` when the handler does not (yet) mirror to Supabase at all.
+function reflectionLine(sbResult) {
+  if (sbResult == null) {
+    return '\n⚠️  frontend反映: tasks.json/projects.json書込のみ・Supabase未mirror = deployed dashboard表示は非保証 (Step 6 Phase C完了まで)'
+  }
+  if (sbResult.ok) {
+    return '\n🟢 frontend反映: Supabase task_status mirror成功 (次回ページ読込で反映)'
+  }
+  if (sbResult.reason === 'supabase_not_configured') {
+    return '\n⚠️  frontend反映: Supabase未接続 (SUPABASE_URL/KEY未設定) = deployed dashboard表示は非保証'
+  }
+  return `\n🔴 frontend反映: Supabase mirror失敗 — ${sbResult.reason} (deployed dashboard表示は非保証)`
+}
+
 // ── Fuzzy finder ──────────────────────────────────────────────────────────────
 
 function fuzzy(items, key, query) {
@@ -225,11 +246,6 @@ async function handleCompleteTask({ project_name, task_name }) {
     pdca: task.pdca,
     pdca_updated_at: task.pdcaUpdatedAt,
   })
-  const sbNote = sb.ok
-    ? '\nSupabase: overlay upserted (visible on prod after reload)'
-    : sb.reason === 'supabase_not_configured'
-      ? ''
-      : `\nSupabase: upsert failed — ${sb.reason}`
 
   return {
     content: [{
@@ -240,7 +256,7 @@ async function handleCompleteTask({ project_name, task_name }) {
         `   Completed: ${task.completedAt}`,
         `   PDCA stage: Act`,
         progressNote,
-        sbNote,
+        reflectionLine(sb),
       ].filter(Boolean).join('\n'),
     }],
   }
@@ -265,7 +281,7 @@ async function handleUpdateProject({ project_name, field, value }) {
   return {
     content: [{
       type: 'text',
-      text: `✅ Updated "${project.name}"\n   ${field}: ${JSON.stringify(oldVal)} → ${JSON.stringify(project[field])}`,
+      text: `✅ Updated "${project.name}"\n   ${field}: ${JSON.stringify(oldVal)} → ${JSON.stringify(project[field])}${reflectionLine(null)}`,
     }],
   }
 }
@@ -321,6 +337,7 @@ async function handleAddChecklistItem({ project_name, block_name, item_text, sta
         `   Item: ${item_text}`,
         `   Status: ${status}`,
         progressNote,
+        reflectionLine(null),
       ].filter(Boolean).join('\n'),
     }],
   }
@@ -352,7 +369,7 @@ async function handleUpdateProjectProgress({ project_name }) {
   return {
     content: [{
       type: 'text',
-      text: `✅ "${project.name}" progress updated from ${oldPct}% → ${newPct}% (calculated from ${src})`,
+      text: `✅ "${project.name}" progress updated from ${oldPct}% → ${newPct}% (calculated from ${src})${reflectionLine(null)}`,
     }],
   }
 }
@@ -421,6 +438,7 @@ async function handleAddTask({ title, project_name, priority = 'medium', due, ow
         `   Priority: ${priority} · PDCA: ${pdca} · Status: ${status}`,
         due ? `   Due: ${due}` : null,
         owner ? `   Owner: ${owner}` : null,
+        reflectionLine(null),
       ].filter(Boolean).join('\n'),
     }],
   }
@@ -467,6 +485,7 @@ async function handleAddFollowup({ project_name, item_text }) {
         `   "${item_text}"`,
         `   It will appear in the Alerts panel and Task List.`,
         `   Task ID: ${taskId}  |  Follow-up ID: ${fuId}`,
+        reflectionLine(null),
       ].join('\n'),
     }],
   }
