@@ -1,0 +1,9 @@
+# --- Secrets: 絶対にcommitしない ---
+token.json
+credentials.json
+
+# --- 生成物 / artifact ---
+hus_drive_folder_ids.json   # setup_hus_drive.py が再生成する map
+*.log
+*manifest*.csv              # manifest.csv / packing_manifest.csv / cleanup_manifest.csv 等
+rollback_*.json             # cleanup rollback スナップショット
