@@ -64,3 +64,90 @@ export async function loadTaskStatuses() {
   }
   return map
 }
+
+// ── Full task rows (Supabase as single source of truth) ──────────────────────
+// The `tasks` table holds complete task bodies — not just status overrides — so
+// MCP-created tasks and frontend edits share one live source. The legacy
+// `task_status` overlay above is kept for backward-compat but is superseded by
+// this table once it is seeded (see supabase/tasks_table.sql).
+
+const TASK_COLS =
+  'id, task, project, priority, owner, due_date, pdca, pdca_updated_at, status, notes, completed_at, deleted'
+
+const rowToTask = (r) => ({
+  id:            r.id,
+  task:          r.task,
+  project:       r.project ?? '',
+  priority:      r.priority ?? 'medium',
+  owner:         r.owner ?? '',
+  dueDate:       r.due_date ?? '',
+  pdca:          r.pdca ?? 'Plan',
+  pdcaUpdatedAt: r.pdca_updated_at ?? undefined,
+  status:        r.status ?? 'not-started',
+  notes:         r.notes ?? '',
+  ...(r.completed_at ? { completedAt: r.completed_at } : {}),
+})
+
+const taskToRow = (t) => ({
+  id:              t.id,
+  task:            t.task,
+  project:         t.project || '',
+  priority:        t.priority || 'medium',
+  owner:           t.owner || '',
+  due_date:        t.dueDate || '',
+  pdca:            t.pdca || 'Plan',
+  pdca_updated_at: t.pdcaUpdatedAt || null,
+  status:          t.status || 'not-started',
+  notes:           t.notes || '',
+  completed_at:    t.completedAt || null,
+  updated_at:      new Date().toISOString(),
+})
+
+/**
+ * Load the live task list from Supabase (excluding soft-deleted rows).
+ * Returns an array of task objects, or null when Supabase is unconfigured or
+ * unreachable — the caller then falls back to the bundled tasks.json.
+ */
+export async function loadTasks() {
+  if (!supabase) return null
+
+  const { data, error } = await supabase
+    .from('tasks')
+    .select(TASK_COLS)
+    .eq('deleted', false)
+
+  if (error) {
+    console.error('[HUS] Supabase loadTasks failed:', error.message)
+    return null
+  }
+  return data.map(rowToTask)
+}
+
+/**
+ * Upsert a full task row. Called on add/update from the frontend so edits
+ * survive deploys and reach every reader. Fire-and-forget.
+ */
+export async function persistTask(task) {
+  if (!supabase) return
+
+  const { error } = await supabase
+    .from('tasks')
+    .upsert(taskToRow(task), { onConflict: 'id' })
+
+  if (error) console.error('[HUS] Supabase persistTask failed:', error.message)
+}
+
+/**
+ * Soft-delete a task (deleted = true) so it disappears from every reader
+ * without losing the record. Fire-and-forget.
+ */
+export async function softDeleteTask(id) {
+  if (!supabase) return
+
+  const { error } = await supabase
+    .from('tasks')
+    .update({ deleted: true, updated_at: new Date().toISOString() })
+    .eq('id', id)
+
+  if (error) console.error('[HUS] Supabase softDeleteTask failed:', error.message)
+}

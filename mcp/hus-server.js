@@ -49,6 +49,40 @@ async function persistTaskStatus(id, status, extras = {}) {
   return { ok: true }
 }
 
+// Upsert a FULL task row into the `tasks` table — the single source of truth
+// the deployed dashboard reads. Every MCP write that touches a task (add /
+// followup / complete / update) mirrors here so it shows up on prod. No-op if
+// Supabase env vars are unset.
+async function upsertTaskRow(t) {
+  if (!supabase) return { ok: false, reason: 'supabase_not_configured' }
+  const row = {
+    id:              t.id,
+    task:            t.task,
+    project:         t.project || '',
+    priority:        t.priority || 'medium',
+    owner:           t.owner || '',
+    due_date:        t.dueDate || '',
+    pdca:            t.pdca || 'Plan',
+    pdca_updated_at: t.pdcaUpdatedAt || null,
+    status:          t.status || 'not-started',
+    notes:           t.notes || '',
+    completed_at:    t.completedAt || null,
+    updated_at:      new Date().toISOString(),
+  }
+  const { error } = await supabase.from('tasks').upsert(row, { onConflict: 'id' })
+  if (error) return { ok: false, reason: error.message }
+  return { ok: true }
+}
+
+// Shared formatter for the Supabase mirror line shown in tool responses.
+function sbNoteFrom(sb) {
+  return sb.ok
+    ? '\nSupabase: tasks row upserted (visible on prod after reload)'
+    : sb.reason === 'supabase_not_configured'
+      ? ''
+      : `\nSupabase: upsert failed — ${sb.reason}`
+}
+
 // ── I/O helpers ───────────────────────────────────────────────────────────────
 
 const load = (name) =>
@@ -218,18 +252,10 @@ async function handleCompleteTask({ project_name, task_name }) {
   save('tasks',    tasks)
   save('projects', projects)
 
-  // Mirror to Supabase task_status so the deployed dashboard reflects this
+  // Mirror the full task row to Supabase so the deployed dashboard reflects this
   // completion on the next page load. No-op if Supabase env vars are unset.
-  const sb = await persistTaskStatus(task.id, 'done', {
-    completed_at: task.completedAt,
-    pdca: task.pdca,
-    pdca_updated_at: task.pdcaUpdatedAt,
-  })
-  const sbNote = sb.ok
-    ? '\nSupabase: overlay upserted (visible on prod after reload)'
-    : sb.reason === 'supabase_not_configured'
-      ? ''
-      : `\nSupabase: upsert failed — ${sb.reason}`
+  const sb = await upsertTaskRow(task)
+  const sbNote = sbNoteFrom(sb)
 
   return {
     content: [{
@@ -399,6 +425,10 @@ async function handleAddTask({ title, project_name, priority = 'medium', due, ow
   tasks.push(newTask)
   save('tasks', tasks)
 
+  // Mirror the full task row to Supabase so it appears on the deployed dashboard.
+  const sb = await upsertTaskRow(newTask)
+  const sbNote = sbNoteFrom(sb)
+
   // Recalculate project progress if linked
   if (projectId) {
     const proj = projects.find(p => p.id === projectId)
@@ -421,6 +451,7 @@ async function handleAddTask({ title, project_name, priority = 'medium', due, ow
         `   Priority: ${priority} · PDCA: ${pdca} · Status: ${status}`,
         due ? `   Due: ${due}` : null,
         owner ? `   Owner: ${owner}` : null,
+        sbNote,
       ].filter(Boolean).join('\n'),
     }],
   }
@@ -445,7 +476,7 @@ async function handleAddFollowup({ project_name, item_text }) {
 
   // Also add to tasks.json so it surfaces in Alerts panel
   const taskId = `task-${Date.now()}`
-  tasks.push({
+  const fuTask = {
     id:           taskId,
     task:         `⚠️ [Follow-up] ${item_text}`,
     project:      project.id,
@@ -456,8 +487,13 @@ async function handleAddFollowup({ project_name, item_text }) {
     pdcaUpdatedAt: today(),
     status:       'not-started',
     notes:        `Follow-up added ${today()} via MCP`,
-  })
+  }
+  tasks.push(fuTask)
   save('tasks', tasks)
+
+  // Mirror the full follow-up row to Supabase so it appears on the deployed dashboard.
+  const sb = await upsertTaskRow(fuTask)
+  const sbNote = sbNoteFrom(sb)
 
   return {
     content: [{
@@ -467,7 +503,8 @@ async function handleAddFollowup({ project_name, item_text }) {
         `   "${item_text}"`,
         `   It will appear in the Alerts panel and Task List.`,
         `   Task ID: ${taskId}  |  Follow-up ID: ${fuId}`,
-      ].join('\n'),
+        sbNote,
+      ].filter(Boolean).join('\n'),
     }],
   }
 }
