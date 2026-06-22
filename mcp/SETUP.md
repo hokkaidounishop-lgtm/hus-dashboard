@@ -109,6 +109,33 @@ Or manually add to `~/hus-dashboard/.claude.json`:
 claude mcp add --scope global hus-dashboard node /Users/tadahisakumagai/hus-dashboard/mcp/hus-server.js
 ```
 
+---
+
+## 3b · Supabase creds — the single-source-of-truth link (CRITICAL)
+
+The dashboard (frontend) and the MCP server **must point at the same Supabase
+project**, or they silently drift apart. Two separate places hold the creds:
+
+| Where | Variables | Used by |
+|---|---|---|
+| **MCP server** — `~/.claude.json` (Code) / `claude_desktop_config.json` (Desktop), under the `hus-dashboard` → `env` block | `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` (anon key also works) | `loadTasks` / `loadProjects` / `buildRevenueSummary` reads **and** every MCP write mirror |
+| **Vercel** — Project → Settings → Environment Variables | `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` | the deployed frontend's reads/writes |
+
+Both must reference the **same project ref** (`zxiwqekpmkotqudlgksw`).
+
+> **If the MCP creds go missing**, the read tools fall back to the frozen
+> `src/data/*.json` seed — which lies the moment the live board has changed.
+> To make that impossible to miss, `get_daily_briefing` / `ryoiki_tenkai` /
+> `get_project_status` now **prepend a LOUD red banner**:
+>
+> ```
+> 🔴🔴🔴 警告: SUPABASE creds未設定 (SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY) 🔴🔴🔴
+>    → ローカルseed (src/data/*.json) を表示中。数字は信用するな。
+> ```
+>
+> Banner present → creds are broken, fix the `env` block above and restart the
+> MCP server. Banner absent → you are reading live Supabase.
+
 Verify it registered:
 
 ```bash
@@ -198,3 +225,4 @@ You tell Claude ──► Claude calls MCP tool
 | `ENOENT` reading JSON files | Make sure the `args` path in the config is the **absolute** path to `hus-server.js` |
 | Changes not appearing in browser | Make sure `npm run dev` is running in `~/hus-dashboard/` |
 | Multiple match error | Be more specific in the name, e.g. `"CVR Recovery"` not just `"CVR"` |
+| 🔴 red SUPABASE banner on briefing | MCP creds missing/wrong — fix `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` in the `hus-dashboard` `env` block (§3b), then restart the MCP server |
