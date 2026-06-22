@@ -92,6 +92,65 @@ async function loadTasks() {
   }))
 }
 
+// Upsert a FULL project row into the Supabase `projects` table — the same
+// single source of truth the deployed dashboard reads. Scalars map to columns,
+// nested blocks / followups go in as jsonb. Every MCP write that mutates a
+// project (update / checklist / followup / progress recalc) mirrors here so the
+// edit shows up on prod. No-op if Supabase env vars are unset.
+async function upsertProjectRow(p) {
+  if (!supabase) return { ok: false, reason: 'supabase_not_configured' }
+  const row = {
+    id:           p.id,
+    name:         p.name || '',
+    description:  p.description || '',
+    status:       p.status || '',
+    owner:        p.owner || '',
+    kpis:         p.kpis || '',
+    deliverables: p.deliverables || '',
+    start_date:   p.startDate || '',
+    due_date:     p.dueDate || '',
+    progress:     typeof p.progress === 'number' ? p.progress : null,
+    blocks:       p.blocks ?? [],
+    followups:    p.followups ?? [],
+    notes:        p.notes || '',
+    updated_at:   new Date().toISOString(),
+  }
+  const { error } = await supabase.from('projects').upsert(row, { onConflict: 'id' })
+  if (error) return { ok: false, reason: error.message }
+  return { ok: true }
+}
+
+// Read the FULL project list from the Supabase `projects` table, mapping the
+// snake_case + jsonb columns back to the camelCase shape every handler expects.
+// Falls back to local src/data/projects.json when Supabase is unconfigured or
+// the query fails, so the read path can never hard-error.
+async function loadProjects() {
+  if (!supabase) return load('projects')
+  const { data, error } = await supabase
+    .from('projects')
+    .select('id, name, description, status, owner, kpis, deliverables, start_date, due_date, progress, blocks, followups, notes')
+    .eq('deleted', false)
+  if (error || !data) {
+    console.error(`[loadProjects] Supabase read failed — falling back to projects.json (${error?.message ?? 'no data'})`)
+    return load('projects')
+  }
+  return data.map((r) => ({
+    id:           r.id,
+    name:         r.name,
+    description:  r.description,
+    status:       r.status,
+    owner:        r.owner,
+    kpis:         r.kpis,
+    deliverables: r.deliverables,
+    startDate:    r.start_date,
+    dueDate:      r.due_date,
+    progress:     r.progress ?? 0,
+    blocks:       r.blocks ?? [],
+    followups:    r.followups ?? [],
+    notes:        r.notes,
+  }))
+}
+
 // ── I/O helpers ───────────────────────────────────────────────────────────────
 
 const load = (name) =>
@@ -240,7 +299,7 @@ async function handleCompleteTask({ project_name, task_name }) {
   if (!task_name) throw new McpError(ErrorCode.InvalidParams, 'task_name is required')
 
   const tasks    = load('tasks')
-  const projects = load('projects')
+  const projects = await loadProjects()
 
   // Optionally narrow by project first
   let pool = tasks
@@ -285,6 +344,8 @@ async function handleCompleteTask({ project_name, task_name }) {
   // Mirror the full task row to Supabase so the deployed dashboard reflects this
   // completion on the next page load. No-op if Supabase env vars are unset.
   const sb = await upsertTaskRow(task)
+  // Mirror the linked project too — its progress % just changed.
+  if (linkedProj) await upsertProjectRow(linkedProj)
 
   return {
     content: [{
@@ -307,7 +368,7 @@ async function handleUpdateProject({ project_name, field, value }) {
     throw new McpError(ErrorCode.InvalidParams, 'project_name, field, and value are all required')
   }
 
-  const projects = load('projects')
+  const projects = await loadProjects()
   const project  = fuzzy(projects, 'name', project_name)
   if (!project) throw new McpError(ErrorCode.InvalidParams, `Project not found: "${project_name}"`)
 
@@ -316,11 +377,13 @@ async function handleUpdateProject({ project_name, field, value }) {
   project[field] = NUMERIC.has(field) ? parseInt(value, 10) : value
 
   save('projects', projects)
+  // Mirror the changed project row to Supabase (single source of truth).
+  const sb = await upsertProjectRow(project)
 
   return {
     content: [{
       type: 'text',
-      text: `✅ Updated "${project.name}"\n   ${field}: ${JSON.stringify(oldVal)} → ${JSON.stringify(project[field])}${reflectionLine(null)}`,
+      text: `✅ Updated "${project.name}"\n   ${field}: ${JSON.stringify(oldVal)} → ${JSON.stringify(project[field])}${reflectionLine(sb)}`,
     }],
   }
 }
@@ -336,7 +399,7 @@ async function handleAddChecklistItem({ project_name, block_name, item_text, sta
     throw new McpError(ErrorCode.InvalidParams, `status must be one of: ${VALID_STATUS.join(', ')}`)
   }
 
-  const projects = load('projects')
+  const projects = await loadProjects()
   const project  = fuzzy(projects, 'name', project_name)
   if (!project) throw new McpError(ErrorCode.InvalidParams, `Project not found: "${project_name}"`)
 
@@ -367,6 +430,8 @@ async function handleAddChecklistItem({ project_name, block_name, item_text, sta
   }
 
   save('projects', projects)
+  // Mirror the changed project row (new block/item + progress) to Supabase.
+  const sb = await upsertProjectRow(project)
 
   return {
     content: [{
@@ -376,7 +441,7 @@ async function handleAddChecklistItem({ project_name, block_name, item_text, sta
         `   Item: ${item_text}`,
         `   Status: ${status}`,
         progressNote,
-        reflectionLine(null),
+        reflectionLine(sb),
       ].filter(Boolean).join('\n'),
     }],
   }
@@ -386,8 +451,8 @@ async function handleAddChecklistItem({ project_name, block_name, item_text, sta
 async function handleUpdateProjectProgress({ project_name }) {
   if (!project_name) throw new McpError(ErrorCode.InvalidParams, 'project_name is required')
 
-  const projects = load('projects')
-  const tasks    = load('tasks')
+  const projects = await loadProjects()
+  const tasks    = await loadTasks()
   const project  = fuzzy(projects, 'name', project_name)
   if (!project) throw new McpError(ErrorCode.InvalidParams, `Project not found: "${project_name}"`)
 
@@ -400,6 +465,8 @@ async function handleUpdateProjectProgress({ project_name }) {
 
   project.progress = newPct
   save('projects', projects)
+  // Mirror the changed project row (new progress) to Supabase.
+  const sb = await upsertProjectRow(project)
 
   const src = (project.blocks ?? []).flatMap((b) => b.items ?? []).length > 0
     ? 'checklist blocks'
@@ -408,7 +475,7 @@ async function handleUpdateProjectProgress({ project_name }) {
   return {
     content: [{
       type: 'text',
-      text: `✅ "${project.name}" progress updated from ${oldPct}% → ${newPct}% (calculated from ${src})${reflectionLine(null)}`,
+      text: `✅ "${project.name}" progress updated from ${oldPct}% → ${newPct}% (calculated from ${src})${reflectionLine(sb)}`,
     }],
   }
 }
@@ -426,7 +493,7 @@ async function handleAddTask({ title, project_name, priority = 'medium', due, ow
   if (!VALID_PDCA.includes(pdca))         throw new McpError(ErrorCode.InvalidParams, `pdca must be one of: ${VALID_PDCA.join(', ')}`)
 
   const tasks    = load('tasks')
-  const projects = load('projects')
+  const projects = await loadProjects()
 
   let projectId = ''
   let projectLabel = ''
@@ -466,6 +533,8 @@ async function handleAddTask({ title, project_name, priority = 'medium', due, ow
       if (newPct !== null) {
         proj.progress = newPct
         save('projects', projects)
+        // Mirror the linked project row (new progress) to Supabase.
+        await upsertProjectRow(proj)
       }
     }
   }
@@ -492,7 +561,7 @@ async function handleAddFollowup({ project_name, item_text }) {
     throw new McpError(ErrorCode.InvalidParams, 'project_name and item_text are required')
   }
 
-  const projects = load('projects')
+  const projects = await loadProjects()
   const tasks    = load('tasks')
   const project  = fuzzy(projects, 'name', project_name)
   if (!project) throw new McpError(ErrorCode.InvalidParams, `Project not found: "${project_name}"`)
@@ -502,6 +571,8 @@ async function handleAddFollowup({ project_name, item_text }) {
   const fuId = `fu-${Date.now()}`
   project.followups.push({ id: fuId, text: item_text, addedAt: today(), status: 'pending' })
   save('projects', projects)
+  // Mirror the changed project row (new followup in jsonb) to Supabase.
+  await upsertProjectRow(project)
 
   // Also add to tasks.json so it surfaces in Alerts panel
   const taskId = `task-${Date.now()}`
@@ -539,7 +610,7 @@ async function handleAddFollowup({ project_name, item_text }) {
 
 // ── 6. get_project_status ─────────────────────────────────────────────────────
 async function handleGetProjectStatus({ project_name }) {
-  const projects = load('projects')
+  const projects = await loadProjects()
   const tasks    = await loadTasks()
 
   if (!project_name || project_name.toLowerCase() === 'all') {
@@ -566,7 +637,7 @@ async function handleGetProjectStatus({ project_name }) {
 
 // ── 7. get_daily_briefing ─────────────────────────────────────────────────────
 async function handleGetDailyBriefing() {
-  const projects = load('projects')
+  const projects = await loadProjects()
   const tasks    = await loadTasks()
   const kpis     = load('kpis')
   const events   = load('calendar')
@@ -662,7 +733,7 @@ async function handleGetDailyBriefing() {
 
 // ── 9. ryoiki_tenkai (領域展開) ───────────────────────────────────────────────
 async function handleRyoikiTenkai() {
-  const projects = load('projects')
+  const projects = await loadProjects()
   const tasks    = await loadTasks()
   const kpis     = load('kpis')
   const events   = load('calendar')

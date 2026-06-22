@@ -151,3 +151,94 @@ export async function softDeleteTask(id) {
 
   if (error) console.error('[HUS] Supabase softDeleteTask failed:', error.message)
 }
+
+// ── Full project rows (Supabase as single source of truth) ───────────────────
+// The `projects` table holds complete project rows — scalar fields as columns,
+// nested blocks / followups as jsonb — so MCP edits (update_project,
+// add_checklist_item, add_followup, progress recalc) and frontend edits share
+// one live source. See supabase/projects_table.sql.
+
+const PROJECT_COLS =
+  'id, name, description, status, owner, kpis, deliverables, start_date, due_date, progress, blocks, followups, notes, deleted'
+
+const rowToProject = (r) => ({
+  id:           r.id,
+  name:         r.name ?? '',
+  description:  r.description ?? '',
+  status:       r.status ?? '',
+  owner:        r.owner ?? '',
+  kpis:         r.kpis ?? '',
+  deliverables: r.deliverables ?? '',
+  startDate:    r.start_date ?? '',
+  dueDate:      r.due_date ?? '',
+  progress:     r.progress ?? 0,
+  blocks:       r.blocks ?? [],
+  followups:    r.followups ?? [],
+  notes:        r.notes ?? '',
+})
+
+const projectToRow = (p) => ({
+  id:           p.id,
+  name:         p.name || '',
+  description:  p.description || '',
+  status:       p.status || '',
+  owner:        p.owner || '',
+  kpis:         p.kpis || '',
+  deliverables: p.deliverables || '',
+  start_date:   p.startDate || '',
+  due_date:     p.dueDate || '',
+  progress:     typeof p.progress === 'number' ? p.progress : null,
+  blocks:       p.blocks ?? [],
+  followups:    p.followups ?? [],
+  notes:        p.notes || '',
+  updated_at:   new Date().toISOString(),
+})
+
+/**
+ * Load the live project list from Supabase (excluding soft-deleted rows).
+ * Returns an array of project objects, or null when Supabase is unconfigured or
+ * unreachable — the caller then falls back to the bundled projects.json.
+ */
+export async function loadProjects() {
+  if (!supabase) return null
+
+  const { data, error } = await supabase
+    .from('projects')
+    .select(PROJECT_COLS)
+    .eq('deleted', false)
+
+  if (error) {
+    console.error('[HUS] Supabase loadProjects failed:', error.message)
+    return null
+  }
+  return data.map(rowToProject)
+}
+
+/**
+ * Upsert a full project row. Called on add/update from the frontend so edits
+ * survive deploys and reach every reader. Fire-and-forget.
+ */
+export async function persistProject(project) {
+  if (!supabase) return
+
+  const { error } = await supabase
+    .from('projects')
+    .upsert(projectToRow(project), { onConflict: 'id' })
+
+  if (error) console.error('[HUS] Supabase persistProject failed:', error.message)
+}
+
+/**
+ * Soft-delete a project (deleted = true) so it disappears from every reader
+ * without losing the record. Fire-and-forget.
+ */
+export async function softDeleteProject(id) {
+  if (!supabase) return
+
+  const { error } = await supabase
+    .from('projects')
+    .update({ deleted: true, updated_at: new Date().toISOString() })
+    .eq('id', id)
+
+  if (error) console.error('[HUS] Supabase softDeleteProject failed:', error.message)
+}

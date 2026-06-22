@@ -3,7 +3,10 @@ import kpisData from '../data/kpis.json'
 import projectsData from '../data/projects.json'
 import tasksData from '../data/tasks.json'
 import calendarData from '../data/calendar.json'
-import { loadTasks, persistTask, softDeleteTask } from '../api/supabase'
+import {
+  loadTasks, persistTask, softDeleteTask,
+  loadProjects, persistProject, softDeleteProject,
+} from '../api/supabase'
 import { syncFromShopify } from '../api/shopify'
 
 const AppContext = createContext(null)
@@ -62,15 +65,39 @@ export function AppProvider({ children }) {
     })
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Load the live project list from Supabase (single source of truth) on mount,
+  // same contract as tasks: the bundled projects.json is only the first-paint
+  // seed / offline fallback. Falls back to the bundle when Supabase is
+  // unconfigured, unreachable, or the table is empty.
+  useEffect(() => {
+    loadProjects().then((live) => {
+      if (live && live.length > 0) setProjects(live)
+    })
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   // ── Projects CRUD ──────────────────────────────────────────────────────────
-  const addProject = (project) =>
-    setProjects((prev) => [...prev, { ...project, id: `proj-${Date.now()}` }])
+  const addProject = (project) => {
+    const newProject = { ...project, id: `proj-${Date.now()}` }
+    setProjects((prev) => [...prev, newProject])
+    persistProject(newProject) // full row → Supabase (single source of truth)
+  }
 
-  const updateProject = (id, updates) =>
-    setProjects((prev) => prev.map((p) => (p.id === id ? { ...p, ...updates } : p)))
+  const updateProject = (id, updates) => {
+    let merged = null
+    setProjects((prev) =>
+      prev.map((p) => {
+        if (p.id !== id) return p
+        merged = { ...p, ...updates }
+        return merged
+      })
+    )
+    if (merged) persistProject(merged) // persist the full updated row
+  }
 
-  const deleteProject = (id) =>
+  const deleteProject = (id) => {
     setProjects((prev) => prev.filter((p) => p.id !== id))
+    softDeleteProject(id) // soft-delete in Supabase so it vanishes everywhere
+  }
 
   // ── Tasks CRUD ─────────────────────────────────────────────────────────────
   const addTask = (task) => {
