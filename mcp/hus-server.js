@@ -161,6 +161,73 @@ const save = (name, data) =>
 
 const today = () => new Date().toISOString().slice(0, 10)
 
+// ── Revenue (shared SoT with the dashboard) ───────────────────────────────────
+// The dashboard's revenue (useRevenueSummary) resolves from: B2C ← Shopify sync
+// (now mirrored into Supabase `revenue_snapshot`), Export/Broker/Tuna ← Supabase
+// `revenue_manual`, B2B ← Freshline (pending). The MCP briefing used to read the
+// frozen kpis.json mock instead ("Mar '25" forever); these helpers + the shared
+// summary make it read the exact same live sources the dashboard does.
+
+async function loadRevenueSnapshot() {
+  if (!supabase) return null
+  const { data, error } = await supabase
+    .from('revenue_snapshot')
+    .select('current_month, totals, monthly_revenue, synced_at')
+    .eq('id', 'latest')
+    .maybeSingle()
+  if (error || !data) return null
+  return data
+}
+
+async function loadRevenueManual() {
+  if (!supabase) return null
+  const now = new Date()
+  const period = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+  const { data, error } = await supabase
+    .from('revenue_manual')
+    .select('export_amount, broker_amount, tuna_show_amount')
+    .eq('period', period)
+    .maybeSingle()
+  if (error) return null
+  return data || null
+}
+
+// Compute the same MTD revenue picture the dashboard shows. Returns { live:false }
+// when no Shopify sync has populated the snapshot yet — the caller then prints a
+// "sync pending" line instead of a stale mock number.
+async function buildRevenueSummary(kpis) {
+  const snap = await loadRevenueSnapshot()
+  const cm = snap?.current_month || {}
+  if (typeof cm.mtd !== 'number' || cm.mtd <= 0) return { live: false }
+
+  const manual = await loadRevenueManual()
+  const b2c    = cm.mtd
+  const exportAmt = manual?.export_amount ?? null
+  const broker = (manual?.broker_amount ?? 0) + (manual?.tuna_show_amount ?? 0) || null
+  const mtdSales = [b2c, exportAmt, broker]
+    .filter((v) => v != null)
+    .reduce((s, v) => s + Number(v), 0)
+  const target = kpis?.targets?.monthlyRevenue ?? null
+  const deltaLM =
+    b2c && cm.lastMonthToSameDay
+      ? ((b2c - cm.lastMonthToSameDay) / cm.lastMonthToSameDay) * 100
+      : null
+  return {
+    live: true,
+    period:   cm.periodKey || null,
+    b2c,
+    exportAmt,
+    broker,
+    mtdSales,
+    forecast: cm.forecast ?? null,
+    target,
+    pctOfTarget: target ? Math.round((mtdSales / target) * 100) : null,
+    deltaLM,
+    totals:   snap?.totals || null,
+    syncedAt: snap?.synced_at || null,
+  }
+}
+
 // ── Frontend reflection status ────────────────────────────────────────────────
 // The deployed dashboard reads from Supabase, but most MCP write handlers only
 // persist to src/data/*.json. Until Step 6 Phase C lands (MCP→Supabase direct
@@ -661,10 +728,7 @@ async function handleGetDailyBriefing() {
     .slice(0, 3)
 
   const critProjs = projects.filter((p) => p.status === 'stalled' || p.status === 'behind')
-  const allMonths = kpis.monthlyRevenue
-  const latest    = allMonths[allMonths.length - 1]
-  const prev      = allMonths[allMonths.length - 2]
-  const revGrowth = (((latest.revenue - prev.revenue) / prev.revenue) * 100).toFixed(1)
+  const rev = await buildRevenueSummary(kpis)
 
   const lines = [
     `🌅 HUS Daily Briefing — ${todayStr}`,
@@ -676,7 +740,17 @@ async function handleGetDailyBriefing() {
   lines.push('📊 KPI Status')
   lines.push(`   CVR:     ${kpis.current.cvr}%  (target ${kpis.targets.cvr}%)  ${kpis.current.cvr < kpis.targets.cvr ? '🔴 BELOW TARGET' : '🟢'}`)
   lines.push(`   AOV:     $${kpis.current.aov}  (target $${kpis.targets.aov})  ${kpis.current.aov < kpis.targets.aov ? '🟡' : '🟢'}`)
-  lines.push(`   ${latest.month} Revenue: $${latest.revenue.toLocaleString()}  (${Number(revGrowth)>0?'▲':'▼'}${Math.abs(revGrowth)}% vs prev month)`)
+  if (rev.live) {
+    lines.push(`   Revenue MTD (${rev.period}): $${rev.mtdSales.toLocaleString()}${rev.target ? `  / target $${rev.target.toLocaleString()} (${rev.pctOfTarget}%)` : ''}`)
+    const parts = [`B2C $${(rev.b2c || 0).toLocaleString()}`]
+    if (rev.exportAmt != null) parts.push(`Export $${rev.exportAmt.toLocaleString()}`)
+    if (rev.broker != null)    parts.push(`Broker/Spot $${rev.broker.toLocaleString()}`)
+    const delta = rev.deltaLM == null ? '' : `  (B2C ${rev.deltaLM > 0 ? '▲' : '▼'}${Math.abs(rev.deltaLM).toFixed(1)}% vs same-day last month)`
+    lines.push(`     ${parts.join(' · ')}${delta}`)
+    if (rev.forecast) lines.push(`     Forecast $${rev.forecast.toLocaleString()}`)
+  } else {
+    lines.push('   Revenue: ⏳ 本番Shopify同期待ち (dashboard sync後にここへ反映)')
+  }
 
   // Overdue
   lines.push('', `⚠️  Overdue Tasks (${overdue.length})`)
@@ -752,17 +826,25 @@ async function handleRyoikiTenkai() {
   ]
 
   // ── KPI Overview ──
-  const monthly = kpis.monthlyRevenue
-  const latest  = monthly[monthly.length - 1]
-  const prev    = monthly[monthly.length - 2]
-  const growth  = ((latest.revenue - prev.revenue) / prev.revenue * 100).toFixed(1)
+  const rev = await buildRevenueSummary(kpis)
 
   lines.push('━━━ 📊 KPI OVERVIEW ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
   lines.push(`  CVR:           ${kpis.current.cvr}%  (target: ${kpis.targets.cvr}%)  ${kpis.current.cvr >= kpis.targets.cvr ? '🟢' : '🔴 BELOW'}`)
   lines.push(`  AOV:           $${kpis.current.aov}  (target: $${kpis.targets.aov})  ${kpis.current.aov >= kpis.targets.aov ? '🟢' : '🟡'}`)
-  lines.push(`  ${latest.month} Revenue:  $${latest.revenue.toLocaleString()}  (${Number(growth) > 0 ? '▲' : '▼'}${Math.abs(growth)}% MoM)`)
-  lines.push(`  Total Revenue: $${kpis.current.totalRevenue.toLocaleString()}`)
-  lines.push(`  Total Orders:  ${kpis.current.totalOrders}`)
+  if (rev.live) {
+    const delta = rev.deltaLM == null ? '' : `  (B2C ${rev.deltaLM > 0 ? '▲' : '▼'}${Math.abs(rev.deltaLM).toFixed(1)}% vs same-day LM)`
+    lines.push(`  Revenue MTD (${rev.period}):  $${rev.mtdSales.toLocaleString()}${rev.target ? `  / target $${rev.target.toLocaleString()} (${rev.pctOfTarget}%)` : ''}${delta}`)
+    const parts = [`B2C $${(rev.b2c || 0).toLocaleString()}`]
+    if (rev.exportAmt != null) parts.push(`Export $${rev.exportAmt.toLocaleString()}`)
+    if (rev.broker != null)    parts.push(`Broker/Spot $${rev.broker.toLocaleString()}`)
+    lines.push(`    ${parts.join(' · ')}`)
+    if (rev.forecast) lines.push(`  Forecast:      $${rev.forecast.toLocaleString()}`)
+    if (rev.totals?.totalRevenue != null) lines.push(`  Total Revenue: $${Number(rev.totals.totalRevenue).toLocaleString()}  (trailing 13mo)`)
+    if (rev.totals?.totalOrders != null)  lines.push(`  Total Orders:  ${rev.totals.totalOrders}`)
+    if (rev.syncedAt) lines.push(`  Synced:        ${rev.syncedAt.slice(0, 16).replace('T', ' ')} UTC`)
+  } else {
+    lines.push('  Revenue:       ⏳ 本番Shopify同期待ち (dashboard sync後に反映)')
+  }
   lines.push('')
 
   // ── Task Statistics ──
@@ -854,7 +936,13 @@ async function handleRyoikiTenkai() {
   lines.push(`  Avg Progress:      ${avgProgress}%`)
   lines.push(`  Critical Projects: ${criticalCount}  ${criticalCount > 0 ? '🔥' : '✅'}`)
   lines.push(`  Overdue Tasks:     ${overdue.length}  ${overdue.length > 0 ? '⚠️' : '✅'}`)
-  lines.push(`  Revenue Trend:     ${Number(growth) > 0 ? '📈' : '📉'} ${growth}% MoM`)
+  if (rev.live && rev.deltaLM != null) {
+    lines.push(`  Revenue Trend:     ${rev.deltaLM > 0 ? '📈' : '📉'} B2C ${rev.deltaLM > 0 ? '+' : ''}${rev.deltaLM.toFixed(1)}% vs same-day last month`)
+  } else if (rev.live) {
+    lines.push(`  Revenue MTD:       $${rev.mtdSales.toLocaleString()} (${rev.period})`)
+  } else {
+    lines.push('  Revenue Trend:     ⏳ sync pending')
+  }
   lines.push('')
   lines.push('╔══════════════════════════════════════════════════════════════════╗')
   lines.push('║                     領域展開 完了                                ║')
