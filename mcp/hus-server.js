@@ -34,21 +34,6 @@ const SB_KEY =
   process.env.VITE_SUPABASE_ANON_KEY
 const supabase = SB_URL && SB_KEY ? createClient(SB_URL, SB_KEY) : null
 
-async function persistTaskStatus(id, status, extras = {}) {
-  if (!supabase) return { ok: false, reason: 'supabase_not_configured' }
-  const row = { id, status, updated_at: new Date().toISOString(), ...extras }
-  if (status === 'done' && !row.completed_at) {
-    row.completed_at = new Date().toISOString().slice(0, 10)
-  } else if (status !== 'done') {
-    row.completed_at = null
-  }
-  const { error } = await supabase
-    .from('task_status')
-    .upsert(row, { onConflict: 'id' })
-  if (error) return { ok: false, reason: error.message }
-  return { ok: true }
-}
-
 // Upsert a FULL task row into the `tasks` table — the single source of truth
 // the deployed dashboard reads. Every MCP write that touches a task (add /
 // followup / complete / update) mirrors here so it shows up on prod. No-op if
@@ -72,15 +57,6 @@ async function upsertTaskRow(t) {
   const { error } = await supabase.from('tasks').upsert(row, { onConflict: 'id' })
   if (error) return { ok: false, reason: error.message }
   return { ok: true }
-}
-
-// Shared formatter for the Supabase mirror line shown in tool responses.
-function sbNoteFrom(sb) {
-  return sb.ok
-    ? '\nSupabase: tasks row upserted (visible on prod after reload)'
-    : sb.reason === 'supabase_not_configured'
-      ? ''
-      : `\nSupabase: upsert failed — ${sb.reason}`
 }
 
 // Read the FULL task list from the Supabase `tasks` table — the same single
@@ -125,6 +101,27 @@ const save = (name, data) =>
   writeFileSync(`${DATA}/${name}.json`, JSON.stringify(data, null, 2) + '\n', 'utf-8')
 
 const today = () => new Date().toISOString().slice(0, 10)
+
+// ── Frontend reflection status ────────────────────────────────────────────────
+// The deployed dashboard reads from Supabase, but most MCP write handlers only
+// persist to src/data/*.json. Until Step 6 Phase C lands (MCP→Supabase direct
+// write for every write handler), an "✅ success" ack must NEVER be mistaken
+// for a guarantee that the change is visible on hus-dashboard.vercel.app.
+//
+// Pass the upsertTaskRow() return value when a handler mirrors the full task
+// row, or `null` when the handler does not (yet) mirror to Supabase at all.
+function reflectionLine(sbResult) {
+  if (sbResult == null) {
+    return '\n⚠️  frontend反映: tasks.json/projects.json書込のみ・Supabase未mirror = deployed dashboard表示は非保証 (Step 6 Phase C完了まで)'
+  }
+  if (sbResult.ok) {
+    return '\n🟢 frontend反映: Supabase tasks行 mirror成功 (次回ページ読込で反映)'
+  }
+  if (sbResult.reason === 'supabase_not_configured') {
+    return '\n⚠️  frontend反映: Supabase未接続 (SUPABASE_URL/KEY未設定) = deployed dashboard表示は非保証'
+  }
+  return `\n🔴 frontend反映: Supabase mirror失敗 — ${sbResult.reason} (deployed dashboard表示は非保証)`
+}
 
 // ── Fuzzy finder ──────────────────────────────────────────────────────────────
 
@@ -288,7 +285,6 @@ async function handleCompleteTask({ project_name, task_name }) {
   // Mirror the full task row to Supabase so the deployed dashboard reflects this
   // completion on the next page load. No-op if Supabase env vars are unset.
   const sb = await upsertTaskRow(task)
-  const sbNote = sbNoteFrom(sb)
 
   return {
     content: [{
@@ -299,7 +295,7 @@ async function handleCompleteTask({ project_name, task_name }) {
         `   Completed: ${task.completedAt}`,
         `   PDCA stage: Act`,
         progressNote,
-        sbNote,
+        reflectionLine(sb),
       ].filter(Boolean).join('\n'),
     }],
   }
@@ -324,7 +320,7 @@ async function handleUpdateProject({ project_name, field, value }) {
   return {
     content: [{
       type: 'text',
-      text: `✅ Updated "${project.name}"\n   ${field}: ${JSON.stringify(oldVal)} → ${JSON.stringify(project[field])}`,
+      text: `✅ Updated "${project.name}"\n   ${field}: ${JSON.stringify(oldVal)} → ${JSON.stringify(project[field])}${reflectionLine(null)}`,
     }],
   }
 }
@@ -380,6 +376,7 @@ async function handleAddChecklistItem({ project_name, block_name, item_text, sta
         `   Item: ${item_text}`,
         `   Status: ${status}`,
         progressNote,
+        reflectionLine(null),
       ].filter(Boolean).join('\n'),
     }],
   }
@@ -411,7 +408,7 @@ async function handleUpdateProjectProgress({ project_name }) {
   return {
     content: [{
       type: 'text',
-      text: `✅ "${project.name}" progress updated from ${oldPct}% → ${newPct}% (calculated from ${src})`,
+      text: `✅ "${project.name}" progress updated from ${oldPct}% → ${newPct}% (calculated from ${src})${reflectionLine(null)}`,
     }],
   }
 }
@@ -460,7 +457,6 @@ async function handleAddTask({ title, project_name, priority = 'medium', due, ow
 
   // Mirror the full task row to Supabase so it appears on the deployed dashboard.
   const sb = await upsertTaskRow(newTask)
-  const sbNote = sbNoteFrom(sb)
 
   // Recalculate project progress if linked
   if (projectId) {
@@ -484,7 +480,7 @@ async function handleAddTask({ title, project_name, priority = 'medium', due, ow
         `   Priority: ${priority} · PDCA: ${pdca} · Status: ${status}`,
         due ? `   Due: ${due}` : null,
         owner ? `   Owner: ${owner}` : null,
-        sbNote,
+        reflectionLine(sb),
       ].filter(Boolean).join('\n'),
     }],
   }
@@ -526,7 +522,6 @@ async function handleAddFollowup({ project_name, item_text }) {
 
   // Mirror the full follow-up row to Supabase so it appears on the deployed dashboard.
   const sb = await upsertTaskRow(fuTask)
-  const sbNote = sbNoteFrom(sb)
 
   return {
     content: [{
@@ -536,7 +531,7 @@ async function handleAddFollowup({ project_name, item_text }) {
         `   "${item_text}"`,
         `   It will appear in the Alerts panel and Task List.`,
         `   Task ID: ${taskId}  |  Follow-up ID: ${fuId}`,
-        sbNote,
+        reflectionLine(sb),
       ].filter(Boolean).join('\n'),
     }],
   }
