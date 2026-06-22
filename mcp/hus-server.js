@@ -767,8 +767,8 @@ async function handleGetDailyBriefing() {
 
   // KPI summary
   lines.push('📊 KPI Status')
-  lines.push(`   CVR:     ${kpis.current.cvr}%  (target ${kpis.targets.cvr}%)  ${kpis.current.cvr < kpis.targets.cvr ? '🔴 BELOW TARGET' : '🟢'}`)
-  lines.push(`   AOV:     $${kpis.current.aov}  (target $${kpis.targets.aov})  ${kpis.current.aov < kpis.targets.aov ? '🟡' : '🟢'}`)
+  lines.push(`   CVR:     ${kpis.current.cvr}%  (target ${kpis.targets.cvr}%)  ${kpis.current.cvr < kpis.targets.cvr ? '🔴 BELOW TARGET' : '🟢'}  [ASSUMPTION: kpis.json手動値・凍結]`)
+  lines.push(`   AOV:     $${kpis.current.aov}  (target $${kpis.targets.aov})  ${kpis.current.aov < kpis.targets.aov ? '🟡' : '🟢'}  [ASSUMPTION: kpis.json手動値・凍結]`)
   if (rev.live) {
     lines.push(`   Revenue MTD (${rev.period}): $${rev.mtdSales.toLocaleString()}${rev.target ? `  / target $${rev.target.toLocaleString()} (${rev.pctOfTarget}%)` : ''}`)
     const parts = [`B2C $${(rev.b2c || 0).toLocaleString()}`]
@@ -860,8 +860,8 @@ async function handleRyoikiTenkai() {
   const rev = await buildRevenueSummary(kpis)
 
   lines.push('━━━ 📊 KPI OVERVIEW ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
-  lines.push(`  CVR:           ${kpis.current.cvr}%  (target: ${kpis.targets.cvr}%)  ${kpis.current.cvr >= kpis.targets.cvr ? '🟢' : '🔴 BELOW'}`)
-  lines.push(`  AOV:           $${kpis.current.aov}  (target: $${kpis.targets.aov})  ${kpis.current.aov >= kpis.targets.aov ? '🟢' : '🟡'}`)
+  lines.push(`  CVR:           ${kpis.current.cvr}%  (target: ${kpis.targets.cvr}%)  ${kpis.current.cvr >= kpis.targets.cvr ? '🟢' : '🔴 BELOW'}  [ASSUMPTION: kpis.json手動値・凍結]`)
+  lines.push(`  AOV:           $${kpis.current.aov}  (target: $${kpis.targets.aov})  ${kpis.current.aov >= kpis.targets.aov ? '🟢' : '🟡'}  [ASSUMPTION: kpis.json手動値・凍結]`)
   if (rev.live) {
     const delta = rev.deltaLM == null ? '' : `  (B2C ${rev.deltaLM > 0 ? '▲' : '▼'}${Math.abs(rev.deltaLM).toFixed(1)}% vs same-day LM)`
     lines.push(`  Revenue MTD (${rev.period}):  $${rev.mtdSales.toLocaleString()}${rev.target ? `  / target $${rev.target.toLocaleString()} (${rev.pctOfTarget}%)` : ''}${delta}`)
