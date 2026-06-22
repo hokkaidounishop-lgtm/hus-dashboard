@@ -59,22 +59,47 @@ async function upsertTaskRow(t) {
   return { ok: true }
 }
 
+// ── Data-source integrity guard ───────────────────────────────────────────────
+// When a read helper can't reach Supabase (creds missing or query failed) it
+// falls back to the bundled src/data/*.json seed — which is FROZEN and WILL lie
+// once the live board has diverged. A silent fallback is exactly how a stale map
+// quietly comes back. So every fallback records why here; the read handlers
+// (briefing / ryoiki / get_project_status) reset this on entry and, if it fired,
+// prepend a LOUD banner so the numbers are never trusted blindly.
+let _fallbackReason = null
+const noteFallback  = (reason) => { if (!_fallbackReason) _fallbackReason = reason }
+const resetFallback = () => { _fallbackReason = null }
+function fallbackBanner() {
+  if (!_fallbackReason) return []
+  const why = _fallbackReason === 'creds'
+    ? 'SUPABASE creds未設定 (SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY)'
+    : 'SUPABASE読取失敗 (network / RLS / table)'
+  return [
+    '🔴🔴🔴 警告: ' + why + ' 🔴🔴🔴',
+    '   → ローカルseed (src/data/*.json) を表示中。数字は信用するな。',
+    '   → 画面 (Supabase) と一致しない。creds復旧まで全数値は参考値。',
+    '   → 復旧手順: mcp/SETUP.md「Supabase creds」参照。',
+    '─'.repeat(50),
+    '',
+  ]
+}
+
 // Read the FULL task list from the Supabase `tasks` table — the same single
 // source of truth the deployed dashboard reads. This is what makes the read
 // path (briefing / ryoiki_tenkai) agree with the frontend: MCP writes mirror
 // into `tasks`, and here we read straight back out of it.
 //
 // Falls back to local src/data/tasks.json when Supabase is unconfigured or the
-// query fails, so the briefing can never hard-error. Rows come back snake_case;
-// we map them to the camelCase shape every handler already expects.
+// query fails — and records WHY via noteFallback() so the handler can warn.
 async function loadTasks() {
-  if (!supabase) return load('tasks')
+  if (!supabase) { noteFallback('creds'); return load('tasks') }
   const { data, error } = await supabase
     .from('tasks')
     .select('id, task, project, priority, owner, due_date, pdca, pdca_updated_at, status, notes, completed_at')
     .eq('deleted', false)
   if (error || !data) {
     console.error(`[loadTasks] Supabase read failed — falling back to tasks.json (${error?.message ?? 'no data'})`)
+    noteFallback('error')
     return load('tasks')
   }
   return data.map((r) => ({
@@ -125,13 +150,14 @@ async function upsertProjectRow(p) {
 // Falls back to local src/data/projects.json when Supabase is unconfigured or
 // the query fails, so the read path can never hard-error.
 async function loadProjects() {
-  if (!supabase) return load('projects')
+  if (!supabase) { noteFallback('creds'); return load('projects') }
   const { data, error } = await supabase
     .from('projects')
     .select('id, name, description, status, owner, kpis, deliverables, start_date, due_date, progress, blocks, followups, notes')
     .eq('deleted', false)
   if (error || !data) {
     console.error(`[loadProjects] Supabase read failed — falling back to projects.json (${error?.message ?? 'no data'})`)
+    noteFallback('error')
     return load('projects')
   }
   return data.map((r) => ({
@@ -677,11 +703,12 @@ async function handleAddFollowup({ project_name, item_text }) {
 
 // ── 6. get_project_status ─────────────────────────────────────────────────────
 async function handleGetProjectStatus({ project_name }) {
+  resetFallback()
   const projects = await loadProjects()
   const tasks    = await loadTasks()
 
   if (!project_name || project_name.toLowerCase() === 'all') {
-    const lines = ['📋 All Projects Summary', '━'.repeat(50)]
+    const lines = [...fallbackBanner(), '📋 All Projects Summary', '━'.repeat(50)]
     projects.forEach((p) => {
       const pt     = tasks.filter((t) => t.project === p.id)
       const done   = pt.filter((t) => t.status === 'done').length
@@ -699,11 +726,12 @@ async function handleGetProjectStatus({ project_name }) {
   const project = fuzzy(projects, 'name', project_name)
   if (!project) throw new McpError(ErrorCode.InvalidParams, `Project not found: "${project_name}"`)
 
-  return { content: [{ type: 'text', text: formatProjectStatus(project, tasks) }] }
+  return { content: [{ type: 'text', text: [...fallbackBanner(), formatProjectStatus(project, tasks)].join('\n') }] }
 }
 
 // ── 7. get_daily_briefing ─────────────────────────────────────────────────────
 async function handleGetDailyBriefing() {
+  resetFallback()
   const projects = await loadProjects()
   const tasks    = await loadTasks()
   const kpis     = load('kpis')
@@ -731,6 +759,7 @@ async function handleGetDailyBriefing() {
   const rev = await buildRevenueSummary(kpis)
 
   const lines = [
+    ...fallbackBanner(),
     `🌅 HUS Daily Briefing — ${todayStr}`,
     '═'.repeat(50),
     '',
@@ -738,8 +767,8 @@ async function handleGetDailyBriefing() {
 
   // KPI summary
   lines.push('📊 KPI Status')
-  lines.push(`   CVR:     ${kpis.current.cvr}%  (target ${kpis.targets.cvr}%)  ${kpis.current.cvr < kpis.targets.cvr ? '🔴 BELOW TARGET' : '🟢'}`)
-  lines.push(`   AOV:     $${kpis.current.aov}  (target $${kpis.targets.aov})  ${kpis.current.aov < kpis.targets.aov ? '🟡' : '🟢'}`)
+  lines.push(`   CVR:     ${kpis.current.cvr}%  (target ${kpis.targets.cvr}%)  ${kpis.current.cvr < kpis.targets.cvr ? '🔴 BELOW TARGET' : '🟢'}  [ASSUMPTION: kpis.json手動値・凍結]`)
+  lines.push(`   AOV:     $${kpis.current.aov}  (target $${kpis.targets.aov})  ${kpis.current.aov < kpis.targets.aov ? '🟡' : '🟢'}  [ASSUMPTION: kpis.json手動値・凍結]`)
   if (rev.live) {
     lines.push(`   Revenue MTD (${rev.period}): $${rev.mtdSales.toLocaleString()}${rev.target ? `  / target $${rev.target.toLocaleString()} (${rev.pctOfTarget}%)` : ''}`)
     const parts = [`B2C $${(rev.b2c || 0).toLocaleString()}`]
@@ -807,6 +836,7 @@ async function handleGetDailyBriefing() {
 
 // ── 9. ryoiki_tenkai (領域展開) ───────────────────────────────────────────────
 async function handleRyoikiTenkai() {
+  resetFallback()
   const projects = await loadProjects()
   const tasks    = await loadTasks()
   const kpis     = load('kpis')
@@ -814,6 +844,7 @@ async function handleRyoikiTenkai() {
   const todayStr = today()
 
   const lines = [
+    ...fallbackBanner(),
     '',
     '╔══════════════════════════════════════════════════════════════════╗',
     '║                    領 域 展 開                                   ║',
@@ -829,8 +860,8 @@ async function handleRyoikiTenkai() {
   const rev = await buildRevenueSummary(kpis)
 
   lines.push('━━━ 📊 KPI OVERVIEW ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
-  lines.push(`  CVR:           ${kpis.current.cvr}%  (target: ${kpis.targets.cvr}%)  ${kpis.current.cvr >= kpis.targets.cvr ? '🟢' : '🔴 BELOW'}`)
-  lines.push(`  AOV:           $${kpis.current.aov}  (target: $${kpis.targets.aov})  ${kpis.current.aov >= kpis.targets.aov ? '🟢' : '🟡'}`)
+  lines.push(`  CVR:           ${kpis.current.cvr}%  (target: ${kpis.targets.cvr}%)  ${kpis.current.cvr >= kpis.targets.cvr ? '🟢' : '🔴 BELOW'}  [ASSUMPTION: kpis.json手動値・凍結]`)
+  lines.push(`  AOV:           $${kpis.current.aov}  (target: $${kpis.targets.aov})  ${kpis.current.aov >= kpis.targets.aov ? '🟢' : '🟡'}  [ASSUMPTION: kpis.json手動値・凍結]`)
   if (rev.live) {
     const delta = rev.deltaLM == null ? '' : `  (B2C ${rev.deltaLM > 0 ? '▲' : '▼'}${Math.abs(rev.deltaLM).toFixed(1)}% vs same-day LM)`
     lines.push(`  Revenue MTD (${rev.period}):  $${rev.mtdSales.toLocaleString()}${rev.target ? `  / target $${rev.target.toLocaleString()} (${rev.pctOfTarget}%)` : ''}${delta}`)
