@@ -174,7 +174,7 @@ function reflectionLine(sbResult) {
     return '\n⚠️  frontend反映: tasks.json/projects.json書込のみ・Supabase未mirror = deployed dashboard表示は非保証 (Step 6 Phase C完了まで)'
   }
   if (sbResult.ok) {
-    return '\n🟢 frontend反映: Supabase tasks行 mirror成功 (次回ページ読込で反映)'
+    return '\n🟢 frontend反映: Supabase行 mirror成功 (次回ページ読込で反映)'
   }
   if (sbResult.reason === 'supabase_not_configured') {
     return '\n⚠️  frontend反映: Supabase未接続 (SUPABASE_URL/KEY未設定) = deployed dashboard表示は非保証'
