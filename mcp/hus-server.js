@@ -540,7 +540,7 @@ async function handleAddFollowup({ project_name, item_text }) {
 // ── 6. get_project_status ─────────────────────────────────────────────────────
 async function handleGetProjectStatus({ project_name }) {
   const projects = load('projects')
-  const tasks    = load('tasks')
+  const tasks    = await loadTasks()
 
   if (!project_name || project_name.toLowerCase() === 'all') {
     const lines = ['📋 All Projects Summary', '━'.repeat(50)]
