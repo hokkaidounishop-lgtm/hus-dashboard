@@ -34,19 +34,121 @@ const SB_KEY =
   process.env.VITE_SUPABASE_ANON_KEY
 const supabase = SB_URL && SB_KEY ? createClient(SB_URL, SB_KEY) : null
 
-async function persistTaskStatus(id, status, extras = {}) {
+// Upsert a FULL task row into the `tasks` table — the single source of truth
+// the deployed dashboard reads. Every MCP write that touches a task (add /
+// followup / complete / update) mirrors here so it shows up on prod. No-op if
+// Supabase env vars are unset.
+async function upsertTaskRow(t) {
   if (!supabase) return { ok: false, reason: 'supabase_not_configured' }
-  const row = { id, status, updated_at: new Date().toISOString(), ...extras }
-  if (status === 'done' && !row.completed_at) {
-    row.completed_at = new Date().toISOString().slice(0, 10)
-  } else if (status !== 'done') {
-    row.completed_at = null
+  const row = {
+    id:              t.id,
+    task:            t.task,
+    project:         t.project || '',
+    priority:        t.priority || 'medium',
+    owner:           t.owner || '',
+    due_date:        t.dueDate || '',
+    pdca:            t.pdca || 'Plan',
+    pdca_updated_at: t.pdcaUpdatedAt || null,
+    status:          t.status || 'not-started',
+    notes:           t.notes || '',
+    completed_at:    t.completedAt || null,
+    updated_at:      new Date().toISOString(),
   }
-  const { error } = await supabase
-    .from('task_status')
-    .upsert(row, { onConflict: 'id' })
+  const { error } = await supabase.from('tasks').upsert(row, { onConflict: 'id' })
   if (error) return { ok: false, reason: error.message }
   return { ok: true }
+}
+
+// Read the FULL task list from the Supabase `tasks` table — the same single
+// source of truth the deployed dashboard reads. This is what makes the read
+// path (briefing / ryoiki_tenkai) agree with the frontend: MCP writes mirror
+// into `tasks`, and here we read straight back out of it.
+//
+// Falls back to local src/data/tasks.json when Supabase is unconfigured or the
+// query fails, so the briefing can never hard-error. Rows come back snake_case;
+// we map them to the camelCase shape every handler already expects.
+async function loadTasks() {
+  if (!supabase) return load('tasks')
+  const { data, error } = await supabase
+    .from('tasks')
+    .select('id, task, project, priority, owner, due_date, pdca, pdca_updated_at, status, notes, completed_at')
+    .eq('deleted', false)
+  if (error || !data) {
+    console.error(`[loadTasks] Supabase read failed — falling back to tasks.json (${error?.message ?? 'no data'})`)
+    return load('tasks')
+  }
+  return data.map((r) => ({
+    id:            r.id,
+    task:          r.task,
+    project:       r.project || null,
+    priority:      r.priority,
+    owner:         r.owner,
+    dueDate:       r.due_date || '',
+    pdca:          r.pdca,
+    pdcaUpdatedAt: r.pdca_updated_at,
+    status:        r.status,
+    notes:         r.notes,
+    completedAt:   r.completed_at,
+  }))
+}
+
+// Upsert a FULL project row into the Supabase `projects` table — the same
+// single source of truth the deployed dashboard reads. Scalars map to columns,
+// nested blocks / followups go in as jsonb. Every MCP write that mutates a
+// project (update / checklist / followup / progress recalc) mirrors here so the
+// edit shows up on prod. No-op if Supabase env vars are unset.
+async function upsertProjectRow(p) {
+  if (!supabase) return { ok: false, reason: 'supabase_not_configured' }
+  const row = {
+    id:           p.id,
+    name:         p.name || '',
+    description:  p.description || '',
+    status:       p.status || '',
+    owner:        p.owner || '',
+    kpis:         p.kpis || '',
+    deliverables: p.deliverables || '',
+    start_date:   p.startDate || '',
+    due_date:     p.dueDate || '',
+    progress:     typeof p.progress === 'number' ? p.progress : null,
+    blocks:       p.blocks ?? [],
+    followups:    p.followups ?? [],
+    notes:        p.notes || '',
+    updated_at:   new Date().toISOString(),
+  }
+  const { error } = await supabase.from('projects').upsert(row, { onConflict: 'id' })
+  if (error) return { ok: false, reason: error.message }
+  return { ok: true }
+}
+
+// Read the FULL project list from the Supabase `projects` table, mapping the
+// snake_case + jsonb columns back to the camelCase shape every handler expects.
+// Falls back to local src/data/projects.json when Supabase is unconfigured or
+// the query fails, so the read path can never hard-error.
+async function loadProjects() {
+  if (!supabase) return load('projects')
+  const { data, error } = await supabase
+    .from('projects')
+    .select('id, name, description, status, owner, kpis, deliverables, start_date, due_date, progress, blocks, followups, notes')
+    .eq('deleted', false)
+  if (error || !data) {
+    console.error(`[loadProjects] Supabase read failed — falling back to projects.json (${error?.message ?? 'no data'})`)
+    return load('projects')
+  }
+  return data.map((r) => ({
+    id:           r.id,
+    name:         r.name,
+    description:  r.description,
+    status:       r.status,
+    owner:        r.owner,
+    kpis:         r.kpis,
+    deliverables: r.deliverables,
+    startDate:    r.start_date,
+    dueDate:      r.due_date,
+    progress:     r.progress ?? 0,
+    blocks:       r.blocks ?? [],
+    followups:    r.followups ?? [],
+    notes:        r.notes,
+  }))
 }
 
 // ── I/O helpers ───────────────────────────────────────────────────────────────
@@ -59,20 +161,87 @@ const save = (name, data) =>
 
 const today = () => new Date().toISOString().slice(0, 10)
 
+// ── Revenue (shared SoT with the dashboard) ───────────────────────────────────
+// The dashboard's revenue (useRevenueSummary) resolves from: B2C ← Shopify sync
+// (now mirrored into Supabase `revenue_snapshot`), Export/Broker/Tuna ← Supabase
+// `revenue_manual`, B2B ← Freshline (pending). The MCP briefing used to read the
+// frozen kpis.json mock instead ("Mar '25" forever); these helpers + the shared
+// summary make it read the exact same live sources the dashboard does.
+
+async function loadRevenueSnapshot() {
+  if (!supabase) return null
+  const { data, error } = await supabase
+    .from('revenue_snapshot')
+    .select('current_month, totals, monthly_revenue, synced_at')
+    .eq('id', 'latest')
+    .maybeSingle()
+  if (error || !data) return null
+  return data
+}
+
+async function loadRevenueManual() {
+  if (!supabase) return null
+  const now = new Date()
+  const period = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+  const { data, error } = await supabase
+    .from('revenue_manual')
+    .select('export_amount, broker_amount, tuna_show_amount')
+    .eq('period', period)
+    .maybeSingle()
+  if (error) return null
+  return data || null
+}
+
+// Compute the same MTD revenue picture the dashboard shows. Returns { live:false }
+// when no Shopify sync has populated the snapshot yet — the caller then prints a
+// "sync pending" line instead of a stale mock number.
+async function buildRevenueSummary(kpis) {
+  const snap = await loadRevenueSnapshot()
+  const cm = snap?.current_month || {}
+  if (typeof cm.mtd !== 'number' || cm.mtd <= 0) return { live: false }
+
+  const manual = await loadRevenueManual()
+  const b2c    = cm.mtd
+  const exportAmt = manual?.export_amount ?? null
+  const broker = (manual?.broker_amount ?? 0) + (manual?.tuna_show_amount ?? 0) || null
+  const mtdSales = [b2c, exportAmt, broker]
+    .filter((v) => v != null)
+    .reduce((s, v) => s + Number(v), 0)
+  const target = kpis?.targets?.monthlyRevenue ?? null
+  const deltaLM =
+    b2c && cm.lastMonthToSameDay
+      ? ((b2c - cm.lastMonthToSameDay) / cm.lastMonthToSameDay) * 100
+      : null
+  return {
+    live: true,
+    period:   cm.periodKey || null,
+    b2c,
+    exportAmt,
+    broker,
+    mtdSales,
+    forecast: cm.forecast ?? null,
+    target,
+    pctOfTarget: target ? Math.round((mtdSales / target) * 100) : null,
+    deltaLM,
+    totals:   snap?.totals || null,
+    syncedAt: snap?.synced_at || null,
+  }
+}
+
 // ── Frontend reflection status ────────────────────────────────────────────────
 // The deployed dashboard reads from Supabase, but most MCP write handlers only
 // persist to src/data/*.json. Until Step 6 Phase C lands (MCP→Supabase direct
 // write for every write handler), an "✅ success" ack must NEVER be mistaken
 // for a guarantee that the change is visible on hus-dashboard.vercel.app.
 //
-// Pass the persistTaskStatus() return value when a handler attempted a mirror,
-// or `null` when the handler does not (yet) mirror to Supabase at all.
+// Pass the upsertTaskRow() return value when a handler mirrors the full task
+// row, or `null` when the handler does not (yet) mirror to Supabase at all.
 function reflectionLine(sbResult) {
   if (sbResult == null) {
     return '\n⚠️  frontend反映: tasks.json/projects.json書込のみ・Supabase未mirror = deployed dashboard表示は非保証 (Step 6 Phase C完了まで)'
   }
   if (sbResult.ok) {
-    return '\n🟢 frontend反映: Supabase task_status mirror成功 (次回ページ読込で反映)'
+    return '\n🟢 frontend反映: Supabase行 mirror成功 (次回ページ読込で反映)'
   }
   if (sbResult.reason === 'supabase_not_configured') {
     return '\n⚠️  frontend反映: Supabase未接続 (SUPABASE_URL/KEY未設定) = deployed dashboard表示は非保証'
@@ -197,7 +366,7 @@ async function handleCompleteTask({ project_name, task_name }) {
   if (!task_name) throw new McpError(ErrorCode.InvalidParams, 'task_name is required')
 
   const tasks    = load('tasks')
-  const projects = load('projects')
+  const projects = await loadProjects()
 
   // Optionally narrow by project first
   let pool = tasks
@@ -239,13 +408,11 @@ async function handleCompleteTask({ project_name, task_name }) {
   save('tasks',    tasks)
   save('projects', projects)
 
-  // Mirror to Supabase task_status so the deployed dashboard reflects this
+  // Mirror the full task row to Supabase so the deployed dashboard reflects this
   // completion on the next page load. No-op if Supabase env vars are unset.
-  const sb = await persistTaskStatus(task.id, 'done', {
-    completed_at: task.completedAt,
-    pdca: task.pdca,
-    pdca_updated_at: task.pdcaUpdatedAt,
-  })
+  const sb = await upsertTaskRow(task)
+  // Mirror the linked project too — its progress % just changed.
+  if (linkedProj) await upsertProjectRow(linkedProj)
 
   return {
     content: [{
@@ -268,7 +435,7 @@ async function handleUpdateProject({ project_name, field, value }) {
     throw new McpError(ErrorCode.InvalidParams, 'project_name, field, and value are all required')
   }
 
-  const projects = load('projects')
+  const projects = await loadProjects()
   const project  = fuzzy(projects, 'name', project_name)
   if (!project) throw new McpError(ErrorCode.InvalidParams, `Project not found: "${project_name}"`)
 
@@ -277,11 +444,13 @@ async function handleUpdateProject({ project_name, field, value }) {
   project[field] = NUMERIC.has(field) ? parseInt(value, 10) : value
 
   save('projects', projects)
+  // Mirror the changed project row to Supabase (single source of truth).
+  const sb = await upsertProjectRow(project)
 
   return {
     content: [{
       type: 'text',
-      text: `✅ Updated "${project.name}"\n   ${field}: ${JSON.stringify(oldVal)} → ${JSON.stringify(project[field])}${reflectionLine(null)}`,
+      text: `✅ Updated "${project.name}"\n   ${field}: ${JSON.stringify(oldVal)} → ${JSON.stringify(project[field])}${reflectionLine(sb)}`,
     }],
   }
 }
@@ -297,7 +466,7 @@ async function handleAddChecklistItem({ project_name, block_name, item_text, sta
     throw new McpError(ErrorCode.InvalidParams, `status must be one of: ${VALID_STATUS.join(', ')}`)
   }
 
-  const projects = load('projects')
+  const projects = await loadProjects()
   const project  = fuzzy(projects, 'name', project_name)
   if (!project) throw new McpError(ErrorCode.InvalidParams, `Project not found: "${project_name}"`)
 
@@ -328,6 +497,8 @@ async function handleAddChecklistItem({ project_name, block_name, item_text, sta
   }
 
   save('projects', projects)
+  // Mirror the changed project row (new block/item + progress) to Supabase.
+  const sb = await upsertProjectRow(project)
 
   return {
     content: [{
@@ -337,7 +508,7 @@ async function handleAddChecklistItem({ project_name, block_name, item_text, sta
         `   Item: ${item_text}`,
         `   Status: ${status}`,
         progressNote,
-        reflectionLine(null),
+        reflectionLine(sb),
       ].filter(Boolean).join('\n'),
     }],
   }
@@ -347,8 +518,8 @@ async function handleAddChecklistItem({ project_name, block_name, item_text, sta
 async function handleUpdateProjectProgress({ project_name }) {
   if (!project_name) throw new McpError(ErrorCode.InvalidParams, 'project_name is required')
 
-  const projects = load('projects')
-  const tasks    = load('tasks')
+  const projects = await loadProjects()
+  const tasks    = await loadTasks()
   const project  = fuzzy(projects, 'name', project_name)
   if (!project) throw new McpError(ErrorCode.InvalidParams, `Project not found: "${project_name}"`)
 
@@ -361,6 +532,8 @@ async function handleUpdateProjectProgress({ project_name }) {
 
   project.progress = newPct
   save('projects', projects)
+  // Mirror the changed project row (new progress) to Supabase.
+  const sb = await upsertProjectRow(project)
 
   const src = (project.blocks ?? []).flatMap((b) => b.items ?? []).length > 0
     ? 'checklist blocks'
@@ -369,7 +542,7 @@ async function handleUpdateProjectProgress({ project_name }) {
   return {
     content: [{
       type: 'text',
-      text: `✅ "${project.name}" progress updated from ${oldPct}% → ${newPct}% (calculated from ${src})${reflectionLine(null)}`,
+      text: `✅ "${project.name}" progress updated from ${oldPct}% → ${newPct}% (calculated from ${src})${reflectionLine(sb)}`,
     }],
   }
 }
@@ -387,7 +560,7 @@ async function handleAddTask({ title, project_name, priority = 'medium', due, ow
   if (!VALID_PDCA.includes(pdca))         throw new McpError(ErrorCode.InvalidParams, `pdca must be one of: ${VALID_PDCA.join(', ')}`)
 
   const tasks    = load('tasks')
-  const projects = load('projects')
+  const projects = await loadProjects()
 
   let projectId = ''
   let projectLabel = ''
@@ -416,6 +589,9 @@ async function handleAddTask({ title, project_name, priority = 'medium', due, ow
   tasks.push(newTask)
   save('tasks', tasks)
 
+  // Mirror the full task row to Supabase so it appears on the deployed dashboard.
+  const sb = await upsertTaskRow(newTask)
+
   // Recalculate project progress if linked
   if (projectId) {
     const proj = projects.find(p => p.id === projectId)
@@ -424,6 +600,8 @@ async function handleAddTask({ title, project_name, priority = 'medium', due, ow
       if (newPct !== null) {
         proj.progress = newPct
         save('projects', projects)
+        // Mirror the linked project row (new progress) to Supabase.
+        await upsertProjectRow(proj)
       }
     }
   }
@@ -438,7 +616,7 @@ async function handleAddTask({ title, project_name, priority = 'medium', due, ow
         `   Priority: ${priority} · PDCA: ${pdca} · Status: ${status}`,
         due ? `   Due: ${due}` : null,
         owner ? `   Owner: ${owner}` : null,
-        reflectionLine(null),
+        reflectionLine(sb),
       ].filter(Boolean).join('\n'),
     }],
   }
@@ -450,7 +628,7 @@ async function handleAddFollowup({ project_name, item_text }) {
     throw new McpError(ErrorCode.InvalidParams, 'project_name and item_text are required')
   }
 
-  const projects = load('projects')
+  const projects = await loadProjects()
   const tasks    = load('tasks')
   const project  = fuzzy(projects, 'name', project_name)
   if (!project) throw new McpError(ErrorCode.InvalidParams, `Project not found: "${project_name}"`)
@@ -460,10 +638,12 @@ async function handleAddFollowup({ project_name, item_text }) {
   const fuId = `fu-${Date.now()}`
   project.followups.push({ id: fuId, text: item_text, addedAt: today(), status: 'pending' })
   save('projects', projects)
+  // Mirror the changed project row (new followup in jsonb) to Supabase.
+  await upsertProjectRow(project)
 
   // Also add to tasks.json so it surfaces in Alerts panel
   const taskId = `task-${Date.now()}`
-  tasks.push({
+  const fuTask = {
     id:           taskId,
     task:         `⚠️ [Follow-up] ${item_text}`,
     project:      project.id,
@@ -474,8 +654,12 @@ async function handleAddFollowup({ project_name, item_text }) {
     pdcaUpdatedAt: today(),
     status:       'not-started',
     notes:        `Follow-up added ${today()} via MCP`,
-  })
+  }
+  tasks.push(fuTask)
   save('tasks', tasks)
+
+  // Mirror the full follow-up row to Supabase so it appears on the deployed dashboard.
+  const sb = await upsertTaskRow(fuTask)
 
   return {
     content: [{
@@ -485,16 +669,16 @@ async function handleAddFollowup({ project_name, item_text }) {
         `   "${item_text}"`,
         `   It will appear in the Alerts panel and Task List.`,
         `   Task ID: ${taskId}  |  Follow-up ID: ${fuId}`,
-        reflectionLine(null),
-      ].join('\n'),
+        reflectionLine(sb),
+      ].filter(Boolean).join('\n'),
     }],
   }
 }
 
 // ── 6. get_project_status ─────────────────────────────────────────────────────
 async function handleGetProjectStatus({ project_name }) {
-  const projects = load('projects')
-  const tasks    = load('tasks')
+  const projects = await loadProjects()
+  const tasks    = await loadTasks()
 
   if (!project_name || project_name.toLowerCase() === 'all') {
     const lines = ['📋 All Projects Summary', '━'.repeat(50)]
@@ -520,8 +704,8 @@ async function handleGetProjectStatus({ project_name }) {
 
 // ── 7. get_daily_briefing ─────────────────────────────────────────────────────
 async function handleGetDailyBriefing() {
-  const projects = load('projects')
-  const tasks    = load('tasks')
+  const projects = await loadProjects()
+  const tasks    = await loadTasks()
   const kpis     = load('kpis')
   const events   = load('calendar')
 
@@ -544,10 +728,7 @@ async function handleGetDailyBriefing() {
     .slice(0, 3)
 
   const critProjs = projects.filter((p) => p.status === 'stalled' || p.status === 'behind')
-  const allMonths = kpis.monthlyRevenue
-  const latest    = allMonths[allMonths.length - 1]
-  const prev      = allMonths[allMonths.length - 2]
-  const revGrowth = (((latest.revenue - prev.revenue) / prev.revenue) * 100).toFixed(1)
+  const rev = await buildRevenueSummary(kpis)
 
   const lines = [
     `🌅 HUS Daily Briefing — ${todayStr}`,
@@ -559,7 +740,17 @@ async function handleGetDailyBriefing() {
   lines.push('📊 KPI Status')
   lines.push(`   CVR:     ${kpis.current.cvr}%  (target ${kpis.targets.cvr}%)  ${kpis.current.cvr < kpis.targets.cvr ? '🔴 BELOW TARGET' : '🟢'}`)
   lines.push(`   AOV:     $${kpis.current.aov}  (target $${kpis.targets.aov})  ${kpis.current.aov < kpis.targets.aov ? '🟡' : '🟢'}`)
-  lines.push(`   ${latest.month} Revenue: $${latest.revenue.toLocaleString()}  (${Number(revGrowth)>0?'▲':'▼'}${Math.abs(revGrowth)}% vs prev month)`)
+  if (rev.live) {
+    lines.push(`   Revenue MTD (${rev.period}): $${rev.mtdSales.toLocaleString()}${rev.target ? `  / target $${rev.target.toLocaleString()} (${rev.pctOfTarget}%)` : ''}`)
+    const parts = [`B2C $${(rev.b2c || 0).toLocaleString()}`]
+    if (rev.exportAmt != null) parts.push(`Export $${rev.exportAmt.toLocaleString()}`)
+    if (rev.broker != null)    parts.push(`Broker/Spot $${rev.broker.toLocaleString()}`)
+    const delta = rev.deltaLM == null ? '' : `  (B2C ${rev.deltaLM > 0 ? '▲' : '▼'}${Math.abs(rev.deltaLM).toFixed(1)}% vs same-day last month)`
+    lines.push(`     ${parts.join(' · ')}${delta}`)
+    if (rev.forecast) lines.push(`     Forecast $${rev.forecast.toLocaleString()}`)
+  } else {
+    lines.push('   Revenue: ⏳ 本番Shopify同期待ち (dashboard sync後にここへ反映)')
+  }
 
   // Overdue
   lines.push('', `⚠️  Overdue Tasks (${overdue.length})`)
@@ -616,8 +807,8 @@ async function handleGetDailyBriefing() {
 
 // ── 9. ryoiki_tenkai (領域展開) ───────────────────────────────────────────────
 async function handleRyoikiTenkai() {
-  const projects = load('projects')
-  const tasks    = load('tasks')
+  const projects = await loadProjects()
+  const tasks    = await loadTasks()
   const kpis     = load('kpis')
   const events   = load('calendar')
   const todayStr = today()
@@ -635,17 +826,25 @@ async function handleRyoikiTenkai() {
   ]
 
   // ── KPI Overview ──
-  const monthly = kpis.monthlyRevenue
-  const latest  = monthly[monthly.length - 1]
-  const prev    = monthly[monthly.length - 2]
-  const growth  = ((latest.revenue - prev.revenue) / prev.revenue * 100).toFixed(1)
+  const rev = await buildRevenueSummary(kpis)
 
   lines.push('━━━ 📊 KPI OVERVIEW ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
   lines.push(`  CVR:           ${kpis.current.cvr}%  (target: ${kpis.targets.cvr}%)  ${kpis.current.cvr >= kpis.targets.cvr ? '🟢' : '🔴 BELOW'}`)
   lines.push(`  AOV:           $${kpis.current.aov}  (target: $${kpis.targets.aov})  ${kpis.current.aov >= kpis.targets.aov ? '🟢' : '🟡'}`)
-  lines.push(`  ${latest.month} Revenue:  $${latest.revenue.toLocaleString()}  (${Number(growth) > 0 ? '▲' : '▼'}${Math.abs(growth)}% MoM)`)
-  lines.push(`  Total Revenue: $${kpis.current.totalRevenue.toLocaleString()}`)
-  lines.push(`  Total Orders:  ${kpis.current.totalOrders}`)
+  if (rev.live) {
+    const delta = rev.deltaLM == null ? '' : `  (B2C ${rev.deltaLM > 0 ? '▲' : '▼'}${Math.abs(rev.deltaLM).toFixed(1)}% vs same-day LM)`
+    lines.push(`  Revenue MTD (${rev.period}):  $${rev.mtdSales.toLocaleString()}${rev.target ? `  / target $${rev.target.toLocaleString()} (${rev.pctOfTarget}%)` : ''}${delta}`)
+    const parts = [`B2C $${(rev.b2c || 0).toLocaleString()}`]
+    if (rev.exportAmt != null) parts.push(`Export $${rev.exportAmt.toLocaleString()}`)
+    if (rev.broker != null)    parts.push(`Broker/Spot $${rev.broker.toLocaleString()}`)
+    lines.push(`    ${parts.join(' · ')}`)
+    if (rev.forecast) lines.push(`  Forecast:      $${rev.forecast.toLocaleString()}`)
+    if (rev.totals?.totalRevenue != null) lines.push(`  Total Revenue: $${Number(rev.totals.totalRevenue).toLocaleString()}  (trailing 13mo)`)
+    if (rev.totals?.totalOrders != null)  lines.push(`  Total Orders:  ${rev.totals.totalOrders}`)
+    if (rev.syncedAt) lines.push(`  Synced:        ${rev.syncedAt.slice(0, 16).replace('T', ' ')} UTC`)
+  } else {
+    lines.push('  Revenue:       ⏳ 本番Shopify同期待ち (dashboard sync後に反映)')
+  }
   lines.push('')
 
   // ── Task Statistics ──
@@ -737,7 +936,13 @@ async function handleRyoikiTenkai() {
   lines.push(`  Avg Progress:      ${avgProgress}%`)
   lines.push(`  Critical Projects: ${criticalCount}  ${criticalCount > 0 ? '🔥' : '✅'}`)
   lines.push(`  Overdue Tasks:     ${overdue.length}  ${overdue.length > 0 ? '⚠️' : '✅'}`)
-  lines.push(`  Revenue Trend:     ${Number(growth) > 0 ? '📈' : '📉'} ${growth}% MoM`)
+  if (rev.live && rev.deltaLM != null) {
+    lines.push(`  Revenue Trend:     ${rev.deltaLM > 0 ? '📈' : '📉'} B2C ${rev.deltaLM > 0 ? '+' : ''}${rev.deltaLM.toFixed(1)}% vs same-day last month`)
+  } else if (rev.live) {
+    lines.push(`  Revenue MTD:       $${rev.mtdSales.toLocaleString()} (${rev.period})`)
+  } else {
+    lines.push('  Revenue Trend:     ⏳ sync pending')
+  }
   lines.push('')
   lines.push('╔══════════════════════════════════════════════════════════════════╗')
   lines.push('║                     領域展開 完了                                ║')

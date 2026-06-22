@@ -3,7 +3,10 @@ import kpisData from '../data/kpis.json'
 import projectsData from '../data/projects.json'
 import tasksData from '../data/tasks.json'
 import calendarData from '../data/calendar.json'
-import { loadTaskStatuses, persistTaskStatus } from '../api/supabase'
+import {
+  loadTasks, persistTask, softDeleteTask,
+  loadProjects, persistProject, softDeleteProject,
+} from '../api/supabase'
 import { syncFromShopify } from '../api/shopify'
 
 const AppContext = createContext(null)
@@ -51,43 +54,64 @@ export function AppProvider({ children }) {
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Merge Supabase task status overrides on mount (production persistence)
+  // Load the live task list from Supabase (single source of truth) on mount.
+  // The bundled tasks.json is only the first-paint seed / offline fallback —
+  // when Supabase returns rows, they replace it wholesale so MCP-created tasks,
+  // edits, and deletions all reflect here. Falls back to the bundle when
+  // Supabase is unconfigured, unreachable, or the table is empty.
   useEffect(() => {
-    loadTaskStatuses().then((overrides) => {
-      if (overrides.size === 0) return
-      setTasks((prev) =>
-        prev.map((t) => {
-          const o = overrides.get(t.id)
-          if (!o) return t
-          return {
-            ...t,
-            status: o.status,
-            ...(o.completedAt ? { completedAt: o.completedAt } : {}),
-            ...(o.pdca ? { pdca: o.pdca, pdcaUpdatedAt: o.pdcaUpdatedAt } : {}),
-          }
-        })
-      )
+    loadTasks().then((live) => {
+      if (live && live.length > 0) setTasks(live)
+    })
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Load the live project list from Supabase (single source of truth) on mount,
+  // same contract as tasks: the bundled projects.json is only the first-paint
+  // seed / offline fallback. Falls back to the bundle when Supabase is
+  // unconfigured, unreachable, or the table is empty.
+  useEffect(() => {
+    loadProjects().then((live) => {
+      if (live && live.length > 0) setProjects(live)
     })
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Projects CRUD ──────────────────────────────────────────────────────────
-  const addProject = (project) =>
-    setProjects((prev) => [...prev, { ...project, id: `proj-${Date.now()}` }])
+  const addProject = (project) => {
+    const newProject = { ...project, id: `proj-${Date.now()}` }
+    setProjects((prev) => [...prev, newProject])
+    persistProject(newProject) // full row → Supabase (single source of truth)
+  }
 
-  const updateProject = (id, updates) =>
-    setProjects((prev) => prev.map((p) => (p.id === id ? { ...p, ...updates } : p)))
+  const updateProject = (id, updates) => {
+    let merged = null
+    setProjects((prev) =>
+      prev.map((p) => {
+        if (p.id !== id) return p
+        merged = { ...p, ...updates }
+        return merged
+      })
+    )
+    if (merged) persistProject(merged) // persist the full updated row
+  }
 
-  const deleteProject = (id) =>
+  const deleteProject = (id) => {
     setProjects((prev) => prev.filter((p) => p.id !== id))
+    softDeleteProject(id) // soft-delete in Supabase so it vanishes everywhere
+  }
 
   // ── Tasks CRUD ─────────────────────────────────────────────────────────────
-  const addTask = (task) =>
-    setTasks((prev) => [
-      ...prev,
-      { ...task, id: `task-${Date.now()}`, pdcaUpdatedAt: new Date().toISOString().slice(0, 10) },
-    ])
+  const addTask = (task) => {
+    const newTask = {
+      ...task,
+      id: `task-${Date.now()}`,
+      pdcaUpdatedAt: new Date().toISOString().slice(0, 10),
+    }
+    setTasks((prev) => [...prev, newTask])
+    persistTask(newTask) // full row → Supabase (single source of truth)
+  }
 
   const updateTask = (id, updates) => {
+    let merged = null
     setTasks((prev) =>
       prev.map((t) => {
         if (t.id !== id) return t
@@ -95,29 +119,18 @@ export function AppProvider({ children }) {
           updates.pdca && updates.pdca !== t.pdca
             ? new Date().toISOString().slice(0, 10)
             : t.pdcaUpdatedAt
-        return { ...t, ...updates, pdcaUpdatedAt }
+        merged = { ...t, ...updates, pdcaUpdatedAt }
+        return merged
       })
     )
-    // Persist status/pdca changes to Supabase
-    if (updates.status || updates.pdca) {
-      const extras = {}
-      if (updates.pdca) {
-        extras.pdca = updates.pdca
-        extras.pdca_updated_at = new Date().toISOString().slice(0, 10)
-      }
-      const status = updates.status
-      if (status) {
-        persistTaskStatus(id, status, extras)
-      } else {
-        // pdca-only change: read current status from state
-        const current = tasks.find((t) => t.id === id)
-        if (current) persistTaskStatus(id, current.status, extras)
-      }
-    }
+    // Persist the full updated row so every reader sees it after a deploy.
+    if (merged) persistTask(merged)
   }
 
-  const deleteTask = (id) =>
+  const deleteTask = (id) => {
     setTasks((prev) => prev.filter((t) => t.id !== id))
+    softDeleteTask(id) // soft-delete in Supabase so it vanishes everywhere
+  }
 
   // ── Calendar Events CRUD ───────────────────────────────────────────────────
   const addEvent = (event) =>

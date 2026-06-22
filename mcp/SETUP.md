@@ -93,12 +93,15 @@ Or manually add to `~/hus-dashboard/.claude.json`:
 }
 ```
 
-> **Prod overlay (required for `complete_task` to stick on prod):**
-> If `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` are set in `env`, the MCP
-> server upserts the completion into the `task_status` table in addition to
-> `tasks.json`. Without them, MCP completions only reach the deployed
-> dashboard after the next `main` rebuild. The service role key is required
-> because the MCP server bypasses RLS; keep it out of git.
+> **Prod write-through (required for MCP writes to show on prod):**
+> If `SUPABASE_URL` + a key (`SUPABASE_SERVICE_ROLE_KEY` _or_
+> `SUPABASE_ANON_KEY`) are set in `env`, every MCP task write —
+> `add_task`, `add_followup`, `complete_task` — upserts the **full task row**
+> into the Supabase `tasks` table, which the deployed dashboard reads as its
+> single source of truth (see `supabase/tasks_table.sql`). Without them, MCP
+> writes only reach `tasks.json` and never appear on prod. The anon key works
+> because RLS allows anon insert/update on `tasks`; a service role key also
+> works (it bypasses RLS). Keep keys out of git.
 
 **Global** (available in every Claude Code session):
 

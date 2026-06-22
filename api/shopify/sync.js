@@ -9,8 +9,40 @@
  *   SHOPIFY_ACCESS_TOKEN   Fallback token if refresh fails (read_orders, read_products)
  */
 
+import { createClient } from '@supabase/supabase-js'
+
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 const API_VERSION = '2024-01'
+
+// ── Revenue snapshot persistence ──────────────────────────────────────────────
+// Mirror each sync's B2C result into Supabase `revenue_snapshot` (singleton row
+// id='latest') so the MCP briefing/ryoiki read the SAME numbers the dashboard
+// just computed — instead of the frozen kpis.json mock. Best-effort: a failure
+// here must never break the sync response the dashboard depends on.
+async function persistRevenueSnapshot({ currentMonth, totals, monthlyRevenue }) {
+  const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL
+  const key =
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.SUPABASE_ANON_KEY ||
+    process.env.VITE_SUPABASE_ANON_KEY
+  if (!url || !key) return
+  try {
+    const supabase = createClient(url, key)
+    const { error } = await supabase.from('revenue_snapshot').upsert(
+      {
+        id:              'latest',
+        current_month:   currentMonth ?? {},
+        totals:          totals ?? {},
+        monthly_revenue: monthlyRevenue ?? [],
+        synced_at:       new Date().toISOString(),
+      },
+      { onConflict: 'id' }
+    )
+    if (error) console.error('[Shopify Sync] revenue_snapshot upsert failed:', error.message)
+  } catch (e) {
+    console.error('[Shopify Sync] revenue_snapshot persist error:', e.message)
+  }
+}
 
 // ── Token refresh ────────────────────────────────────────────────────────────
 
@@ -398,11 +430,17 @@ export default async function handler(req, res) {
     const nyMetrics  = buildNYMetrics(orders)
     const currentMonth = buildCurrentMonth(orders)
 
+    const current = {
+      ...totals,
+      cvr: null, // CVR requires Shopify Analytics API — kept from dashboard manual entry
+    }
+
+    // Mirror the B2C result into Supabase so the MCP briefing reads the same
+    // numbers. Awaited but best-effort — never blocks/breaks the response.
+    await persistRevenueSnapshot({ currentMonth, totals: current, monthlyRevenue: monthly })
+
     return res.status(200).json({
-      current: {
-        ...totals,
-        cvr: null, // CVR requires Shopify Analytics API — kept from dashboard manual entry
-      },
+      current,
       currentMonth,
       monthlyRevenue:  monthly,
       regionBreakdown: breakdown,
