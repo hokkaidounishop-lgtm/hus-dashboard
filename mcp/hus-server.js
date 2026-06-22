@@ -83,6 +83,39 @@ function sbNoteFrom(sb) {
       : `\nSupabase: upsert failed — ${sb.reason}`
 }
 
+// Read the FULL task list from the Supabase `tasks` table — the same single
+// source of truth the deployed dashboard reads. This is what makes the read
+// path (briefing / ryoiki_tenkai) agree with the frontend: MCP writes mirror
+// into `tasks`, and here we read straight back out of it.
+//
+// Falls back to local src/data/tasks.json when Supabase is unconfigured or the
+// query fails, so the briefing can never hard-error. Rows come back snake_case;
+// we map them to the camelCase shape every handler already expects.
+async function loadTasks() {
+  if (!supabase) return load('tasks')
+  const { data, error } = await supabase
+    .from('tasks')
+    .select('id, task, project, priority, owner, due_date, pdca, pdca_updated_at, status, notes, completed_at')
+    .eq('deleted', false)
+  if (error || !data) {
+    console.error(`[loadTasks] Supabase read failed — falling back to tasks.json (${error?.message ?? 'no data'})`)
+    return load('tasks')
+  }
+  return data.map((r) => ({
+    id:            r.id,
+    task:          r.task,
+    project:       r.project || null,
+    priority:      r.priority,
+    owner:         r.owner,
+    dueDate:       r.due_date || '',
+    pdca:          r.pdca,
+    pdcaUpdatedAt: r.pdca_updated_at,
+    status:        r.status,
+    notes:         r.notes,
+    completedAt:   r.completed_at,
+  }))
+}
+
 // ── I/O helpers ───────────────────────────────────────────────────────────────
 
 const load = (name) =>
@@ -539,7 +572,7 @@ async function handleGetProjectStatus({ project_name }) {
 // ── 7. get_daily_briefing ─────────────────────────────────────────────────────
 async function handleGetDailyBriefing() {
   const projects = load('projects')
-  const tasks    = load('tasks')
+  const tasks    = await loadTasks()
   const kpis     = load('kpis')
   const events   = load('calendar')
 
@@ -635,7 +668,7 @@ async function handleGetDailyBriefing() {
 // ── 9. ryoiki_tenkai (領域展開) ───────────────────────────────────────────────
 async function handleRyoikiTenkai() {
   const projects = load('projects')
-  const tasks    = load('tasks')
+  const tasks    = await loadTasks()
   const kpis     = load('kpis')
   const events   = load('calendar')
   const todayStr = today()
